@@ -35,7 +35,7 @@ jobs:
       - name: Build frontend for GitHub Pages
         env:
           VITE_BASE: ${{ vars.VITE_BASE || '/' }}
-          VITE_API_URL: ${{ vars.VITE_API_URL || '' }}
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://raut-traders.rauttraders.workers.dev' }}
           VITE_WHATSAPP_NUMBER: ${{ vars.VITE_WHATSAPP_NUMBER || '917507425887' }}
         run: npm run build:pages --prefix frontend
 
