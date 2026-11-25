@@ -20,7 +20,7 @@ export const defaultSettings: Settings = {
     line2: 'Delivered to Your',
     highlight: 'Doorstep',
     description:
-      'Retailers trust us to get top company products delivered straight to their shop door — place your order and we handle the rest.',
+      'Retailers trust us to get top company products delivered straight to their shop door. Place your order and we handle the rest.',
     badges: ['Genuine products', 'Fast delivery', 'Fair pricing'],
     primaryLabel: 'Explore',
     secondaryLabel: 'My order',

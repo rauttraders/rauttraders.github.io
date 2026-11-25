@@ -51,7 +51,7 @@ export default function AdminLayout() {
   useEffect(() => {
     if (!newOrders.seq) return
     const n = newOrders.orders.length
-    setToast({ id: newOrders.seq, text: n === 1 ? `New order ${newOrders.orders[0].id} — ${inr(newOrders.orders[0].total)}` : `${n} new orders just came in` })
+    setToast({ id: newOrders.seq, text: n === 1 ? `New order ${newOrders.orders[0].id} (${inr(newOrders.orders[0].total)})` : `${n} new orders just came in` })
     try {
       const ctx = new AudioContext()
       const o = ctx.createOscillator()
@@ -242,7 +242,7 @@ export default function AdminLayout() {
         <main className="p-6 max-lg:p-4 max-md:p-3">
           {saveError && (
             <p role="alert" className="mb-4 rounded-xl bg-[#fdeaea] px-4 py-3 text-[13px] font-semibold text-[#c62f2c]">
-              Your last change could not be saved to the server ({saveError}). Check your connection — it will retry on your next edit.
+              Your last change could not be saved to the server ({saveError}). Check your connection. It will retry on your next edit.
             </p>
           )}
           <Outlet />

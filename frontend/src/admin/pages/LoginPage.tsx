@@ -44,20 +44,20 @@ export default function LoginPage() {
       <form onSubmit={submit} noValidate className="relative z-10 w-full max-w-[400px] rounded-3xl border border-[#ececf0] bg-white p-8 shadow-[0_20px_50px_rgba(239,83,80,0.18)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-lg:p-6 max-md:rounded-2xl max-md:p-5">
         <img src={logo} alt="" className="logo-outline mx-auto hidden h-[48px] w-auto object-contain max-lg:block max-md:h-[38px]" />
         <h1 className="mb-0 mt-5 text-center text-[24px] font-extrabold text-ink max-md:mt-3.5 max-md:text-[20px]">Admin sign in</h1>
-        <p className="mb-0 mt-1.5 text-center text-[14px] text-muted max-md:text-[13px]">Manage {settings.business.name} — products, orders and site content.</p>
+        <p className="mb-0 mt-1.5 text-center text-[14px] text-muted max-md:text-[13px]">Manage {settings.business.name || 'your shop'}: products, orders and site content.</p>
 
         <label className="mt-6 block max-md:mt-4">
           <span className="mb-1.5 block text-xs font-semibold text-muted">Username</span>
           <span className="relative block">
             <User size={16} aria-hidden className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
-            <input value={user} onChange={(e) => { setUser(e.target.value); setError('') }} autoComplete="username" autoFocus className={input} />
+            <input value={user} onChange={(e) => { setUser(e.target.value); setError('') }} placeholder="Enter your username" autoComplete="username" autoFocus className={input} />
           </span>
         </label>
         <label className="mt-4 block">
           <span className="mb-1.5 block text-xs font-semibold text-muted">Password</span>
           <span className="relative block">
             <Lock size={16} aria-hidden className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
-            <input type={show ? 'text' : 'password'} value={pass} onChange={(e) => { setPass(e.target.value); setError('') }} autoComplete="current-password" className={`${input} pr-11`} />
+            <input type={show ? 'text' : 'password'} value={pass} onChange={(e) => { setPass(e.target.value); setError('') }} placeholder="Enter your password" autoComplete="current-password" className={`${input} pr-11`} />
             <button type="button" onClick={() => setShow((v) => !v)} aria-label={show ? 'Hide password' : 'Show password'} className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-muted hover:text-brand">
               {show ? <EyeOff size={16} aria-hidden /> : <Eye size={16} aria-hidden />}
             </button>

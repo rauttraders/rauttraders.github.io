@@ -38,7 +38,7 @@ export default function Heatmap({ grid, title }: { grid: number[][]; title: stri
 
       <div className="flex-1" />
       <div className="-mx-5 -mb-5 mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#e3e3e8] px-5 py-3.5 text-[12px] text-muted dark:border-[#45464c]">
-        <span className="min-h-[18px] font-semibold text-ink">{h ? `${h.day} at ${hourLabel(h.hour)} — ${h.n} ${h.n === 1 ? 'order' : 'orders'}` : 'Hover a square for details'}</span>
+        <span className="min-h-[18px] font-semibold text-ink">{h ? `${h.day} at ${hourLabel(h.hour)}: ${h.n} ${h.n === 1 ? 'order' : 'orders'}` : 'Hover a square for details'}</span>
         <span className="flex items-center gap-1.5">
           Fewer
           {LEVELS.map((o) => <span key={o} aria-hidden className="h-3 w-5 rounded-[4px]" style={{ background: 'var(--viz-brand)', opacity: o }} />)}

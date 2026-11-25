@@ -44,7 +44,7 @@ export function validatePassword(pw: string, username = ''): string | null {
   const lower = pw.toLowerCase()
   if (COMMON.has(lower)) return 'That password is too common. Choose something harder to guess.'
   if (/^(.)\1+$/.test(pw)) return 'A password made of one repeated character is too easy to guess.'
-  if (/^\d+$/.test(pw)) return 'Add some letters — a password of only digits is too easy to guess.'
+  if (/^\d+$/.test(pw)) return 'Add some letters. A password of only digits is too easy to guess.'
   if (username.length >= 3 && lower.includes(username.toLowerCase())) return 'The password must not contain the username.'
   if (lower.includes('admin') || lower.includes('password')) return 'The password must not contain "admin" or "password".'
   return null

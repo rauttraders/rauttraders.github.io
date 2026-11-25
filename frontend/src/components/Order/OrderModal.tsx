@@ -124,8 +124,8 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
           )}
           <p className="mb-0 mt-2 text-[13px] text-muted">
             {placed.saved
-              ? `Total ${formatINR(placed.total)}. WhatsApp should have opened with your order — just press send. `
-              : `Total ${formatINR(placed.total)}. The shop's order system couldn't be reached, so please make sure you press send in WhatsApp — that message is your order. `}
+              ? `Total ${formatINR(placed.total)}. WhatsApp should have opened with your order. Just press send. `
+              : `Total ${formatINR(placed.total)}. The shop's order system couldn't be reached, so please make sure you press send in WhatsApp; that message is your order. `}
             {placed.saved && 'The shop will confirm delivery details with you on WhatsApp.'}
           </p>
           <div className="mt-6 flex flex-col gap-2.5">
@@ -164,7 +164,7 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 id="order-title" className="m-0 text-xl font-semibold text-ink max-md:text-lg">Send your order</h2>
-            <p className="mb-0 mt-1 text-[13px] text-muted max-md:text-[12px]">We'll open WhatsApp with your order written out — just press send. No personal details needed.</p>
+            <p className="mb-0 mt-1 text-[13px] text-muted max-md:text-[12px]">We'll open WhatsApp with your order written out. Just press send. No personal details needed.</p>
           </div>
           <button type="button" aria-label="Close" onClick={onClose} className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-muted hover:bg-black/5 dark:hover:bg-white/10">
             <X size={18} aria-hidden />

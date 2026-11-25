@@ -134,8 +134,8 @@ export default function SettingsPage() {
       <Card>
         <PanelHeader icon={GalleryHorizontal} title="Home page hero" subtitle="Main banner headline, description and action buttons" />
         <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
-          <TextInput label="Headline — first line" value={d.hero.line1} onChange={(e) => up('hero', { line1: e.target.value })} />
-          <TextInput label="Headline — second line" value={d.hero.line2} onChange={(e) => up('hero', { line2: e.target.value })} />
+          <TextInput label="Headline (first line)" value={d.hero.line1} onChange={(e) => up('hero', { line1: e.target.value })} />
+          <TextInput label="Headline (second line)" value={d.hero.line2} onChange={(e) => up('hero', { line2: e.target.value })} />
           <TextInput label="Highlighted word" value={d.hero.highlight} onChange={(e) => up('hero', { highlight: e.target.value })} hint="Shown in the red gradient at the end of the headline." />
           <div />
           <TextArea wrapClass="col-span-2 max-sm:col-span-1" label="Description" value={d.hero.description} onChange={(e) => up('hero', { description: e.target.value })} />
@@ -147,10 +147,10 @@ export default function SettingsPage() {
       <Card>
         <PanelHeader icon={LayoutTemplate} title="Section text" subtitle="Headings and intro lines for the Shop and Contact sections" />
         <div className="grid grid-cols-1 gap-4">
-          <TextInput label="Shop section — title" value={d.shop.title} onChange={(e) => up('shop', { title: e.target.value })} />
-          <TextArea label="Shop section — text" rows={2} value={d.shop.text} onChange={(e) => up('shop', { text: e.target.value })} />
-          <TextInput label="Contact section — title" value={d.contact.title} onChange={(e) => up('contact', { title: e.target.value })} />
-          <TextArea label="Contact section — text" rows={2} value={d.contact.text} onChange={(e) => up('contact', { text: e.target.value })} />
+          <TextInput label="Shop section title" value={d.shop.title} onChange={(e) => up('shop', { title: e.target.value })} />
+          <TextArea label="Shop section text" rows={2} value={d.shop.text} onChange={(e) => up('shop', { text: e.target.value })} />
+          <TextInput label="Contact section title" value={d.contact.title} onChange={(e) => up('contact', { title: e.target.value })} />
+          <TextArea label="Contact section text" rows={2} value={d.contact.text} onChange={(e) => up('contact', { text: e.target.value })} />
         </div>
       </Card>
 
@@ -190,7 +190,7 @@ export default function SettingsPage() {
         <div className="mx-auto flex max-w-[860px] flex-wrap items-center gap-3 max-sm:gap-2">
           <div className="min-w-0 flex-1 text-[13px] max-sm:max-h-[64px] max-sm:w-full max-sm:flex-none max-sm:overflow-y-auto max-sm:text-xs">
             {errors.length > 0 ? <ul role="alert" className="m-0 list-none p-0 font-semibold text-[#c62f2c]">{errors.map((e) => <li key={e}>{e}</li>)}</ul>
-              : saved ? <span className="inline-flex items-center gap-1.5 font-semibold text-[#1c6b3c] dark:text-[#7fd6a1]"><Check size={15} aria-hidden /> Saved — the store is updated.</span>
+              : saved ? <span className="inline-flex items-center gap-1.5 font-semibold text-[#1c6b3c] dark:text-[#7fd6a1]"><Check size={15} aria-hidden /> Saved. The store is updated.</span>
               : dirty ? <span className="font-semibold text-ink">You have unsaved changes.</span> : <span className="text-muted">No changes.</span>}
           </div>
           <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={() => { setD(structuredClone(settings)); setErrors([]) }}>Discard</button>

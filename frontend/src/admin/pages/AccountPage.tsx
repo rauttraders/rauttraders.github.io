@@ -149,7 +149,7 @@ function SecurityCard() {
       if (next === cur) return setErr('The new password must be different from the current one.')
       if (next !== again) return setErr('The new passwords do not match.')
     }
-    if (!next && user.trim() === username) return setErr('Nothing to change — enter a new username or password.')
+    if (!next && user.trim() === username) return setErr('Nothing to change. Enter a new username or password.')
     setBusy(true)
     const e2 = await changeCredentials({ currentPassword: cur, newUsername: user.trim(), newPassword: next || undefined })
     setBusy(false)
@@ -254,7 +254,7 @@ function DataCard() {
 
   return (
     <Card>
-      <PanelHeader icon={Download} title="Backup & session" subtitle="Your data lives on the server — keep a copy of it too" />
+      <PanelHeader icon={Download} title="Backup & session" subtitle="Your data lives on the server; keep a copy of it too" />
       <p className="mb-4 mt-0 text-[13px] text-muted">A backup has your products, brands, slides, orders and site text (not your password). The server also keeps a daily safety copy in its data folder.</p>
       <div className="flex flex-wrap items-center gap-3">
         <button type="button" className={btnPrimary} onClick={() => void download()}>Download backup <span aria-hidden className="h-4 w-px shrink-0 bg-white/40" /> <Download size={15} aria-hidden /></button>
