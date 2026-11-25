@@ -85,6 +85,7 @@ export default function BrandsPage() {
               Add brand <span aria-hidden className="h-4 w-px bg-white/40" /> <Plus size={16} aria-hidden />
             </button>
           }
+          className="md:mb-0 md:border-b-0 md:pb-0"
         />
         <div className="hidden justify-end max-md:flex">
           <button type="button" className={`${btnPrimary} w-full`} onClick={() => setEditing({ b: null })}>

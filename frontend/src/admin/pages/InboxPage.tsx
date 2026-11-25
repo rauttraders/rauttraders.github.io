@@ -278,6 +278,7 @@ export default function InboxPage() {
               : 'All messages from your contact form'
           }
           action={<div className="flex items-center gap-2 max-md:hidden">{actions}</div>}
+          className="md:mb-0 md:border-b-0 md:pb-0"
         />
         <div className="hidden flex-wrap items-center justify-end gap-2 max-md:flex">
           {actions}

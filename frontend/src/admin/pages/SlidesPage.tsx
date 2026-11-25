@@ -90,6 +90,7 @@ export default function SlidesPage() {
               Add slide <span aria-hidden className="h-4 w-px bg-white/40" /> <Plus size={16} aria-hidden />
             </button>
           }
+          className="md:mb-0 md:border-b-0 md:pb-0"
         />
         <div className="hidden justify-end max-md:flex">
           <button type="button" className={`${btnPrimary} w-full`} disabled={slides.length >= MAX_SLIDES} onClick={() => setEditing({ s: null })}>

@@ -15,9 +15,9 @@ export function CardTitle({ children, action }: { children: ReactNode; action?: 
 }
 
 /** Card header for dashboard panels: icon tile, title, subheading, then a full-width grey divider line. */
-export function PanelHeader({ icon: Icon, title, subtitle, action }: { icon: LucideIcon; title: string; subtitle: string; action?: ReactNode }) {
+export function PanelHeader({ icon: Icon, title, subtitle, action, className = '' }: { icon: LucideIcon; title: string; subtitle: string; action?: ReactNode; className?: string }) {
   return (
-    <div className="-mx-5 mb-5 flex items-center gap-3 border-b border-[#e3e3e8] px-5 pb-4 dark:border-[#45464c] max-lg:-mx-4 max-lg:mb-4 max-lg:px-4 max-lg:pb-3 max-md:-mx-3.5 max-md:mb-3.5 max-md:gap-2.5 max-md:px-3.5">
+    <div className={`-mx-5 mb-5 flex items-center gap-3 border-b border-[#e3e3e8] px-5 pb-4 dark:border-[#45464c] max-lg:-mx-4 max-lg:mb-4 max-lg:px-4 max-lg:pb-3 max-md:-mx-3.5 max-md:mb-3.5 max-md:gap-2.5 max-md:px-3.5 ${className}`}>
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand dark:bg-brand/20 max-md:h-8 max-md:w-8">
         <Icon size={18} aria-hidden />
       </span>

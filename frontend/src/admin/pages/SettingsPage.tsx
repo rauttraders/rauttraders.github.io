@@ -1,10 +1,10 @@
-import { Check, LocateFixed, RotateCcw, Save } from 'lucide-react'
+import { Check, Database, GalleryHorizontal, Info, LayoutTemplate, LocateFixed, RotateCcw, Save, Store } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { defaultSettings } from '../../data/company'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
 import { useStore } from '../../store/StoreContext'
 import type { HighlightIcon, Settings } from '../../store/types'
-import { Card, CardTitle, btnDanger, btnPrimary, btnSoft } from '../ui/Card'
+import { Card, PanelHeader, btnDanger, btnPrimary, btnSoft } from '../ui/Card'
 import { SelectInput, TextArea, TextInput } from '../ui/Inputs'
 
 const ICONS: { value: HighlightIcon; label: string }[] = [
@@ -89,8 +89,7 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto flex max-w-[860px] flex-col gap-5 pb-24 max-sm:pb-36">
       <Card>
-        <CardTitle>Business details</CardTitle>
-        <p className="mb-4 mt-0 text-[13px] text-muted">Shown in the navbar, About section, footer and used for WhatsApp orders and the map.</p>
+        <PanelHeader icon={Store} title="Business details" subtitle="Shown in the navbar, About section, footer and used for WhatsApp orders and the map." />
         <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
           <TextInput label="Business name" value={d.business.name} onChange={(e) => up('business', { name: e.target.value })} />
           <TextInput label="WhatsApp number" value={d.business.whatsappNumber} onChange={(e) => up('business', { whatsappNumber: e.target.value })} hint="With country code, digits only. Orders are sent here." />
@@ -127,7 +126,7 @@ export default function SettingsPage() {
       </Card>
 
       <Card>
-        <CardTitle>Home page hero</CardTitle>
+        <PanelHeader icon={GalleryHorizontal} title="Home page hero" subtitle="Main banner headline, description and action buttons" />
         <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
           <TextInput label="Headline — first line" value={d.hero.line1} onChange={(e) => up('hero', { line1: e.target.value })} />
           <TextInput label="Headline — second line" value={d.hero.line2} onChange={(e) => up('hero', { line2: e.target.value })} />
@@ -140,7 +139,7 @@ export default function SettingsPage() {
       </Card>
 
       <Card>
-        <CardTitle>Section text</CardTitle>
+        <PanelHeader icon={LayoutTemplate} title="Section text" subtitle="Headings and intro lines for the Shop and Contact sections" />
         <div className="grid grid-cols-1 gap-4">
           <TextInput label="Shop section — title" value={d.shop.title} onChange={(e) => up('shop', { title: e.target.value })} />
           <TextArea label="Shop section — text" rows={2} value={d.shop.text} onChange={(e) => up('shop', { text: e.target.value })} />
@@ -150,7 +149,7 @@ export default function SettingsPage() {
       </Card>
 
       <Card>
-        <CardTitle>About us</CardTitle>
+        <PanelHeader icon={Info} title="About us" subtitle="Company story, founding year and highlight cards" />
         <div className="grid grid-cols-1 gap-4">
           <TextInput label="Title" value={d.about.title} onChange={(e) => up('about', { title: e.target.value })} />
           <TextArea label="Intro paragraph" rows={4} value={d.about.intro} onChange={(e) => up('about', { intro: e.target.value })} />
@@ -174,8 +173,7 @@ export default function SettingsPage() {
       </Card>
 
       <Card>
-        <CardTitle>Data</CardTitle>
-        <p className="mb-4 mt-0 text-[13px] text-muted">Changes here are saved on the shop's server and appear for every customer. Customer orders are kept and are not affected by a reset.</p>
+        <PanelHeader icon={Database} title="Data" subtitle="Changes here are saved on the shop's server and appear for every customer. Customer orders are kept and are not affected by a reset." />
         <div className="flex flex-wrap gap-3">
           {sampleCount > 0 && <button type="button" className={btnSoft} onClick={async () => { if (await confirm({ tone: 'warning', title: 'Remove the sample orders?', message: 'Only the made-up demo orders are removed. Real customer orders are kept.', details: [{ label: 'Sample orders', value: sampleCount }], confirmLabel: 'Remove sample orders' })) void clearSampleOrders() }}>Clear {sampleCount} sample orders</button>}
           <button type="button" className={btnDanger} onClick={async () => { if (await confirm({ tone: 'danger', title: 'Reset the shop catalogue and text?', message: 'Products, categories, brands, slides and all website text go back to the original defaults. This cannot be undone.', details: [{ label: 'Customer orders', value: 'Kept' }, { label: 'Admin login', value: 'Kept' }], confirmLabel: 'Yes, reset everything' })) { resetAll(); setD(structuredClone(defaultSettings)); setErrors([]) } }}><RotateCcw size={15} aria-hidden /> Reset catalogue &amp; text</button>
