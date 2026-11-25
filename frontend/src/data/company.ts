@@ -29,7 +29,7 @@ export const defaultSettings: Settings = {
   about: {
     title: 'Supplying shops with the brands they trust',
     intro:
-      'Raut Traders, led by Ganesh Raut and Suresh Raut, supplies retailers with genuine wholesale products at fair prices and dependable delivery.',
+      'Wholesale distribution by Ganesh and Suresh Raut, delivering genuine products at fair prices.',
     foundedYear: new Date().getFullYear(),
     highlights: [
       { icon: 'shield', title: 'Authorised supply', text: 'Genuine stock sourced directly from the brands we represent.' },

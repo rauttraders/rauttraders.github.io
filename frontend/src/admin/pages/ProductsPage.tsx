@@ -1,4 +1,4 @@
-import { Crop, EyeOff, Eye, ImagePlus, LayoutGrid, List, Package, Pencil, Plus, Search, Tags, Trash2, X } from 'lucide-react'
+import { Crop, EyeOff, Eye, ImagePlus, LayoutGrid, List, Package, Pencil, Plus, Search, Tags, Trash2, Upload, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
 import { useStore } from '../../store/StoreContext'
@@ -96,7 +96,7 @@ function ProductForm({ initial, onClose }: { initial: Product | null; onClose: (
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <label className={`${btnSoft} !h-9`}>
-                Upload image
+                Upload image <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Upload size={15} aria-hidden />
                 <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
               </label>
               {d.image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(d.image)}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}

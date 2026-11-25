@@ -101,7 +101,7 @@ function ProfileCard() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <label className={`${btnSoft} !h-9`}>
-            <Upload size={15} aria-hidden /> Upload photo
+            Upload photo <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Upload size={15} aria-hidden />
             <input type="file" accept="image/*" className="sr-only" onChange={(e) => { onPhoto(e.target.files?.[0]); e.target.value = '' }} />
           </label>
           {profile.photo && <button type="button" className={`${btnDanger} !h-9 !px-4`} onClick={() => { void updateProfile({ photo: '' }).then(() => setOk('Photo removed')) }}>Remove <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Trash2 size={14} aria-hidden /></button>}
@@ -259,7 +259,7 @@ function DataCard() {
       <div className="flex flex-wrap items-center gap-3">
         <button type="button" className={btnPrimary} onClick={() => void download()}>Download backup <span aria-hidden className="h-4 w-px shrink-0 bg-white/40" /> <Download size={15} aria-hidden /></button>
         <label className={btnSoft}>
-          <Upload size={15} aria-hidden /> Restore from file
+          Restore from file <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Upload size={15} aria-hidden />
           <input type="file" accept="application/json,.json" className="sr-only" onChange={(e) => { void restore(e.target.files?.[0]); e.target.value = '' }} />
         </label>
         <button type="button" className={`${btnDanger} ml-auto max-sm:ml-0`} onClick={logout}>Sign out <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <LogOut size={15} aria-hidden /></button>

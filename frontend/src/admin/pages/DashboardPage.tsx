@@ -30,7 +30,7 @@ function Delta({ k }: { k: Kpi }) {
 
 export default function DashboardPage() {
   const confirm = useConfirm()
-  const { orders, categories, clearSampleOrders, loadSampleOrders } = useStore()
+  const { orders, categories, clearSampleOrders } = useStore()
   const { prefs } = useAuth()
   const [range, setRange] = useState(() => lastNDays(prefs.defaultRangeDays))
   const days = rangeDays(range)
@@ -70,12 +70,6 @@ export default function DashboardPage() {
           <button type="button" className={`${btnSoft} ml-auto !h-8 !px-4`} onClick={async () => { if (await confirm({ tone: 'warning', title: 'Remove the sample orders?', message: 'Only the made-up demo orders are removed. Real customer orders are kept.', details: [{ label: 'Sample orders', value: orders.filter((o) => o.sample).length }], confirmLabel: 'Remove sample orders' })) void clearSampleOrders() }}>Clear sample data</button>
         </p>
       )}
-      {orders.length === 0 && (
-        <p className="m-0 flex flex-wrap items-center gap-3 rounded-2xl bg-white px-4 py-3 text-[13px] text-muted shadow-sm dark:bg-[#34353a]">
-          <span className="font-semibold text-ink">No orders yet.</span> New customer orders appear here automatically. Want to see how the charts look first?
-          <button type="button" className={`${btnSoft} ml-auto !h-8 !px-4`} onClick={() => void loadSampleOrders()}>Load sample orders</button>
-        </p>
-      )}
 
       <div className="flex flex-wrap items-end justify-between gap-3 max-md:gap-2">
         <div>
@@ -88,8 +82,8 @@ export default function DashboardPage() {
       <div className="grid grid-cols-4 gap-4 max-xl:grid-cols-2 max-md:gap-2.5">
         {cards.map(({ label, k: kk, value, Icon }) => (
           <Card key={label} className="!p-5 max-lg:!p-4 max-md:!p-3">
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand dark:bg-brand/20 max-sm:hidden"><Icon size={17} aria-hidden /></span>
+            <div className="flex items-center gap-2.5 max-sm:gap-2">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand dark:bg-brand/20 max-sm:h-7 max-sm:w-7"><Icon size={17} className="max-sm:h-3.5 max-sm:w-3.5" aria-hidden /></span>
               <span className="text-[13px] font-semibold text-muted max-md:text-[12px]">{label}</span>
             </div>
             <p className="m-0 mt-3 text-[27px] font-extrabold leading-none text-ink max-lg:text-[22px] max-md:mt-2 max-md:text-[18px]">{value}</p>

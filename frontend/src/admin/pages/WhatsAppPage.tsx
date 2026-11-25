@@ -143,9 +143,9 @@ export default function WhatsAppPage() {
           <div className="min-w-0 flex-1 text-[13px] max-sm:w-full max-sm:flex-none max-sm:text-xs">
             {saved ? <span className="inline-flex items-center gap-1.5 font-semibold text-[#1c6b3c] dark:text-[#7fd6a1]"><Check size={15} aria-hidden /> Saved. New orders use this message.</span> : dirty ? <span className="font-semibold text-ink">You have unsaved changes.</span> : <span className="text-muted">No changes.</span>}
           </div>
-          <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} onClick={() => { setD(structuredClone(defaultSettings.whatsapp)); setNumError(''); setSaved(false) }}>Reset to default <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <RotateCcw size={15} aria-hidden /></button>
+          <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} onClick={() => { setD(structuredClone(defaultSettings.whatsapp)); setNumError(''); setSaved(false) }}><span className="max-sm:hidden">Reset to default</span><span className="sm:hidden">Reset</span> <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <RotateCcw size={15} aria-hidden /></button>
           <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={() => { setD(structuredClone(settings.whatsapp)); setWhatsappNumber(settings.business.whatsappNumber); setNumError('') }}>Discard</button>
-          <button type="button" className={`${btnPrimary} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={save}>Save changes <span aria-hidden className="h-4 w-px shrink-0 bg-white/40" /> <Save size={15} aria-hidden /></button>
+          <button type="button" className={`${btnPrimary} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={save}><span className="max-sm:hidden">Save changes</span><span className="sm:hidden">Save</span> <span aria-hidden className="h-4 w-px shrink-0 bg-white/40" /> <Save size={15} aria-hidden /></button>
         </div>
       </div>
     </div>

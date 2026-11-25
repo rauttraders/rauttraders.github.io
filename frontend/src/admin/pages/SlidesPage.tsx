@@ -1,4 +1,4 @@
-import { Crop, GalleryHorizontal, GripVertical, ImagePlus, Pencil, Plus, Trash2 } from 'lucide-react'
+import { Crop, GalleryHorizontal, GripVertical, ImagePlus, Pencil, Plus, Trash2, Upload } from 'lucide-react'
 import { useState } from 'react'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
 import { useStore } from '../../store/StoreContext'
@@ -34,7 +34,7 @@ function SlideForm({ initial, onSave, onClose }: { initial: Slide | null; onSave
 
         <div className="flex flex-wrap items-center gap-3">
           <label className={`${btnSoft} !h-9`}>
-            {image ? 'Replace image' : 'Upload image'}
+            {image ? 'Replace image' : 'Upload image'} <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Upload size={15} aria-hidden />
             <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
           </label>
           {image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(image)}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}

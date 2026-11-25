@@ -1,4 +1,4 @@
-import { BadgeCheck, Crop, ImagePlus, Pencil, Plus, Trash2 } from 'lucide-react'
+import { BadgeCheck, Crop, ImagePlus, Pencil, Plus, Trash2, Upload } from 'lucide-react'
 import { useState } from 'react'
 import { useStore } from '../../store/StoreContext'
 import { useConfirm, useNotice } from '../../components/ui/ConfirmDialog'
@@ -48,7 +48,7 @@ function BrandForm({ initial, onClose }: { initial: Brand | null; onClose: () =>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <label className={`${btnSoft} !h-9`}>
-                Upload logo
+                Upload logo <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Upload size={15} aria-hidden />
                 <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
               </label>
               {logo && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(logo)}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
