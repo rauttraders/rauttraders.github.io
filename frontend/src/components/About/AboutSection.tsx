@@ -13,30 +13,9 @@ export default function AboutSection() {
   const visible = products.filter((p) => p.active)
   const hasLocation = hasValidLocation(settings)
   const aboutStats = [
-    {
-      icon: 'tag',
-      value: `${new Set(visible.map((p) => p.company)).size}+`,
-      label: 'Brands',
-      card: 'border-[#fbd5d4] bg-[#fff3f2] dark:border-[#5a3b3b] dark:bg-[#3b2c2c]',
-      iconCls: 'bg-brand text-white shadow-[0_4px_10px_rgba(239,83,80,0.35)]',
-      numCls: 'text-brand',
-    },
-    {
-      icon: 'package',
-      value: `${visible.length}+`,
-      label: 'Products',
-      card: 'border-[#c4eed9] bg-[#eefaf4] dark:border-[#355646] dark:bg-[#24382f]',
-      iconCls: 'bg-[#1baf7a] text-white shadow-[0_4px_10px_rgba(27,175,122,0.35)]',
-      numCls: 'text-[#1c6b3c] dark:text-[#7fd6a1]',
-    },
-    {
-      icon: 'calendar',
-      value: `${Math.max(0, new Date().getFullYear() - about.foundedYear)}+`,
-      label: 'Years',
-      card: 'border-[#cde1fd] bg-[#eff6ff] dark:border-[#364d6d] dark:bg-[#233247]',
-      iconCls: 'bg-[#2563eb] text-white shadow-[0_4px_10px_rgba(37,99,235,0.35)]',
-      numCls: 'text-[#17519c] dark:text-[#8fbcf5]',
-    },
+    { icon: 'tag', value: `${new Set(visible.map((p) => p.company)).size}+`, label: 'Brands' },
+    { icon: 'package', value: `${visible.length}+`, label: 'Products' },
+    { icon: 'calendar', value: `${Math.max(0, new Date().getFullYear() - about.foundedYear)}+`, label: 'Years' },
   ]
   // Only show contact rows that have been filled in
   const contactRows = [
@@ -54,17 +33,18 @@ export default function AboutSection() {
             <SectionHeader title={about.title} titleId="about-title" />
             <p className="mb-0 mt-4 text-[15px] leading-[1.6rem] text-muted max-md:mt-2.5 max-md:text-[13.5px] max-md:leading-[1.35rem]">{about.intro}</p>
 
-            <dl className="m-0 mt-6 grid grid-cols-3 gap-3 max-md:mt-4 max-md:gap-2">
-              {aboutStats.map((s) => {
+            <dl className="m-0 mt-6 grid grid-cols-3 gap-3 max-md:mt-4 max-md:grid-cols-2 max-md:gap-2.5">
+              {aboutStats.map((s, i) => {
                 const Icon = statIcons[s.icon as keyof typeof statIcons]
+                const spanFull = aboutStats.length % 2 === 1 && i === aboutStats.length - 1
                 return (
-                  <div key={s.label} className={`flex items-center gap-3 rounded-xl border p-3 transition-all hover:-translate-y-0.5 hover:shadow-sm max-md:flex-col max-md:items-center max-md:gap-1.5 max-md:p-2.5 max-md:text-center ${s.card}`}>
-                    <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full max-md:h-8 max-md:w-8 ${s.iconCls}`}>
+                  <div key={s.label} className={`flex items-center gap-3 rounded-xl border border-[#fbd5d4] bg-[#fff4f4] p-3 transition-all hover:-translate-y-0.5 hover:shadow-sm dark:border-[#5a3b3b] dark:bg-[#3a2a2a] max-md:gap-2.5 max-md:p-3 ${spanFull ? 'max-md:col-span-2' : ''}`}>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-[0_4px_10px_rgba(239,83,80,0.35)] max-md:h-9 max-md:w-9">
                       <Icon size={18} aria-hidden />
                     </span>
-                    <div className="flex items-baseline gap-1.5 max-md:flex-col max-md:items-center max-md:gap-0.5">
-                      <dd className={`m-0 text-[26px] font-bold leading-none max-lg:text-[22px] max-md:text-[18px] ${s.numCls}`}>{s.value}</dd>
-                      <dt className="text-sm font-semibold text-muted max-md:text-[11px]">{s.label}</dt>
+                    <div className="flex items-baseline gap-1.5 max-md:flex-col max-md:gap-0.5">
+                      <dd className="m-0 text-[26px] font-bold leading-none text-brand max-lg:text-[22px] max-md:text-[20px]">{s.value}</dd>
+                      <dt className="text-sm font-semibold text-muted max-md:text-[12px]">{s.label}</dt>
                     </div>
                   </div>
                 )
