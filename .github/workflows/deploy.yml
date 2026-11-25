@@ -36,7 +36,7 @@ jobs:
         env:
           VITE_BASE: ${{ vars.VITE_BASE || '/' }}
           VITE_API_URL: ${{ vars.VITE_API_URL || '' }}
-          VITE_WHATSAPP_NUMBER: ${{ vars.VITE_WHATSAPP_NUMBER || '919999999999' }}
+          VITE_WHATSAPP_NUMBER: ${{ vars.VITE_WHATSAPP_NUMBER || '917507425887' }}
         run: npm run build:pages --prefix frontend
 
       - name: Upload Pages artifact

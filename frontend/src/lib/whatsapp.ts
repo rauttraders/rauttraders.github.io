@@ -1,7 +1,7 @@
 import type { CartLine, Customer } from '../types'
 import { formatINR } from './format'
 
-export const WHATSAPP_NUMBER = (import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined) ?? '919999999999'
+export const WHATSAPP_NUMBER = (import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined) ?? '917507425887'
 
 export const cartTotal = (lines: CartLine[]) => lines.reduce((s, l) => s + l.product.price * l.qty, 0)
 
