@@ -1,0 +1,7 @@
+# Local secrets for `wrangler dev` (copy to .dev.vars — it is git-ignored).
+# In production set them with:  npx wrangler secret put PASSWORD_PEPPER   (and ADMIN_USER / ADMIN_PASSWORD)
+# They only create the FIRST admin (when the admins table is empty); after that the password lives, hashed, in the database.
+ADMIN_USER=admin
+ADMIN_PASSWORD=admin123
+# Long random string mixed into every password hash (generate one with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
+PASSWORD_PEPPER=local-dev-pepper-change-me-0123456789abcdef

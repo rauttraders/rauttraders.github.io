@@ -1,0 +1,32 @@
+// Cloudflare Worker config (free plan) — the API only; the website is on GitHub Pages. Replace REPLACE_WITH_D1_ID after `npx wrangler d1 create raut-traders`.
+{
+  "name": "raut-traders",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+
+  "d1_databases": [
+    { "binding": "DB", "database_name": "raut-traders", "database_id": "raut-traders", "migrations_dir": "migrations" }
+  ],
+
+  // Rate limits per visitor address (Cloudflare's built-in limiter; no database writes).
+  "ratelimits": [
+    { "name": "GLOBAL_LIMITER", "namespace_id": "1001", "simple": { "limit": 120, "period": 60 } },   // any /api call
+    { "name": "LOGIN_LIMITER", "namespace_id": "1002", "simple": { "limit": 10, "period": 60 } },     // sign-in attempts
+    { "name": "UPLOADS_LIMITER", "namespace_id": "1003", "simple": { "limit": 300, "period": 60 } }   // image downloads
+  ],
+
+  // Daily clean-up of expired sessions and old rate-limit rows (03:00 IST).
+  "triggers": { "crons": ["30 21 * * *"] },
+
+  "vars": {
+    "SITE_NAME": "Raut Trader's",
+    // The website's address(es) — exact origin only (no path, no trailing slash). For a GitHub Pages project site this is
+    // https://<your-github-name>.github.io  (the repository name is NOT part of it). Add a custom domain here too if you use one.
+    "ALLOWED_ORIGINS": "https://rauttraders.github.io",
+    // Password hashing rounds. 5000 fits the free plan's ~10 ms CPU limit; on a paid plan raise it (max 100000).
+    "PBKDF2_ITERATIONS": "5000"
+  }
+  // Secrets (never in this file): set with `wrangler secret put NAME` or .dev.vars locally
+  //   PASSWORD_PEPPER  (long random string mixed into password hashes — keep it safe; if it is lost every admin password must be reset)
+  //   ADMIN_USER, ADMIN_PASSWORD  (create the first admin the very first time someone signs in; the password must then be changed)
+}
