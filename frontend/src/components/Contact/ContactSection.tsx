@@ -62,7 +62,7 @@ export default function ContactSection() {
             <SectionHeader title={settings.contact.title} titleId="contact-title">
               {settings.contact.text}
             </SectionHeader>
-            <div className="mt-8 max-lg:mt-6 max-md:hidden">
+            <div className="mt-8 max-lg:mt-6 max-lg:flex max-lg:justify-center max-md:hidden">
               <ContactIllustration />
             </div>
           </Reveal>

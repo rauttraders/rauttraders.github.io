@@ -32,7 +32,7 @@ export default function Footer() {
       <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand via-[#ff8a65] to-brand" />
       <div className="mx-auto w-full max-w-[1200px] px-3.5 pb-6 pt-12 max-xl:px-10 max-md:px-5">
         <div className="grid grid-cols-[1.4fr_1fr_1fr_1.4fr] gap-10 max-lg:grid-cols-2 max-sm:grid-cols-1">
-          <div>
+          <div className="flex flex-col items-start">
             <a href="#home" aria-label={`${company.name || 'Home'} — Home`} className="inline-block">
               <PromoHeader alt="" sticker />
             </a>

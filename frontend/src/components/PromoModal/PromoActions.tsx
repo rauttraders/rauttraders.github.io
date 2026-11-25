@@ -10,7 +10,7 @@ interface PromoActionsProps {
 
 export default function PromoActions({ primaryLabel, secondaryLabel, onPrimary, onSecondary }: PromoActionsProps) {
   return (
-    <div className="mt-[30px] flex flex-nowrap items-center gap-3.5 max-lg:mt-6 max-lg:flex-wrap">
+    <div className="mt-[30px] flex flex-nowrap items-center gap-3.5 max-lg:mt-6 max-lg:flex-wrap max-lg:justify-center">
       {[
         { label: primaryLabel, variant: 'primary' as const, icon: Compass, onClick: onPrimary },
         { label: secondaryLabel, variant: 'secondary' as const, icon: UserPlus, onClick: onSecondary },
