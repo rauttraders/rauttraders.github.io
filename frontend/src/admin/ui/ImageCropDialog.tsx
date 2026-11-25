@@ -50,12 +50,12 @@ export default function ImageCropDialog({ src, preset, onApply, onCancel }: Prop
     return { canvas: r.canvas, w: r.canvas.width, h: r.canvas.height }
   }, [img, auto])
 
-  // Base size: auto-fit fills ~88% of the frame; the profile photo fills the circle; otherwise fit whole picture.
+  // Base size: auto-fit fills ~96% of the frame so uploaded product photos look large and sharp; profile photo fills the circle.
   const base = useMemo(() => {
     if (!fitted) return 1
     const contain = Math.min(stageW / fitted.w, stageH / fitted.h)
-    if (auto) return contain * 0.88
-    return preset.circle ? Math.max(stageW / fitted.w, stageH / fitted.h) : contain * 0.94
+    if (auto) return contain * 0.96
+    return preset.circle ? Math.max(stageW / fitted.w, stageH / fitted.h) : contain * 0.98
   }, [fitted, stageW, stageH, auto, preset.circle])
 
   const reset = useCallback(() => {

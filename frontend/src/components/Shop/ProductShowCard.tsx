@@ -1,9 +1,10 @@
-import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react'
-import { memo } from 'react'
+import { Eye, Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react'
+import { memo, useState } from 'react'
 import HighlightText from '../ui/HighlightText'
 import QtyInput from '../ui/QtyInput'
 import { formatINR } from '../../lib/format'
 import type { Product as ShowcaseProduct } from '../../store/types'
+import ProductZoomModal from './ProductZoomModal'
 
 interface ProductShowCardProps {
   product: ShowcaseProduct
@@ -18,22 +19,38 @@ const ctaBase =
   'flex h-[46px] max-md:h-[42px] w-full cursor-pointer items-center justify-center gap-2 rounded-full border-0 text-sm max-md:text-[13.5px] font-semibold transition-colors active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand'
 
 function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: ProductShowCardProps) {
+  const [zoomOpen, setZoomOpen] = useState(false)
+
   return (
+    <>
+    {zoomOpen && <ProductZoomModal product={product} onClose={() => setZoomOpen(false)} />}
     <article className="flex h-full flex-col overflow-hidden group rounded-2xl border border-[#ececf0] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_12px_28px_rgba(239,83,80,0.18)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none">
-      <div className="relative flex h-[215px] items-center justify-center bg-gradient-to-b from-cream to-white dark:from-[#3d3e44] dark:to-[#34353a] max-md:h-[235px]">
+      <div className="relative flex h-[230px] items-center justify-center bg-gradient-to-b from-cream to-white dark:from-[#3d3e44] dark:to-[#34353a] max-md:h-[250px]">
         <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-[#c62f2c] shadow-sm backdrop-blur dark:bg-[#2b2c30]/90 dark:text-[#ff8a87]">
           {brandLogo && <img src={brandLogo} alt="" draggable={false} className="logo-outline h-4 w-auto max-w-[44px] shrink-0 object-contain" />}
           <HighlightText text={product.company} query={searchQuery} />
         </span>
+        {product.image && (
+          <button
+            type="button"
+            onClick={() => setZoomOpen(true)}
+            aria-label={`Zoom ${product.name}`}
+            title="View & zoom image"
+            className="absolute right-3 top-3 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#ececf0] bg-white/90 text-muted shadow-sm backdrop-blur transition-colors hover:border-brand hover:text-brand dark:border-[#45464c] dark:bg-[#2b2c30]/90 dark:text-[#b4b4b8]"
+          >
+            <Eye size={15} aria-hidden />
+          </button>
+        )}
         <img
           src={product.image}
           alt={product.name}
           loading="lazy"
           draggable={false}
+          onClick={() => product.image && setZoomOpen(true)}
           className={
             product.isLogo
-              ? 'logo-outline mt-4 max-h-[110px] w-[74%] object-contain transition-transform duration-300 group-hover:scale-105 max-md:max-h-[120px] max-md:w-[78%]'
-              : 'h-full w-full object-contain p-2 pt-7 transition-transform duration-300 group-hover:scale-105 max-md:p-1.5 max-md:pt-6'
+              ? 'logo-outline mt-3 max-h-[126px] w-[78%] cursor-zoom-in object-contain transition-transform duration-300 group-hover:scale-105 max-md:max-h-[136px] max-md:w-[82%]'
+              : 'h-full w-full cursor-zoom-in object-contain p-1.5 transition-transform duration-300 group-hover:scale-105'
           }
         />
       </div>
@@ -92,6 +109,7 @@ function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: P
         )}
       </div>
     </article>
+    </>
   )
 }
 

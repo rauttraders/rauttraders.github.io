@@ -163,7 +163,7 @@ export function autoFit(img: HTMLImageElement): AutoFitResult {
     return { canvas: out, removedBackground: false, trimmed: false }
   }
   ctx.putImageData(data, 0, 0)
-  const pad = Math.round(Math.max(bw, bh) * 0.02)
+  const pad = Math.round(Math.max(bw, bh) * 0.01)
   const x0 = Math.max(0, minX - pad), y0 = Math.max(0, minY - pad)
   const x1 = Math.min(w, maxX + 1 + pad), y1 = Math.min(h, maxY + 1 + pad)
   out.width = x1 - x0
@@ -191,7 +191,7 @@ export interface CropPreset {
 
 export const CROP_PRESETS: Record<'slide' | 'product' | 'logo' | 'avatar', CropPreset> = {
   slide: { title: 'Adjust slide image', aspects: [{ label: 'Slide', ratio: 8 / 5, out: [960, 600] }], autoFit: true, stage: '#fbd9d8', format: 'image/webp' },
-  product: { title: 'Adjust product photo', aspects: [{ label: 'Square', ratio: 1, out: [640, 640] }, { label: 'Wide 4:3', ratio: 4 / 3, out: [800, 600] }], autoFit: true, stage: '#fff4f4', format: 'image/webp' },
+  product: { title: 'Adjust product photo', aspects: [{ label: 'Wide 4:3', ratio: 4 / 3, out: [960, 720] }, { label: 'Square', ratio: 1, out: [800, 800] }], autoFit: true, stage: '#fff4f4', format: 'image/webp' },
   logo: { title: 'Adjust logo', aspects: [{ label: 'Wide 3:2', ratio: 3 / 2, out: [600, 400] }, { label: 'Square', ratio: 1, out: [480, 480] }], autoFit: true, stage: '#fff4f4', format: 'image/webp' },
   avatar: { title: 'Adjust profile photo', aspects: [{ label: 'Circle', ratio: 1, out: [320, 320] }], autoFit: false, circle: true, stage: '#ffffff', format: 'image/jpeg', fill: '#ffffff' },
 }
