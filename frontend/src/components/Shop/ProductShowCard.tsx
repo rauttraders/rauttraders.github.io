@@ -20,7 +20,7 @@ const ctaBase =
 function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: ProductShowCardProps) {
   return (
     <article className="flex h-full flex-col overflow-hidden group rounded-2xl border border-[#ececf0] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_12px_28px_rgba(239,83,80,0.18)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none">
-      <div className="relative flex h-[195px] items-center justify-center bg-gradient-to-b from-cream to-white dark:from-[#3d3e44] dark:to-[#34353a] max-md:h-[210px]">
+      <div className="relative flex h-[215px] items-center justify-center bg-gradient-to-b from-cream to-white dark:from-[#3d3e44] dark:to-[#34353a] max-md:h-[235px]">
         <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-[#c62f2c] shadow-sm backdrop-blur dark:bg-[#2b2c30]/90 dark:text-[#ff8a87]">
           {brandLogo && <img src={brandLogo} alt="" draggable={false} className="logo-outline h-4 w-auto max-w-[44px] shrink-0 object-contain" />}
           <HighlightText text={product.company} query={searchQuery} />
@@ -32,8 +32,8 @@ function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: P
           draggable={false}
           className={
             product.isLogo
-              ? 'logo-outline mt-5 max-h-[92px] w-[68%] object-contain transition-transform duration-300 group-hover:scale-105 max-md:max-h-[104px] max-md:w-[74%]'
-              : 'h-full w-full object-contain px-4 pb-3 pt-10 transition-transform duration-300 group-hover:scale-105 max-md:px-3 max-md:pb-2.5 max-md:pt-9'
+              ? 'logo-outline mt-4 max-h-[110px] w-[74%] object-contain transition-transform duration-300 group-hover:scale-105 max-md:max-h-[120px] max-md:w-[78%]'
+              : 'h-full w-full object-contain p-2 pt-7 transition-transform duration-300 group-hover:scale-105 max-md:p-1.5 max-md:pt-6'
           }
         />
       </div>
