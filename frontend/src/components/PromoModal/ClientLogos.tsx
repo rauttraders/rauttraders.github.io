@@ -27,9 +27,9 @@ export default function ClientLogos({ logos: logosProp }: ClientLogosProps) {
           <li
             key={i}
             aria-hidden={i >= logos.length}
-            className="logo-item mx-8 flex h-20 shrink-0 items-center px-2 max-md:mx-4 max-md:h-11 max-md:px-1.5"
+            className="logo-item mx-8 flex h-20 shrink-0 items-center px-2 max-md:mx-4 max-md:h-13 max-md:px-1.5"
           >
-            <img src={logo.src} alt={i < logos.length ? logo.name : ''} className="logo-outline h-14 w-auto max-w-[195px] object-contain max-md:h-8 max-md:max-w-[115px]" draggable={false} />
+            <img src={logo.src} alt={i < logos.length ? logo.name : ''} className="logo-outline h-14 w-auto max-w-[195px] object-contain max-md:h-10 max-md:max-w-[135px]" draggable={false} />
           </li>
         ))}
       </ul>
