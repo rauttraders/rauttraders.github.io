@@ -5,6 +5,7 @@ import './index.css'
 import App from './App'
 import { AuthProvider } from './admin/auth'
 import { ConfirmProvider } from './components/ui/ConfirmDialog'
+import { ToastProvider } from './components/ui/Toast'
 import AdminLayout from './admin/AdminLayout'
 import AccountPage from './admin/pages/AccountPage'
 import BrandsPage from './admin/pages/BrandsPage'
@@ -32,8 +33,9 @@ function mount() {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-      <StoreProvider>
-        <ConfirmProvider>
+      <ToastProvider>
+        <StoreProvider>
+          <ConfirmProvider>
         <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Routes>
             <Route path="/" element={<App />} />
@@ -54,7 +56,8 @@ createRoot(document.getElementById('root')!).render(
           </Routes>
         </BrowserRouter>
         </ConfirmProvider>
-      </StoreProvider>
+        </StoreProvider>
+      </ToastProvider>
     </AuthProvider>
   </StrictMode>,
 )

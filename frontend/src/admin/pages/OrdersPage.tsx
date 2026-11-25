@@ -1,6 +1,7 @@
 import { ChevronDown, Copy, Download, IndianRupee, Package, ReceiptText, Search, ShoppingBag, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
+import { useToast } from '../../components/ui/Toast'
 import ReceiptDialog from '../../components/Order/ReceiptDialog'
 import { formatINR } from '../../lib/format'
 import { useStore } from '../../store/StoreContext'
@@ -62,6 +63,7 @@ function orderText(o: Order): string {
 function OrderRow({ order, open, onToggle, onReceipt }: { order: Order; open: boolean; onToggle: () => void; onReceipt: () => void }) {
   const { deleteOrder } = useStore()
   const confirm = useConfirm()
+  const toast = useToast()
   const [copied, setCopied] = useState(false)
   const u = units(order)
 
@@ -69,9 +71,10 @@ function OrderRow({ order, open, onToggle, onReceipt }: { order: Order; open: bo
     try {
       await navigator.clipboard.writeText(orderText(order))
       setCopied(true)
+      toast.success(`Order ${order.id} copied`)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      /* clipboard blocked — nothing to do */
+      toast.error('Clipboard access blocked by browser')
     }
   }
 

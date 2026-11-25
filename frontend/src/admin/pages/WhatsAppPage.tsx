@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { defaultSettings } from '../../data/company'
 import { buildBasketMessage } from '../../lib/order'
 import { useStore } from '../../store/StoreContext'
+import { useToast } from '../../components/ui/Toast'
 import type { WhatsAppSettings } from '../../store/types'
 import type { BasketItem } from '../../components/Navbar/BasketMenu'
 import { Card, PanelHeader, btnPrimary, btnSoft } from '../ui/Card'
@@ -14,6 +15,7 @@ import WhatsAppPreview from '../ui/WhatsAppPreview'
 const SAMPLE_WHEN = new Date(2026, 10, 22, 10, 42)
 
 export default function WhatsAppPage() {
+  const toast = useToast()
   const { settings, products, updateSettings } = useStore()
   const [d, setD] = useState<WhatsAppSettings>(() => structuredClone(settings.whatsapp))
   const [whatsappNumber, setWhatsappNumber] = useState(() => settings.business.whatsappNumber)
@@ -49,7 +51,9 @@ export default function WhatsAppPage() {
   const save = () => {
     const digits = whatsappNumber.replace(/\D/g, '')
     if (digits && digits.length < 12) {
-      setNumError('Enter a valid 10-digit mobile number.')
+      const msg = 'Enter a valid 10-digit mobile number.'
+      setNumError(msg)
+      toast.error(msg)
       return
     }
     setNumError('')

@@ -14,6 +14,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api } from '../../lib/api'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
+import { useToast } from '../../components/ui/Toast'
 import { btnSoft, Card, PanelHeader } from '../ui/Card'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -152,6 +153,7 @@ export default function InboxPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const confirm = useConfirm()
+  const toast = useToast()
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const load = useCallback(
@@ -188,8 +190,11 @@ export default function InboxPage() {
       await api('/admin/contacts/read', { method: 'POST', body: { ids: [id] } })
       setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, read: true } : m)))
       setUnread((n) => Math.max(0, n - 1))
+      toast.success('Marked as read')
     } catch (e) {
-      setError((e as Error).message)
+      const msg = (e as Error).message
+      setError(msg)
+      toast.error(msg)
     }
   }
 
@@ -200,8 +205,11 @@ export default function InboxPage() {
       await api('/admin/contacts/read', { method: 'POST', body: { ids: unreadIds } })
       setMessages((prev) => prev.map((m) => ({ ...m, read: true })))
       setUnread(0)
+      toast.success('All messages marked as read')
     } catch (e) {
-      setError((e as Error).message)
+      const msg = (e as Error).message
+      setError(msg)
+      toast.error(msg)
     }
   }
 
@@ -209,11 +217,14 @@ export default function InboxPage() {
     try {
       await api(`/admin/contacts/${id}/archive`, { method: 'PATCH', body: { archived: archive } })
       setMessages((prev) => prev.filter((m) => m.id !== id))
+      toast.success(archive ? 'Message archived' : 'Message restored to inbox')
       if (!archive) return // restored from archive — no unread change needed
       const wasUnread = messages.find((m) => m.id === id)?.read === false
       if (wasUnread) setUnread((n) => Math.max(0, n - 1))
     } catch (e) {
-      setError((e as Error).message)
+      const msg = (e as Error).message
+      setError(msg)
+      toast.error(msg)
     }
   }
 
@@ -230,8 +241,11 @@ export default function InboxPage() {
       const wasUnread = messages.find((m) => m.id === id)?.read === false
       setMessages((prev) => prev.filter((m) => m.id !== id))
       if (wasUnread) setUnread((n) => Math.max(0, n - 1))
+      toast.success('Message deleted')
     } catch (e) {
-      setError((e as Error).message)
+      const msg = (e as Error).message
+      setError(msg)
+      toast.error(msg)
     }
   }
 

@@ -2,6 +2,7 @@ import { Check, Database, GalleryHorizontal, Info, LayoutTemplate, LocateFixed, 
 import { useEffect, useRef, useState } from 'react'
 import { defaultSettings } from '../../data/company'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
+import { useToast } from '../../components/ui/Toast'
 import { useStore } from '../../store/StoreContext'
 import type { HighlightIcon, Settings } from '../../store/types'
 import { Card, PanelHeader, btnDanger, btnPrimary, btnSoft } from '../ui/Card'
@@ -16,6 +17,7 @@ const ICONS: { value: HighlightIcon; label: string }[] = [
 
 export default function SettingsPage() {
   const confirm = useConfirm()
+  const toast = useToast()
   const { settings, updateSettings, resetAll, clearSampleOrders, orders } = useStore()
   const [d, setD] = useState<Settings>(() => structuredClone(settings))
   const [saved, setSaved] = useState(false)
@@ -45,7 +47,10 @@ export default function SettingsPage() {
     if ((hasLat && hasLng) && (Math.abs(b.lat) > 90 || Math.abs(b.lng) > 180)) errs.push('Map latitude / longitude are not valid numbers.')
     if (!(d.about.foundedYear >= 1900 && d.about.foundedYear <= new Date().getFullYear())) errs.push('Founded year is not valid.')
     setErrors(errs)
-    if (errs.length) return
+    if (errs.length) {
+      toast.error(errs[0])
+      return
+    }
     const next = structuredClone(d)
     if (!hasLat || !hasLng) {
       delete (next.business as { lat?: number }).lat

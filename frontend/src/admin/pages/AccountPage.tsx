@@ -1,6 +1,7 @@
 import { Camera, Check, Download, Eye, EyeOff, KeyRound, LogOut, Palette, Save, SlidersHorizontal, Trash2, Upload, UserRound } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
+import { useToast } from '../../components/ui/Toast'
 import { useTheme } from '../../hooks/useTheme'
 import { useStore } from '../../store/StoreContext'
 import { useAuth } from '../auth'
@@ -66,21 +67,24 @@ function ProfileCard() {
   const onPhoto = (f?: File) => {
     if (f) setCropSrc(f)
   }
+  const toast = useToast()
   const applyPhoto = async (url: string) => {
     setCropSrc(null)
     const e = await updateProfile({ photo: url })
-    if (e) return setErr(e)
+    if (e) { setErr(e); toast.error(e); return }
     setErr('')
     setOk('Photo updated')
+    toast.success('Photo updated')
   }
   const save = async () => {
-    if (!name.trim()) return setErr('Enter your name.')
+    if (!name.trim()) { const m = 'Enter your name.'; setErr(m); toast.error(m); return }
     const emailProblem = validateEmail(email.trim())
-    if (emailProblem) return setErr(emailProblem)
+    if (emailProblem) { setErr(emailProblem); toast.error(emailProblem); return }
     const e = await updateProfile({ name: name.trim(), email: email.trim() })
-    if (e) return setErr(e)
+    if (e) { setErr(e); toast.error(e); return }
     setErr('')
     setOk('Profile saved')
+    toast.success('Profile saved')
   }
 
   return (
@@ -216,6 +220,7 @@ function PreferencesCard() {
 function DataCard() {
   const confirm = useConfirm()
   const { exportJson, importJson } = useStore()
+  const toast = useToast()
   const { logout } = useAuth()
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
@@ -228,18 +233,23 @@ function DataCard() {
       a.click()
       URL.revokeObjectURL(url)
       setMsg({ ok: true, text: 'Backup downloaded.' })
+      toast.success('Backup downloaded')
     } catch (e) {
-      setMsg({ ok: false, text: (e as Error).message })
+      const text = (e as Error).message
+      setMsg({ ok: false, text })
+      toast.error(text)
     }
   }
   const restore = async (f?: File) => {
     if (!f) return
     const fileProblem = validateBackupFile(f)
-    if (fileProblem) return setMsg({ ok: false, text: fileProblem })
+    if (fileProblem) { setMsg({ ok: false, text: fileProblem }); toast.error(fileProblem); return }
     const go = await confirm({ tone: 'warning', title: 'Restore this backup?', message: 'Your current products, orders and site settings will be replaced by the ones in this file.', details: [{ label: 'File', value: f.name }, { label: 'Size', value: `${Math.max(1, Math.round(f.size / 1024))} KB` }], confirmLabel: 'Restore backup' })
     if (!go) return
     const err = await importJson(await f.text())
     setMsg(err ? { ok: false, text: err } : { ok: true, text: 'Backup restored.' })
+    if (err) toast.error(err)
+    else toast.success('Backup restored')
   }
 
   return (

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useAuth } from '../admin/auth'
+import { useToast } from '../components/ui/Toast'
 import { defaultSettings } from '../data/company'
 import { api } from '../lib/api'
 import { imageFromStored, imageToStored, makeSampleOrders, seedLogoFor, slugify } from './seed'
@@ -116,6 +117,7 @@ const POLL_MS = 10000
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const { authed } = useAuth()
+  const toast = useToast()
   const [cat, setCat] = useState<Omit<StoreState, 'orders'>>(() => ({ products: [], categories: [], brands: [], slides: [], settings: mergeSettings(null) }))
   const [orders, setOrders] = useState<Order[]>([])
   const [ready, setReady] = useState(false)
@@ -180,14 +182,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         // Uploaded images came back as /uploads URLs; swap them in without triggering another save.
         setCat((c) => ({ ...c, products: out.products.map((p) => ({ ...p, image: imageFromStored(p.image) })), brands: out.brands.map((b) => ({ ...b, logo: imageFromStored(b.logo) })), slides: out.slides.map((x) => ({ ...x, image: imageFromStored(x.image) })) }))
         setSaveError('')
+        toast.success('Changes saved to server')
       } catch (e) {
-        setSaveError((e as Error).message)
+        const msg = (e as Error).message || 'Could not save changes'
+        setSaveError(msg)
+        toast.error(`Save failed: ${msg}`)
       } finally {
         setSaving(false)
       }
     }, 600)
     return () => clearTimeout(t)
-  }, [cat, authed])
+  }, [cat, authed, toast])
 
   const mutate = useCallback((fn: (c: Omit<StoreState, 'orders'>) => Omit<StoreState, 'orders'>) => {
     dirty.current = true
@@ -279,21 +284,36 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const deleteOrder = useCallback(
     (id: string) => {
       setOrders((list) => list.filter((o) => o.id !== id))
-      api(`/admin/orders/${id}`, { method: 'DELETE', body: {} }).catch(() => void refreshOrders())
+      api(`/admin/orders/${id}`, { method: 'DELETE', body: {} })
+        .then(() => toast.success(`Order ${id} deleted`))
+        .catch((e) => {
+          toast.error(`Could not delete order: ${(e as Error).message}`)
+          void refreshOrders()
+        })
     },
-    [refreshOrders],
+    [refreshOrders, toast],
   )
   const loadSampleOrders = useCallback(async () => {
-    const sample = makeSampleOrders(cat.products.filter((p) => p.active))
-    const list = await api<Order[]>('/admin/orders/sample', { body: { orders: sample } })
-    known.current = new Set(list.map((o) => o.id))
-    setOrders(list)
-  }, [cat.products])
+    try {
+      const sample = makeSampleOrders(cat.products.filter((p) => p.active))
+      const list = await api<Order[]>('/admin/orders/sample', { body: { orders: sample } })
+      known.current = new Set(list.map((o) => o.id))
+      setOrders(list)
+      toast.success('Sample orders loaded')
+    } catch (e) {
+      toast.error(`Could not load sample orders: ${(e as Error).message}`)
+    }
+  }, [cat.products, toast])
   const clearSampleOrders = useCallback(async () => {
-    const list = await api<Order[]>('/admin/orders/sample', { method: 'DELETE', body: {} })
-    known.current = new Set(list.map((o) => o.id))
-    setOrders(list)
-  }, [])
+    try {
+      const list = await api<Order[]>('/admin/orders/sample', { method: 'DELETE', body: {} })
+      known.current = new Set(list.map((o) => o.id))
+      setOrders(list)
+      toast.success('Sample orders cleared')
+    } catch (e) {
+      toast.error(`Could not clear sample orders: ${(e as Error).message}`)
+    }
+  }, [toast])
 
   // ---- backup / restore
   const exportJson = useCallback(async () => JSON.stringify(await api('/admin/backup'), null, 2), [])

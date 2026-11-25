@@ -251,7 +251,7 @@ export default function AdminLayout() {
 
       {saving && <span className="fixed bottom-4 left-1/2 z-[60] -translate-x-1/2 rounded-full border border-[#e3e3e8] bg-white px-4 py-2 text-[12px] font-semibold text-ink shadow-[0_6px_18px_rgba(0,0,0,0.12)] dark:border-[#45464c] dark:bg-[#34353a] lg:ml-[132px]">Saving…</span>}
       {toast && (
-        <div role="status" className="fixed bottom-5 right-5 z-[120] flex max-w-[380px] items-stretch rounded-2xl border border-[#f6c9c7] bg-[#fff1f0] text-ink shadow-[0_12px_32px_rgba(239,83,80,0.28)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-[0_12px_32px_rgba(0,0,0,0.5)] max-sm:left-4 max-sm:right-4 max-sm:max-w-none">
+        <div role="status" className="fixed bottom-5 right-5 z-[120] flex max-w-[380px] items-stretch rounded-2xl border border-[#f6c9c7] bg-[#fff1f0] text-ink shadow-[0_12px_32px_rgba(239,83,80,0.28)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-[0_12px_32px_rgba(0,0,0,0.5)] max-lg:left-1/2 max-lg:right-auto max-lg:w-[calc(100vw-24px)] max-lg:-translate-x-1/2">
           <Link to="/admin/orders" onClick={() => setToast(null)} className="flex min-w-0 flex-1 items-center gap-3 py-3 pl-4 pr-2 text-ink no-underline">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-[0_4px_10px_rgba(239,83,80,0.4)]"><ReceiptText size={17} aria-hidden /></span>
             <span className="min-w-0 text-[13px] font-semibold leading-snug">{toast.text}<span className="block text-[11px] font-normal text-muted">Click to open Orders</span></span>
