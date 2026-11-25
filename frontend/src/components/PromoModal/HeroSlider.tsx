@@ -17,7 +17,7 @@ const hop = (el: HTMLElement) =>
   )
 
 const arrowClass =
-  'absolute z-30 top-[130px] flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-line bg-white p-0 text-[#7a7a7a] dark:bg-[#3a3b41] dark:text-[#b4b4b8] transition-colors hover:border-brand hover:text-brand'
+  'absolute z-30 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-line bg-white p-0 text-[#7a7a7a] dark:bg-[#3a3b41] dark:text-[#b4b4b8] transition-colors hover:border-brand hover:text-brand max-md:h-8 max-md:w-8'
 
 const AUTO_MS = 3000
 
@@ -86,32 +86,34 @@ export default function HeroSlider({ slides: slidesProp }: HeroSliderProps) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <Brushstroke />
-      {multi && <button type="button" aria-label="Previous slide" onClick={(e) => { hop(e.currentTarget); prev(); setBump((b) => ({ dir: 'left', n: b.n + 1 })) }} className={`${arrowClass} -left-12 max-xl:left-1 max-md:top-[105px]`}>
-        <ChevronLeft key={`l${bump.n}`} size={24} strokeWidth={2} className={bump.dir === 'left' ? 'arrow-bounce-left' : undefined} />
-      </button>}
-      {multi && <button type="button" aria-label="Next slide" onClick={(e) => { hop(e.currentTarget); next(); setBump((b) => ({ dir: 'right', n: b.n + 1 })) }} className={`${arrowClass} -right-12 max-xl:right-1 max-md:top-[105px]`}>
-        <ChevronRight key={`r${bump.n}`} size={24} strokeWidth={2} className={bump.dir === 'right' ? 'arrow-bounce-right' : undefined} />
-      </button>}
+      <div className="relative h-[260px] w-full max-md:h-[210px]">
+        <Brushstroke />
+        {multi && <button type="button" aria-label="Previous slide" onClick={(e) => { hop(e.currentTarget); prev(); setBump((b) => ({ dir: 'left', n: b.n + 1 })) }} className={`${arrowClass} -left-12 max-xl:left-1 max-md:left-0`}>
+          <ChevronLeft key={`l${bump.n}`} size={20} strokeWidth={2} className={bump.dir === 'left' ? 'arrow-bounce-left' : undefined} />
+        </button>}
+        {multi && <button type="button" aria-label="Next slide" onClick={(e) => { hop(e.currentTarget); next(); setBump((b) => ({ dir: 'right', n: b.n + 1 })) }} className={`${arrowClass} -right-12 max-xl:right-1 max-md:right-0`}>
+          <ChevronRight key={`r${bump.n}`} size={20} strokeWidth={2} className={bump.dir === 'right' ? 'arrow-bounce-right' : undefined} />
+        </button>}
 
-      <div className="relative z-20 h-[260px] w-full [overflow-x:clip] max-md:h-[210px]">
-        <div
-          className={`flex h-full ${animate ? 'transition-transform duration-500 ease-in-out' : ''}`}
-          style={{ transform: `translateX(-${pos * 100}%)` }}
-          onTransitionEnd={onTransitionEnd}
-        >
-          {track.map((s, i) => (
-            <div
-              key={i}
-              role="group"
-              aria-hidden={i !== pos}
-              aria-label={`${(i - 1 + count) % count + 1} of ${count}`}
-              className="flex h-full w-full shrink-0 items-center justify-center"
-            >
-              {/* Safe box: always inside the brush stroke, whatever the picture's shape. */}
-              <img src={s.image} alt={s.title} className="h-[80%] w-[74%] -rotate-6 object-contain" draggable={false} />
-            </div>
-          ))}
+        <div className="relative z-20 h-full w-full [overflow-x:clip]">
+          <div
+            className={`flex h-full ${animate ? 'transition-transform duration-500 ease-in-out' : ''}`}
+            style={{ transform: `translateX(-${pos * 100}%)` }}
+            onTransitionEnd={onTransitionEnd}
+          >
+            {track.map((s, i) => (
+              <div
+                key={i}
+                role="group"
+                aria-hidden={i !== pos}
+                aria-label={`${(i - 1 + count) % count + 1} of ${count}`}
+                className="flex h-full w-full shrink-0 items-center justify-center"
+              >
+                {/* Safe box: always inside the brush stroke, whatever the picture's shape. */}
+                <img src={s.image} alt={s.title} className="h-[80%] w-[74%] -rotate-6 object-contain" draggable={false} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
