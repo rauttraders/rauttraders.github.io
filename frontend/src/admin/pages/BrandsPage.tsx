@@ -1,4 +1,4 @@
-import { Crop, ImagePlus, Pencil, Plus, Trash2 } from 'lucide-react'
+import { BadgeCheck, Crop, ImagePlus, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useStore } from '../../store/StoreContext'
 import { useConfirm, useNotice } from '../../components/ui/ConfirmDialog'
@@ -6,7 +6,7 @@ import type { Brand } from '../../store/types'
 import { slugify } from '../../store/seed'
 import { CROP_PRESETS } from '../imageTools'
 import ImageCropDialog from '../ui/ImageCropDialog'
-import { btnDanger, btnPrimary, btnSoft, iconBtn } from '../ui/Card'
+import { Card, PanelHeader, btnDanger, btnPrimary, btnSoft, iconBtn } from '../ui/Card'
 import { TextInput } from '../ui/Inputs'
 import Modal from '../ui/Modal'
 import { validateText } from '../../lib/validation'
@@ -75,10 +75,23 @@ export default function BrandsPage() {
 
   return (
     <div className="mx-auto flex max-w-[1280px] flex-col gap-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="m-0 text-[14px] text-muted">{brands.length} brands · logos appear in the home page strip</p>
-        <button type="button" className={btnPrimary} onClick={() => setEditing({ b: null })}><Plus size={16} aria-hidden /> Add brand</button>
-      </div>
+      <Card>
+        <PanelHeader
+          icon={BadgeCheck}
+          title="Brands"
+          subtitle={`${brands.length} ${brands.length === 1 ? 'brand' : 'brands'} · logos appear in the home page strip`}
+          action={
+            <button type="button" className={`${btnPrimary} max-md:hidden`} onClick={() => setEditing({ b: null })}>
+              Add brand <span aria-hidden className="h-4 w-px bg-white/40" /> <Plus size={16} aria-hidden />
+            </button>
+          }
+        />
+        <div className="hidden justify-end max-md:flex">
+          <button type="button" className={`${btnPrimary} w-full`} onClick={() => setEditing({ b: null })}>
+            Add brand <span aria-hidden className="h-4 w-px bg-white/40" /> <Plus size={16} aria-hidden />
+          </button>
+        </div>
+      </Card>
 
       {sorted.length === 0 ? (
         <p className="m-0 rounded-2xl bg-white py-16 text-center text-[14px] text-muted dark:bg-[#34353a]">No brands yet. Add one to use it on products.</p>

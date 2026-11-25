@@ -42,7 +42,7 @@ export default function CategoriesPage() {
   return (
     <div className="viz-root flex w-full flex-col gap-5">
       <Card>
-        <PanelHeader icon={Plus} title="Add a category" subtitle="Group your products so customers can browse and filter them" />
+        <PanelHeader icon={Tags} title="Add a category" subtitle="Group your products so customers can browse and filter them" />
         <form onSubmit={add} noValidate className="flex flex-wrap items-start gap-3">
           <div className="min-w-[240px] flex-1">
             <input
@@ -55,7 +55,7 @@ export default function CategoriesPage() {
             />
             {err && <p role="alert" className="mb-0 mt-1.5 pl-4 text-xs font-medium text-[#c62f2c]">{err}</p>}
           </div>
-          <button type="submit" className={`${btnPrimary} !h-[46px] max-md:!h-[40px] max-sm:w-full`}><Plus size={16} aria-hidden /> Add category</button>
+          <button type="submit" className={`${btnPrimary} !h-[46px] max-md:!h-[40px] max-sm:w-full`}>Add category <span aria-hidden className="h-4 w-px bg-white/40" /> <Plus size={16} aria-hidden /></button>
         </form>
       </Card>
 

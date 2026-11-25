@@ -1,4 +1,4 @@
-import { ChevronDown, Copy, Download, ReceiptText, Search, ShoppingBag, Trash2 } from 'lucide-react'
+import { ChevronDown, Copy, Download, IndianRupee, Package, ReceiptText, Search, ShoppingBag, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
 import ReceiptDialog from '../../components/Order/ReceiptDialog'
@@ -190,13 +190,18 @@ export default function OrdersPage() {
       )}
       <div className="grid grid-cols-3 gap-3 max-md:gap-2">
         {[
-          { label: 'Orders', value: String(rows.length) },
-          { label: 'Units ordered', value: String(totalUnits) },
-          { label: 'Order value', value: inr(totalValue) },
-        ].map((s) => (
-          <div key={s.label} className="rounded-2xl border border-[#ececf0] bg-white p-4 dark:border-[#45464c] dark:bg-[#34353a] max-md:rounded-xl max-md:p-2.5">
-            <p className="m-0 text-[12px] font-semibold uppercase tracking-wide text-muted max-md:text-[10px]">{s.label}</p>
-            <p className="m-0 mt-1 text-[24px] font-extrabold text-ink max-lg:text-[20px] max-md:text-[16px]">{s.value}</p>
+          { label: 'Orders', value: String(rows.length), Icon: ShoppingBag, tone: 'bg-brand/10 text-brand dark:bg-brand/20' },
+          { label: 'Units ordered', value: String(totalUnits), Icon: Package, tone: 'bg-[#dff5e8] text-[#1c6b3c] dark:bg-[#1d3a2a] dark:text-[#7fd6a1]' },
+          { label: 'Order value', value: inr(totalValue), Icon: IndianRupee, tone: 'bg-[#e3effd] text-[#17519c] dark:bg-[#1c3350] dark:text-[#8fbcf5]' },
+        ].map(({ label, value, Icon, tone }) => (
+          <div key={label} className="flex items-center gap-3 rounded-2xl border border-[#ececf0] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-md:flex-col max-md:items-start max-md:gap-2 max-md:rounded-xl max-md:p-2.5">
+            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl max-md:h-8 max-md:w-8 ${tone}`}>
+              <Icon size={18} className="max-md:h-4 max-md:w-4" aria-hidden />
+            </span>
+            <div className="min-w-0 leading-tight">
+              <p className="m-0 text-[22px] font-extrabold text-ink max-lg:text-[19px] max-md:text-[15px]">{value}</p>
+              <p className="m-0 mt-0.5 text-[12px] font-semibold text-muted max-md:text-[10.5px]">{label}</p>
+            </div>
           </div>
         ))}
       </div>

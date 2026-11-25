@@ -5,7 +5,7 @@ import { useStore } from '../../store/StoreContext'
 import type { Slide } from '../../store/types'
 import { CROP_PRESETS } from '../imageTools'
 import ImageCropDialog from '../ui/ImageCropDialog'
-import { btnPrimary, btnSoft, iconBtn } from '../ui/Card'
+import { Card, PanelHeader, btnPrimary, btnSoft, iconBtn } from '../ui/Card'
 import { TextInput } from '../ui/Inputs'
 import Modal from '../ui/Modal'
 
@@ -80,10 +80,23 @@ export default function SlidesPage() {
 
   return (
     <div className="mx-auto flex max-w-[980px] flex-col gap-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="m-0 text-[14px] text-muted">{slides.length} {slides.length === 1 ? 'slide' : 'slides'} · shown on the home page · drag a card to change the order</p>
-        <button type="button" className={btnPrimary} disabled={slides.length >= MAX_SLIDES} onClick={() => setEditing({ s: null })}><Plus size={16} aria-hidden /> Add slide</button>
-      </div>
+      <Card>
+        <PanelHeader
+          icon={GalleryHorizontal}
+          title="Hero slider"
+          subtitle={`${slides.length} ${slides.length === 1 ? 'slide' : 'slides'} · shown on the home page · drag a card to change the order`}
+          action={
+            <button type="button" className={`${btnPrimary} max-md:hidden`} disabled={slides.length >= MAX_SLIDES} onClick={() => setEditing({ s: null })}>
+              Add slide <span aria-hidden className="h-4 w-px bg-white/40" /> <Plus size={16} aria-hidden />
+            </button>
+          }
+        />
+        <div className="hidden justify-end max-md:flex">
+          <button type="button" className={`${btnPrimary} w-full`} disabled={slides.length >= MAX_SLIDES} onClick={() => setEditing({ s: null })}>
+            Add slide <span aria-hidden className="h-4 w-px bg-white/40" /> <Plus size={16} aria-hidden />
+          </button>
+        </div>
+      </Card>
 
       {slides.length === 0 ? (
         <p className="m-0 flex flex-col items-center gap-2 rounded-2xl bg-white py-16 text-[14px] text-muted dark:bg-[#34353a]"><GalleryHorizontal size={28} aria-hidden /> No slides. The slider is hidden on the home page until you add one.</p>
