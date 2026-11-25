@@ -1,3 +1,4 @@
+import { bundledCompanyLogos } from '../../store/seed'
 import { useStore } from '../../store/StoreContext'
 
 export interface ClientLogo {
@@ -12,7 +13,8 @@ interface ClientLogosProps {
 /** Infinite right-to-left marquee of client logos; pauses on hover. */
 export default function ClientLogos({ logos: logosProp }: ClientLogosProps) {
   const { brands } = useStore()
-  const logos = logosProp ?? brands.filter((b) => b.logo).map((b) => ({ name: b.name, src: b.logo }))
+  const brandLogos = brands.filter((b) => b.logo).map((b) => ({ name: b.name, src: b.logo }))
+  const logos = logosProp ?? (brandLogos.length > 0 ? brandLogos : bundledCompanyLogos)
   if (logos.length === 0) return null
   return (
     <div

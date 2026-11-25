@@ -7,6 +7,10 @@ import type { Order, OrderItem, Product } from './types'
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
 
 const companyLogoFiles = import.meta.glob('../assets/companies/*.png', { eager: true, import: 'default' }) as Record<string, string>
+export const bundledCompanyLogos = Object.entries(companyLogoFiles).map(([path, src]) => ({
+  name: (path.split('/').pop() ?? '').replace(/\.png$/, '').replace(/_/g, ' '),
+  src,
+}))
 const logoByName = new Map(
   Object.entries(companyLogoFiles).map(([path, url]) => [norm((path.split('/').pop() ?? '').replace(/\.png$/, '')), url]),
 )
