@@ -1,4 +1,4 @@
-import { CheckCircle2, Copy, Globe, MessageCircle, TriangleAlert, X } from 'lucide-react'
+import { CheckCircle2, Copy, Globe, MessageCircle, ReceiptText, TriangleAlert, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError } from '../../lib/api'
 import { formatINR } from '../../lib/format'
@@ -6,6 +6,7 @@ import { whatsappUrl, whatsappWebUrl } from '../../lib/links'
 import { basketTotal, buildBasketMessage } from '../../lib/order'
 import { useStore } from '../../store/StoreContext'
 import type { BasketItem } from '../Navbar/BasketMenu'
+import ReceiptDialog from './ReceiptDialog'
 
 /** A random 128-bit key (works on plain http too, where crypto.randomUUID is not available). */
 function newOrderKey(): string {
@@ -44,6 +45,7 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
   const [error, setError] = useState('')
   const [placed, setPlaced] = useState<Placed | null>(null)
   const [copied, setCopied] = useState(false)
+  const [receiptOpen, setReceiptOpen] = useState(false)
   const total = basketTotal(items)
 
   useEffect(() => {
@@ -101,6 +103,13 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
 
   if (placed) {
     return (
+      <>
+        {receiptOpen && placed.id && (
+          <ReceiptDialog
+            order={{ id: placed.id, createdAt: new Date().toISOString(), items: items.map(i => ({ id: i.id, name: i.name, company: i.company ?? '', categoryId: '', size: i.size ?? '', price: i.price, qty: i.qty })), total: placed.total }}
+            onClose={() => setReceiptOpen(false)}
+          />
+        )}
       <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-black/50 p-4">
         <div role="dialog" aria-modal="true" aria-labelledby="order-done" className="w-full max-w-[420px] rounded-2xl bg-white p-7 text-center shadow-[0_12px_40px_rgba(0,0,0,0.25)] dark:bg-[#34353a] max-md:p-5">
           <span className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full max-md:h-12 max-md:w-12 ${placed.saved ? 'bg-[#dff5e8] text-[#1c6b3c] dark:bg-[#1d3a2a] dark:text-[#7fd6a1]' : 'bg-[#fdf0d5] text-[#8a5a00] dark:bg-[#4a3a16] dark:text-[#f0c56b]'}`}>
@@ -131,11 +140,21 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
                 {copied ? 'Copied ✓' : 'Copy message'} <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <Copy size={14} aria-hidden />
               </button>
             </div>
+            {placed.id && (
+              <button
+                type="button"
+                onClick={() => setReceiptOpen(true)}
+                className="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-brand/10 text-[13px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white dark:bg-brand/20"
+              >
+                <ReceiptText size={14} aria-hidden /> View Receipt
+              </button>
+            )}
             <p className="m-0 text-[11.5px] leading-snug text-muted">On a laptop? Use <b>WhatsApp Web</b>. No WhatsApp here? Copy the message and send it to {settings.business.phone} from your phone.</p>
             <button type="button" onClick={onSent} className="h-10 cursor-pointer border-0 bg-transparent text-[13px] font-semibold text-muted hover:text-ink">Done</button>
           </div>
         </div>
       </div>
+      </>
     )
   }
 

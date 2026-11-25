@@ -1,6 +1,7 @@
-import { ChevronDown, Copy, Download, Search, ShoppingBag, Trash2 } from 'lucide-react'
+import { ChevronDown, Copy, Download, ReceiptText, Search, ShoppingBag, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
+import ReceiptDialog from '../../components/Order/ReceiptDialog'
 import { formatINR } from '../../lib/format'
 import { useStore } from '../../store/StoreContext'
 import type { Order } from '../../store/types'
@@ -58,7 +59,7 @@ function orderText(o: Order): string {
   ].join('\n')
 }
 
-function OrderRow({ order, open, onToggle }: { order: Order; open: boolean; onToggle: () => void }) {
+function OrderRow({ order, open, onToggle, onReceipt }: { order: Order; open: boolean; onToggle: () => void; onReceipt: () => void }) {
   const { deleteOrder } = useStore()
   const confirm = useConfirm()
   const [copied, setCopied] = useState(false)
@@ -126,6 +127,7 @@ function OrderRow({ order, open, onToggle }: { order: Order; open: boolean; onTo
           </div>
           <div className="mt-4 flex flex-wrap justify-end gap-2">
             <button type="button" onClick={() => void copy()} className={btnSoft}><Copy size={14} aria-hidden /> {copied ? 'Copied ✓' : 'Copy order'}</button>
+            <button type="button" onClick={onReceipt} className={btnSoft}><ReceiptText size={14} aria-hidden /> Receipt</button>
             <button
               type="button"
               className={`${btnDanger} !px-4`}
@@ -147,6 +149,7 @@ export default function OrdersPage() {
   const [range, setRange] = useState<Range>('all')
   const [q, setQ] = useState('')
   const [openId, setOpenId] = useState<string | null>(null)
+  const [receiptOrder, setReceiptOrder] = useState<Order | null>(null)
 
   const rows = useMemo(() => {
     const t = q.trim().toLowerCase()
@@ -182,6 +185,9 @@ export default function OrdersPage() {
 
   return (
     <div className="mx-auto flex max-w-[980px] flex-col gap-5 max-md:gap-3.5">
+      {receiptOrder && (
+        <ReceiptDialog order={receiptOrder} onClose={() => setReceiptOrder(null)} />
+      )}
       <div className="grid grid-cols-3 gap-3 max-md:gap-2">
         {[
           { label: 'Orders', value: String(rows.length) },
@@ -219,7 +225,7 @@ export default function OrdersPage() {
             <h2 className="mb-2 mt-0 px-1 text-[12px] font-bold uppercase tracking-[0.1em] text-muted">{g.label}</h2>
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
               {g.items.map((o) => (
-                <OrderRow key={o.id} order={o} open={openId === o.id} onToggle={() => setOpenId(openId === o.id ? null : o.id)} />
+                <OrderRow key={o.id} order={o} open={openId === o.id} onToggle={() => setOpenId(openId === o.id ? null : o.id)} onReceipt={() => setReceiptOrder(o)} />
               ))}
             </ul>
           </section>
