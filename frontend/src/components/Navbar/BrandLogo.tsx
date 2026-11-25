@@ -14,7 +14,7 @@ export default function BrandLogo({
   name: nameProp,
 }: BrandLogoProps) {
   const { settings } = useStore()
-  const name = nameProp ?? settings.business.name
+  const name = nameProp ?? (settings.business.name || 'Raut Traders')
   return (
     <a href={href} onClick={onClick} aria-label={`${name} — Home`} className="flex shrink-0 items-center gap-2.5">
       <img src={logo} alt="" className="sticker-logo block h-5 w-auto object-contain" />

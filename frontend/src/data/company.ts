@@ -29,7 +29,7 @@ export const defaultSettings: Settings = {
   about: {
     title: 'Supplying shops with the brands they trust',
     intro:
-      'We are a distribution partner for popular FMCG brands. We help retailers stock their counters with genuine products at fair prices, backed by dependable delivery and friendly support.',
+      'Raut Traders, led by Ganesh Raut and Suresh Raut, is a wholesale distribution partner for popular FMCG brands. We help retailers stock their counters with genuine products at fair wholesale prices, backed by dependable delivery and friendly support.',
     foundedYear: new Date().getFullYear(),
     highlights: [
       { icon: 'shield', title: 'Authorised supply', text: 'Genuine stock sourced directly from the brands we represent.' },
