@@ -165,21 +165,21 @@ export default function AdminLayout() {
           <button type="button" aria-label="Open menu" onClick={() => setOpen(true)} className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ink hover:bg-brand/10 max-md:h-9 max-md:w-9 lg:hidden">
             <Menu size={20} aria-hidden />
           </button>
-          <h1 className="m-0 text-[17px] font-semibold text-ink max-md:text-[15px]">{current}</h1>
-          <div className="ml-auto">
+          <h1 className="m-0 min-w-0 flex-1 truncate text-[17px] font-semibold text-ink max-md:text-[15px]">{current}</h1>
+          <div className="ml-auto shrink-0">
             <button
               ref={menu.anchor}
               type="button"
               aria-haspopup="menu"
               aria-expanded={menu.open}
               onClick={() => menu.setOpen((o) => !o)}
-              className={`flex cursor-pointer items-center gap-2 rounded-full border bg-white py-1 pl-1 pr-2.5 text-left outline-none transition-colors dark:bg-[#2b2c30] ${menu.open ? 'border-brand' : 'border-[#d8d8df] hover:border-brand/60 dark:border-[#55565d]'}`}
+              className={`flex cursor-pointer items-center gap-2 rounded-full border bg-white py-1 pl-1 pr-2.5 text-left outline-none transition-colors dark:bg-[#2b2c30] max-sm:gap-1.5 max-sm:pr-2 ${menu.open ? 'border-brand' : 'border-[#d8d8df] hover:border-brand/60 dark:border-[#55565d]'}`}
             >
               <Avatar photo={profile.photo} name={profile.name || username} size={28} />
-              <span className="min-w-0 leading-tight max-md:hidden">
-                <span className="block max-w-[180px] truncate text-[12px] font-bold text-ink">{profile.name || username}</span>
+              <span className="min-w-0 leading-tight">
+                <span className="block max-w-[110px] truncate text-[12px] font-bold text-ink sm:max-w-[150px] md:max-w-[180px] max-sm:text-[11.5px]">{profile.name || username}</span>
                 {(username || profile.email) && (
-                  <span className="block max-w-[180px] truncate text-[10.5px] text-muted">
+                  <span className="block max-w-[110px] truncate text-[10.5px] text-muted sm:max-w-[150px] md:max-w-[180px] max-sm:text-[10px]">
                     {username ? `@${username}` : ''}
                     {username && profile.email ? ' · ' : ''}
                     {profile.email || ''}
