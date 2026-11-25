@@ -16,9 +16,9 @@ export default function BrandLogo({
   const { settings } = useStore()
   const name = nameProp ?? (settings.business.name || 'Raut Traders')
   return (
-    <a href={href} onClick={onClick} aria-label={`${name} — Home`} className="flex shrink-0 items-center gap-2.5">
+    <a href={href} onClick={onClick} aria-label={`${name}: Home`} className="flex shrink-0 items-center gap-2.5 max-md:gap-2">
       <img src={logo} alt="" className="sticker-logo block h-5 w-auto object-contain" />
-      <span className={`flex flex-col pr-6 text-[12px] font-bold uppercase leading-[1.15] tracking-[0.4px] text-[#4a4a4a] dark:text-[#d0d0d4] max-md:hidden`}>
+      <span className="flex flex-col pr-6 text-[12px] font-bold uppercase leading-[1.15] tracking-[0.4px] text-[#4a4a4a] dark:text-[#d0d0d4] max-md:pr-2 max-md:text-[11px]">
         {name.split(' ').map((word, i) => (
           <span key={i}>
             <span className={i === 0 ? "text-brand" : undefined}>{word.charAt(0)}</span>
