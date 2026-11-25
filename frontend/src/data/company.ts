@@ -11,7 +11,7 @@ export const defaultSettings: Settings = {
     phone: '',
     email: '',
     hours: '',
-    whatsappNumber: (import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined) ?? '',
+    whatsappNumber: '',
     lat: NaN,
     lng: NaN,
   },
