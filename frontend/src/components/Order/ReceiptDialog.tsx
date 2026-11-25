@@ -39,7 +39,7 @@ export default function ReceiptDialog({ order, onClose }: Props) {
               className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-0 bg-brand/10 px-4 text-[12.5px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white dark:bg-brand/20"
               title="Print receipt"
             >
-              <Printer size={14} aria-hidden /> Print
+              Print <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <Printer size={14} aria-hidden />
             </button>
             <button
               type="button"

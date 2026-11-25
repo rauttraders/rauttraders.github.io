@@ -146,7 +146,7 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
                 onClick={() => setReceiptOpen(true)}
                 className="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-brand/10 text-[13px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white dark:bg-brand/20"
               >
-                <ReceiptText size={14} aria-hidden /> View Receipt
+                View Receipt <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <ReceiptText size={14} aria-hidden />
               </button>
             )}
             <p className="m-0 text-[11.5px] leading-snug text-muted">On a laptop? Use <b>WhatsApp Web</b>. No WhatsApp here? Copy the message and send it to {settings.business.phone} from your phone.</p>

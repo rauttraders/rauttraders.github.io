@@ -127,7 +127,7 @@ function OrderRow({ order, open, onToggle, onReceipt }: { order: Order; open: bo
           </div>
           <div className="mt-4 flex flex-wrap justify-end gap-2">
             <button type="button" onClick={() => void copy()} className={btnSoft}><Copy size={14} aria-hidden /> {copied ? 'Copied ✓' : 'Copy order'}</button>
-            <button type="button" onClick={onReceipt} className={btnSoft}><ReceiptText size={14} aria-hidden /> Receipt</button>
+            <button type="button" onClick={onReceipt} className={btnSoft}>Receipt <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <ReceiptText size={14} aria-hidden /></button>
             <button
               type="button"
               className={`${btnDanger} !px-4`}

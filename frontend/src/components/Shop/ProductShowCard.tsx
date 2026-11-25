@@ -30,17 +30,6 @@ function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: P
           {brandLogo && <img src={brandLogo} alt="" draggable={false} className="logo-outline h-4 w-auto max-w-[44px] shrink-0 object-contain" />}
           <HighlightText text={product.company} query={searchQuery} />
         </span>
-        {product.image && (
-          <button
-            type="button"
-            onClick={() => setZoomOpen(true)}
-            aria-label={`Zoom ${product.name}`}
-            title="View & zoom image"
-            className="absolute right-3 top-3 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[#ececf0] bg-white/90 text-muted shadow-sm backdrop-blur transition-colors hover:border-brand hover:text-brand dark:border-[#45464c] dark:bg-[#2b2c30]/90 dark:text-[#b4b4b8]"
-          >
-            <Eye size={15} aria-hidden />
-          </button>
-        )}
         <img
           src={product.image}
           alt={product.name}
@@ -60,21 +49,34 @@ function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: P
         <p className="mb-3 mt-1.5 line-clamp-2 min-h-[2.6rem] text-[13px] leading-[1.3rem] text-muted"><HighlightText text={product.description} query={searchQuery} /></p>
 
         <div className="mb-4 mt-auto flex items-baseline gap-2">
-          {product.mrp && <span className="text-[13px] text-muted line-through">{formatINR(product.mrp)}</span>}
+          {product.mrp && <span className="text-[13px] text-muted line-through">{formatINR(product.price)}</span>}
           <span className="text-[19px] font-extrabold text-brand">{formatINR(product.price)}</span>
           <span className="rounded-full bg-black/5 px-2 py-0.5 text-[11px] font-semibold text-muted dark:bg-white/10">{product.size}</span>
         </div>
 
         {qty === 0 ? (
-          <button
-            type="button"
-            onClick={() => onQty(product.id, 1)}
-            className={`${ctaBase} bg-brand/10 text-brand hover:bg-brand hover:text-white dark:bg-brand/20`}
-          >
-            Add to basket
-            <span aria-hidden className="h-5 w-px shrink-0 bg-current opacity-30" />
-            <ShoppingCart size={17} strokeWidth={2.5} aria-hidden />
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => onQty(product.id, 1)}
+              className={`${ctaBase} min-w-0 flex-1 bg-brand/10 text-brand hover:bg-brand hover:text-white dark:bg-brand/20`}
+            >
+              Add to basket
+              <span aria-hidden className="h-5 w-px shrink-0 bg-current opacity-30" />
+              <ShoppingCart size={17} strokeWidth={2.5} aria-hidden />
+            </button>
+            {product.image && (
+              <button
+                type="button"
+                aria-label={`View ${product.name}`}
+                title="View & zoom image"
+                onClick={() => setZoomOpen(true)}
+                className="flex h-[46px] w-[46px] max-md:h-[42px] max-md:w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-brand/10 text-brand transition-colors hover:bg-brand hover:text-white active:scale-95 dark:bg-brand/20"
+              >
+                <Eye size={18} aria-hidden />
+              </button>
+            )}
+          </div>
         ) : (
           <div className="flex gap-2">
             <div className="flex h-[46px] max-md:h-[42px] min-w-0 flex-1 items-center justify-between rounded-full bg-brand/10 px-1.5 text-ink dark:bg-brand/20">
@@ -96,6 +98,17 @@ function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: P
                 <Plus size={16} strokeWidth={2.75} />
               </button>
             </div>
+            {product.image && (
+              <button
+                type="button"
+                aria-label={`View ${product.name}`}
+                title="View & zoom image"
+                onClick={() => setZoomOpen(true)}
+                className="flex h-[46px] w-[46px] max-md:h-[42px] max-md:w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-brand/10 text-brand transition-colors hover:bg-brand hover:text-white active:scale-95 dark:bg-brand/20"
+              >
+                <Eye size={18} aria-hidden />
+              </button>
+            )}
             <button
               type="button"
               aria-label={`Remove ${product.name} from basket`}
