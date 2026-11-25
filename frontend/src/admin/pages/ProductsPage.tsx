@@ -231,14 +231,14 @@ export default function ProductsPage() {
         <ul className="m-0 grid list-none grid-cols-4 gap-4 p-0 max-2xl:grid-cols-3 max-lg:grid-cols-2 max-md:gap-2.5">
           {rows.map((p) => (
             <li key={p.id} className={`group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-[#ececf0] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-[0_10px_24px_rgba(239,83,80,0.14)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-md:rounded-xl ${p.active ? '' : 'opacity-75'}`}>
-              <div className="relative flex h-[160px] items-center justify-center bg-gradient-to-b from-cream to-white dark:from-[#3d3e44] dark:to-[#34353a] max-md:h-[120px]">
+              <div className="relative flex h-[160px] items-center justify-center bg-gradient-to-b from-cream to-white dark:from-[#3d3e44] dark:to-[#34353a] max-md:h-[150px]">
                 <span className="absolute left-3 top-3 z-10 inline-flex max-w-[70%] items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-[#c62f2c] shadow-sm backdrop-blur dark:bg-[#2b2c30]/90 dark:text-[#ff8a87] max-md:left-2 max-md:top-2 max-md:px-2 max-md:py-0.5 max-md:text-[10px]">
                   {logoOf.get(p.company) ? <img src={logoOf.get(p.company)} alt="" draggable={false} className="logo-outline h-4 w-auto max-w-[40px] shrink-0 object-contain" /> : null}
                   <span className="truncate">{p.company}</span>
                 </span>
                 {!p.active && <span className="absolute right-3 top-3 z-10 inline-flex items-center gap-1 rounded-full bg-[#1f2023]/80 px-2.5 py-1 text-[11px] font-bold text-white max-md:right-2 max-md:top-2 max-md:px-2 max-md:py-0.5 max-md:text-[10px]"><EyeOff size={12} aria-hidden /> Hidden</span>}
                 {p.image ? (
-                  <img src={p.image} alt="" draggable={false} className={p.isLogo ? 'logo-outline mt-5 max-h-[84px] w-[62%] object-contain transition-transform duration-300 group-hover:scale-105' : 'h-full w-full object-contain p-1 pt-9 transition-transform duration-300 group-hover:scale-105'} />
+                  <img src={p.image} alt="" draggable={false} className={p.isLogo ? 'logo-outline mt-5 max-h-[84px] w-[62%] object-contain transition-transform duration-300 group-hover:scale-105 max-md:max-h-[96px] max-md:w-[70%]' : 'h-full w-full object-contain p-1 pt-9 transition-transform duration-300 group-hover:scale-105 max-md:px-1.5 max-md:pb-1.5 max-md:pt-7'} />
                 ) : (
                   <ImagePlus size={26} className="text-muted" aria-hidden />
                 )}
@@ -247,7 +247,7 @@ export default function ProductsPage() {
                 <h3 className="m-0 truncate text-[15px] font-semibold text-ink max-md:text-[13px]" title={p.name}>{p.name}</h3>
                 <p className="m-0 mt-0.5 truncate text-xs text-muted max-md:text-[11px]">{p.size} · {catName(p.categoryId)}</p>
                 <p className="mb-0 mt-2 text-[19px] max-md:mt-1.5 max-md:text-[15px]">{priceEl(p)}</p>
-                <div className="mt-auto flex items-center justify-between gap-2 border-t border-[#ececf0] pt-3 dark:border-[#45464c] max-md:pt-2" style={{ marginTop: 14 }}>
+                <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 border-t border-[#ececf0] pt-3 dark:border-[#45464c] max-md:mt-2.5 max-md:gap-1 max-md:pt-2">
                   <Toggle checked={p.active} onChange={(v) => saveProduct({ ...p, active: v })} label={p.active ? 'Visible' : 'Hidden'} />
                   {actions(p)}
                 </div>
