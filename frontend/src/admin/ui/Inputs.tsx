@@ -59,9 +59,9 @@ export function Checkbox({ checked, onChange, label }: { checked: boolean; onCha
   )
 }
 
-export function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
+export function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: ReactNode }) {
   return (
-    <label className="flex cursor-pointer items-center gap-3 text-[14px] font-semibold text-ink">
+    <label className="flex cursor-pointer items-center gap-3 text-[14px] font-semibold text-ink max-sm:gap-2 max-sm:text-[13px]">
       <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)} className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full border-0 transition-colors ${checked ? 'bg-brand' : 'bg-[#c9c9ce] dark:bg-[#55565d]'}`}>
         <span className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${checked ? 'translate-x-5' : ''}`} />
       </button>

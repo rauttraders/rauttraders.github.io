@@ -1,4 +1,4 @@
-import { Check, MessageSquareText, RotateCcw, Save, Smartphone, Type } from 'lucide-react'
+import { Check, Clock, MapPin, MessageSquareText, Phone, RotateCcw, Save, Smartphone, Type } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { defaultSettings } from '../../data/company'
@@ -71,11 +71,11 @@ export default function WhatsAppPage() {
               onChange={(e) => { setWhatsappNumber(e.target.value); setNumError(''); setSaved(false) }}
               placeholder="e.g. 919876543210"
               error={numError}
-              hint="With country code, digits only. Saved to the database — customer orders are sent here (also editable in Site settings)."
+              hint="With country code, digits only. Saved to the database. Customer orders are sent here (also editable in Site settings)."
             />
           </div>
           <p className="mb-4 mt-0 text-[13px] text-muted">Other business details come from <Link to="/admin/settings" className="font-semibold text-brand no-underline hover:underline">Site settings</Link>. Choose which ones to show here.</p>
-          <div className={row}>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3.5 max-sm:gap-x-3 max-sm:gap-y-2.5">
             <Toggle checked={d.showShopName} onChange={(v) => up('showShopName', v)} label="Shop name" />
             <Toggle checked={d.showAddress} onChange={(v) => up('showAddress', v)} label="Address" />
             <Toggle checked={d.showPhone} onChange={(v) => up('showPhone', v)} label="Phone number" />
@@ -99,7 +99,7 @@ export default function WhatsAppPage() {
         <Card>
           <PanelHeader icon={Type} title="Items & totals" subtitle="How the list and the price calculation look" />
           <div className={row}>
-            <Select label="Item lines" value={d.itemStyle} onChange={(v) => up('itemStyle', v as WhatsAppSettings['itemStyle'])} options={[{ value: 'detailed', label: 'Detailed — name, brand, size, price' }, { value: 'compact', label: 'Compact — one line per item' }]} />
+            <Select label="Item lines" value={d.itemStyle} onChange={(v) => up('itemStyle', v as WhatsAppSettings['itemStyle'])} options={[{ value: 'detailed', label: 'Detailed (name, brand, size, price)' }, { value: 'compact', label: 'Compact (one line per item)' }]} />
             <Select label="Divider lines" value={d.divider} onChange={(v) => up('divider', v as WhatsAppSettings['divider'])} options={[{ value: 'line', label: '━━━━━━━ Solid line' }, { value: 'dots', label: '• • • • • Dots' }, { value: 'none', label: 'None (blank space)' }]} />
             <TextInput label="Final total label" value={d.totalLabel} onChange={(e) => up('totalLabel', e.target.value)} />
             <div className="flex flex-col justify-center gap-3.5">
@@ -114,7 +114,15 @@ export default function WhatsAppPage() {
           <div className="flex flex-col gap-4">
             <TextArea label="Delivery / payment note (leave empty to hide)" rows={2} value={d.note} onChange={(e) => up('note', e.target.value)} />
             <TextInput label="Closing line (leave empty to hide)" value={d.closing} onChange={(e) => up('closing', e.target.value)} />
-            <Toggle checked={d.emojis} onChange={(v) => up('emojis', v)} label="Use emojis (📍 📞 🕘) in the shop details" />
+            <Toggle
+              checked={d.emojis}
+              onChange={(v) => up('emojis', v)}
+              label={
+                <span className="inline-flex flex-wrap items-center gap-1.5">
+                  Use icons (<MapPin size={14} className="text-brand" aria-hidden /> <Phone size={14} className="text-brand" aria-hidden /> <Clock size={14} className="text-brand" aria-hidden />) in the shop details
+                </span>
+              }
+            />
           </div>
         </Card>
       </div>
@@ -130,7 +138,7 @@ export default function WhatsAppPage() {
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#ececf0] bg-white/95 px-6 py-3 backdrop-blur dark:border-[#45464c] dark:bg-[#34353a]/95 max-sm:px-4 max-sm:py-2.5 lg:pl-[288px]">
         <div className="mx-auto flex max-w-[1180px] flex-wrap items-center gap-3 max-sm:gap-2">
           <div className="min-w-0 flex-1 text-[13px] max-sm:w-full max-sm:flex-none max-sm:text-xs">
-            {saved ? <span className="inline-flex items-center gap-1.5 font-semibold text-[#1c6b3c] dark:text-[#7fd6a1]"><Check size={15} aria-hidden /> Saved — new orders use this message.</span> : dirty ? <span className="font-semibold text-ink">You have unsaved changes.</span> : <span className="text-muted">No changes.</span>}
+            {saved ? <span className="inline-flex items-center gap-1.5 font-semibold text-[#1c6b3c] dark:text-[#7fd6a1]"><Check size={15} aria-hidden /> Saved. New orders use this message.</span> : dirty ? <span className="font-semibold text-ink">You have unsaved changes.</span> : <span className="text-muted">No changes.</span>}
           </div>
           <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} onClick={() => { setD(structuredClone(defaultSettings.whatsapp)); setNumError(''); setSaved(false) }}><RotateCcw size={15} aria-hidden /> Reset to default</button>
           <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={() => { setD(structuredClone(settings.whatsapp)); setWhatsappNumber(settings.business.whatsappNumber); setNumError('') }}>Discard</button>
