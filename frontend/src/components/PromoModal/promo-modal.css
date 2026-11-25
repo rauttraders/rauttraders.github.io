@@ -1,0 +1,29 @@
+.promo-overlay { background: rgba(0,0,0,.55); backdrop-filter: blur(4px); }
+
+/* Slider arrow icon nudges outward and back once, when clicked */
+@keyframes arrow-bounce-left { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-4px); } }
+@keyframes arrow-bounce-right { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
+.arrow-bounce-left { animation: arrow-bounce-left 0.4s ease-out 1; }
+.arrow-bounce-right { animation: arrow-bounce-right 0.4s ease-out 1; }
+@media (prefers-reduced-motion: reduce) {
+  .arrow-bounce-left, .arrow-bounce-right { animation: none; }
+}
+
+/* Dark mode: white die-cut border that follows the logo's own edges (no box) */
+html.dark .logo-outline {
+  margin: 1px;
+  filter:
+    drop-shadow(1.2px 0 0 #fff) drop-shadow(-1.2px 0 0 #fff)
+    drop-shadow(0 1.2px 0 #fff) drop-shadow(0 -1.2px 0 #fff)
+    drop-shadow(0.8px 0.8px 0 #fff) drop-shadow(-0.8px -0.8px 0 #fff)
+    drop-shadow(0.8px -0.8px 0 #fff) drop-shadow(-0.8px 0.8px 0 #fff);
+}
+
+/* Client logo marquee: scrolls right-to-left forever; the list is rendered twice so -50% loops seamlessly */
+@keyframes logo-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.logo-marquee-track { animation: logo-marquee var(--marquee-time, 40s) linear infinite; }
+.logo-marquee:hover .logo-marquee-track { animation-play-state: paused; }
+.logo-marquee { mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+.logo-item { transition: transform .25s ease; }
+.logo-item:hover { transform: scale(1.12); }
+@media (prefers-reduced-motion: reduce) { .logo-marquee-track { animation: none; } }

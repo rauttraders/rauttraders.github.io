@@ -1,0 +1,25 @@
+.navbar { border-bottom: 1px solid #F0F0F0; }
+.navbar.is-scrolled { box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+html.dark .navbar { border-bottom-color: #45464c; }
+html.dark .navbar.is-scrolled { box-shadow: 0 6px 20px rgba(0,0,0,.5); }
+html.dark .search-field:focus-within { box-shadow: inset 0 0 0 1px #6a6b72; }
+
+.nav-link { position: relative; display: inline-block; padding: 4px 0; }
+.nav-link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: #EF5350; transform: scaleX(0); transition: transform .15s ease;
+}
+.nav-link:hover::after, .nav-link:focus-visible::after { transform: scaleX(1); }
+
+.search-field:focus-within { box-shadow: inset 0 0 0 1px #D4D5D9; }
+
+/* Die-cut sticker: white outline hugging the logo's own edges (rounded via diagonals),
+   no shadow */
+.sticker-logo {
+  margin: 1px;
+  filter:
+    drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff)
+    drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff)
+    drop-shadow(0.7px 0.7px 0 #fff) drop-shadow(-0.7px -0.7px 0 #fff)
+    drop-shadow(0.7px -0.7px 0 #fff) drop-shadow(-0.7px 0.7px 0 #fff);
+}

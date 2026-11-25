@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Nunito", system-ui, sans-serif;
+  --color-ink: #111111;
+  --color-muted: #596579;
+  --color-brand: #ef5350;
+  --color-brand-hover: #e53935;
+  --color-line: #d8d8df;
+  --color-cream: #fff4f4;
+  --color-cream-2: #ffeaea;
+}
+
+html { scroll-behavior: smooth; }
+html, body, #root { min-height: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; font-family: var(--font-sans); background: #e9ebf0; color: var(--color-ink); }
+
+button, input, select, textarea { font-family: inherit; }
+
+/* Dark mode: swap the colour tokens and page surface */
+html.dark {
+  color-scheme: dark;
+  --color-ink: #f3f3f3;
+  --color-muted: #b4b4b8;
+  --color-line: #55565d;
+  --color-cream: #3a2e2e;
+  --color-cream-2: #3a2323;
+}
+html.dark body { background: #2b2c30; }
+
+/* Always-on white die-cut sticker border that follows the logo's own edges (no box) */
+.sticker-outline {
+  margin: 2px;
+  filter:
+    drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)
+    drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+    drop-shadow(1.4px 1.4px 0 #fff) drop-shadow(-1.4px -1.4px 0 #fff)
+    drop-shadow(1.4px -1.4px 0 #fff) drop-shadow(-1.4px 1.4px 0 #fff);
+}
+
+/* Scroll-reveal: fades and slides content up once it enters the viewport */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; transition-delay: var(--reveal-delay, 0ms); }
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* Soft dotted texture for alternate section backgrounds */
+.bg-dots {
+  background-image: radial-gradient(rgba(239, 83, 80, 0.12) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+
+/* Admin charts: categorical slots (validated reference palette) + chart ink, light and dark */
+.viz-root {
+  --viz-brand: #e53935; --viz-brand-soft: rgba(229, 57, 53, 0.16);
+  --viz-1: #2a78d6; --viz-2: #eb6834; --viz-3: #1baf7a; --viz-4: #eda100; --viz-5: #e87ba4; --viz-6: #008300; --viz-other: #9b9ba3;
+  --viz-surface: #ffffff; --viz-grid: #ececf0; --viz-axis: #596579;
+}
+html.dark .viz-root {
+  --viz-brand: #ef5350; --viz-brand-soft: rgba(239, 83, 80, 0.2);
+  --viz-1: #3987e5; --viz-2: #d95926; --viz-3: #199e70; --viz-4: #c98500; --viz-5: #d55181; --viz-6: #0ca30c; --viz-other: #7a7b83;
+  --viz-surface: #34353a; --viz-grid: #45464c; --viz-axis: #b4b4b8;
+}
+
+/* Remove native number spinners and the search clear "x" so inputs keep the UI style */
+input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; display: none; }
+
+/* Styled range slider (admin) */
+.range-input { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 9999px; background: var(--color-line); outline: none; cursor: pointer; }
+.range-input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #ef5350; border: 3px solid #fff; box-shadow: 0 2px 6px rgba(239,83,80,.5); }
+.range-input::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #ef5350; border: 3px solid #fff; box-shadow: 0 2px 6px rgba(239,83,80,.5); }
+.range-input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(239,83,80,.25); }
+
+/* Custom scrollbars: slim, rounded, soft grey that turns brand-red on hover (light + dark) */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cfd0d6; border: 3px solid transparent; background-clip: content-box; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #ef5350; background-clip: content-box; }
+::-webkit-scrollbar-thumb:active { background: #e53935; background-clip: content-box; }
+::-webkit-scrollbar-corner { background: transparent; }
+html.dark ::-webkit-scrollbar-thumb { background: #5a5b62; background-clip: content-box; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: #ef5350; background-clip: content-box; }
+/* Firefox (and anything without ::-webkit-scrollbar) */
+@supports not selector(::-webkit-scrollbar) {
+  * { scrollbar-width: thin; scrollbar-color: #cfd0d6 transparent; }
+  html.dark * { scrollbar-color: #5a5b62 transparent; }
+}
+
+/* Back-to-top arrow: gentle bob while hovered */
+@keyframes back-top-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+/* Confirmation dialogs */
+@keyframes dlg-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dlg-pop { from { opacity: 0; transform: translateY(8px) scale(0.96); } to { opacity: 1; transform: none; } }
