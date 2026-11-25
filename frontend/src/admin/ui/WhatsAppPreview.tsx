@@ -1,5 +1,6 @@
 import { CheckCheck, Mic, Paperclip, Phone, Smile, Video } from 'lucide-react'
 import type { ReactNode } from 'react'
+import logoUrl from '../../assets/sortlogo.png'
 
 /** Renders WhatsApp's *bold*, _italic_ and ~strike~ markup the way the chat does. */
 function renderMarkup(line: string): ReactNode[] {
@@ -34,9 +35,11 @@ export default function WhatsAppPreview({ text, name, time = '10:42 am' }: Props
     <div className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[30px] border-[7px] border-[#1f2023] bg-[#efeae2] shadow-[0_14px_36px_rgba(0,0,0,0.25)] dark:bg-[#0b141a]">
       {/* header */}
       <div className="flex items-center gap-2.5 bg-[#075e54] px-3 py-2.5 text-white dark:bg-[#202c33]">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-[15px] font-bold">{(name.trim().charAt(0) || 'S').toUpperCase()}</span>
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1">
+          <img src={logoUrl} alt={name || 'Raut Traders'} className="h-full w-full object-contain" />
+        </span>
         <div className="min-w-0 flex-1 leading-tight">
-          <p className="m-0 truncate text-[14px] font-semibold">{name || 'Shop'}</p>
+          <p className="m-0 truncate text-[14px] font-semibold">{name || 'Raut Traders'}</p>
           <p className="m-0 text-[11px] opacity-80">online</p>
         </div>
         <Video size={17} aria-hidden className="opacity-90" />

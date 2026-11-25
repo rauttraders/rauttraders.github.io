@@ -1,4 +1,4 @@
-import { Check, MessageSquareText, RotateCcw, Save, Type } from 'lucide-react'
+import { Check, MessageSquareText, RotateCcw, Save, Smartphone, Type } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { defaultSettings } from '../../data/company'
@@ -16,8 +16,10 @@ const SAMPLE_WHEN = new Date(2026, 10, 22, 10, 42)
 export default function WhatsAppPage() {
   const { settings, products, updateSettings } = useStore()
   const [d, setD] = useState<WhatsAppSettings>(() => structuredClone(settings.whatsapp))
+  const [whatsappNumber, setWhatsappNumber] = useState(() => settings.business.whatsappNumber)
+  const [numError, setNumError] = useState('')
   const [saved, setSaved] = useState(false)
-  const dirty = JSON.stringify(d) !== JSON.stringify(settings.whatsapp)
+  const dirty = JSON.stringify(d) !== JSON.stringify(settings.whatsapp) || whatsappNumber !== settings.business.whatsappNumber
 
   useEffect(() => {
     if (!saved) return
@@ -38,10 +40,20 @@ export default function WhatsAppPage() {
     return [{ id: 's1', name: 'Sample Biscuits', company: 'Brand', size: '70 g', price: 10, qty: 12, image: '' }, { id: 's2', name: 'Sample Namkeen', company: 'Brand', size: '200 g', price: 40, qty: 6, image: '' }]
   }, [products])
 
-  const text = useMemo(() => buildBasketMessage(sample, settings.business, d, 'RT-1042', SAMPLE_WHEN), [sample, settings.business, d])
+  const liveBusiness = useMemo(
+    () => ({ ...settings.business, whatsappNumber: whatsappNumber.trim() }),
+    [settings.business, whatsappNumber],
+  )
+  const text = useMemo(() => buildBasketMessage(sample, liveBusiness, d, 'RT-1042', SAMPLE_WHEN), [sample, liveBusiness, d])
 
   const save = () => {
-    updateSettings({ ...settings, whatsapp: d })
+    const cleaned = whatsappNumber.trim()
+    if (cleaned && cleaned.replace(/\D/g, '').length < 10) {
+      setNumError('WhatsApp number must include country code (e.g. 919876543210).')
+      return
+    }
+    setNumError('')
+    updateSettings({ ...settings, business: { ...settings.business, whatsappNumber: cleaned }, whatsapp: d })
     setSaved(true)
   }
 
@@ -51,8 +63,18 @@ export default function WhatsAppPage() {
     <div className="mx-auto grid max-w-[1180px] grid-cols-[minmax(0,1fr)_370px] gap-6 pb-24 max-xl:grid-cols-1 max-sm:pb-36">
       <div className="flex flex-col gap-5">
         <Card>
-          <PanelHeader icon={MessageSquareText} title="Shop details" subtitle="The first lines of the message" />
-          <p className="mb-4 mt-0 text-[13px] text-muted">The details themselves come from <Link to="/admin/settings" className="font-semibold text-brand no-underline hover:underline">Site settings</Link>. Choose which ones to show here.</p>
+          <PanelHeader icon={MessageSquareText} title="Shop details" subtitle="Receiving number and the first lines of the message" />
+          <div className="mb-5">
+            <TextInput
+              label="WhatsApp number (receives orders)"
+              value={whatsappNumber}
+              onChange={(e) => { setWhatsappNumber(e.target.value); setNumError(''); setSaved(false) }}
+              placeholder="e.g. 919876543210"
+              error={numError}
+              hint="With country code, digits only. Saved to the database — customer orders are sent here (also editable in Site settings)."
+            />
+          </div>
+          <p className="mb-4 mt-0 text-[13px] text-muted">Other business details come from <Link to="/admin/settings" className="font-semibold text-brand no-underline hover:underline">Site settings</Link>. Choose which ones to show here.</p>
           <div className={row}>
             <Toggle checked={d.showShopName} onChange={(v) => up('showShopName', v)} label="Shop name" />
             <Toggle checked={d.showAddress} onChange={(v) => up('showAddress', v)} label="Address" />
@@ -98,9 +120,11 @@ export default function WhatsAppPage() {
       </div>
 
       <aside className="xl:sticky xl:top-[84px] xl:self-start">
-        <p className="m-0 mb-3 text-center text-[12px] font-bold uppercase tracking-[0.1em] text-muted">Live preview</p>
-        <WhatsAppPreview text={text} name={settings.business.name} />
-        <p className="mb-0 mt-3 text-center text-xs text-muted">What the customer sends you. Sample order using your real products. It never contains their personal details.</p>
+        <Card>
+          <PanelHeader icon={Smartphone} title="Live preview" subtitle="Customer WhatsApp order view" />
+          <WhatsAppPreview text={text} name={settings.business.name || 'Raut Traders'} />
+          <p className="mb-0 mt-3 text-center text-xs text-muted">What the customer sends you. Sample order using your real products. It never contains their personal details.</p>
+        </Card>
       </aside>
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#ececf0] bg-white/95 px-6 py-3 backdrop-blur dark:border-[#45464c] dark:bg-[#34353a]/95 max-sm:px-4 max-sm:py-2.5 lg:pl-[288px]">
@@ -108,8 +132,8 @@ export default function WhatsAppPage() {
           <div className="min-w-0 flex-1 text-[13px] max-sm:w-full max-sm:flex-none max-sm:text-xs">
             {saved ? <span className="inline-flex items-center gap-1.5 font-semibold text-[#1c6b3c] dark:text-[#7fd6a1]"><Check size={15} aria-hidden /> Saved — new orders use this message.</span> : dirty ? <span className="font-semibold text-ink">You have unsaved changes.</span> : <span className="text-muted">No changes.</span>}
           </div>
-          <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} onClick={() => { setD(structuredClone(defaultSettings.whatsapp)); setSaved(false) }}><RotateCcw size={15} aria-hidden /> Reset to default</button>
-          <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={() => setD(structuredClone(settings.whatsapp))}>Discard</button>
+          <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} onClick={() => { setD(structuredClone(defaultSettings.whatsapp)); setNumError(''); setSaved(false) }}><RotateCcw size={15} aria-hidden /> Reset to default</button>
+          <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={() => { setD(structuredClone(settings.whatsapp)); setWhatsappNumber(settings.business.whatsappNumber); setNumError('') }}>Discard</button>
           <button type="button" className={`${btnPrimary} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={save}><Save size={15} aria-hidden /> Save changes</button>
         </div>
       </div>
