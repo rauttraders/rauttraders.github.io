@@ -19,12 +19,12 @@ export interface HeaderActionsProps {
   cartCount?: number
 }
 
-/** Right side of the navbar: PROFILE (language + theme dropdown) and MY ORDER (the page with the chosen items). */
+/** Right side of the navbar: MY ORDER (the page with the chosen items) and PROFILE (language + theme dropdown). */
 export default function HeaderActions({ theme, onThemeChange, language, onLanguageChange, basketItems = [], onRemoveItem, onQtyChange, onBag, onCheckout, basketOpen, onBasketOpenChange, showLabels = true, cartCount = 0 }: HeaderActionsProps) {
   return (
     <div className="flex items-center gap-[22px] max-md:gap-4">
-      <ProfileMenu theme={theme} onThemeChange={onThemeChange} language={language} onLanguageChange={onLanguageChange} showLabel={showLabels} />
       <BasketMenu items={basketItems} count={cartCount} onRemove={onRemoveItem} onQty={onQtyChange} onBrowse={onBag} onCheckout={onCheckout} open={basketOpen} onOpenChange={onBasketOpenChange} showLabel={showLabels} />
+      <ProfileMenu theme={theme} onThemeChange={onThemeChange} language={language} onLanguageChange={onLanguageChange} showLabel={showLabels} />
     </div>
   )
 }
