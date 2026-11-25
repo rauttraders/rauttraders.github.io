@@ -55,7 +55,35 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <style>
+        @keyframes rt-spin { to { transform: rotate(360deg); } }
+        .rt-boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: #e9ebf0; color: #111111; font-family: 'Nunito', system-ui, -apple-system, sans-serif; }
+        .rt-boot-ring-wrap { position: relative; width: 80px; height: 80px; border-radius: 9999px; background: #ffffff; box-shadow: 0 8px 28px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; }
+        .rt-boot-ring { position: absolute; inset: 0; border-radius: 9999px; border: 3px solid #ececf0; border-top-color: #ef5350; animation: rt-spin 0.85s linear infinite; }
+        .rt-boot-logo { width: 40px; height: 40px; object-fit: contain; }
+        .rt-boot-title { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: 0.02em; }
+        .rt-boot-brand { color: #ef5350; }
+        .rt-boot-sub { margin: 4px 0 0; font-size: 13px; font-weight: 600; color: #596579; text-align: center; }
+        @media (prefers-color-scheme: dark) {
+          .rt-boot { background: #2b2c30; color: #f3f3f3; }
+          .rt-boot-ring-wrap { background: #34353a; }
+          .rt-boot-ring { border-color: #45464c; border-top-color: #ef5350; }
+          .rt-boot-sub { color: #b4b4b8; }
+        }
+        @media (prefers-reduced-motion: reduce) { .rt-boot-ring { animation: none; } }
+      </style>
+      <div class="rt-boot" role="status" aria-live="polite">
+        <div class="rt-boot-ring-wrap">
+          <span class="rt-boot-ring" aria-hidden="true"></span>
+          <img class="rt-boot-logo" src="/favicon.png?v=2" alt="Raut Traders" />
+        </div>
+        <div>
+          <p class="rt-boot-title">Raut <span class="rt-boot-brand">Trader's</span></p>
+          <p class="rt-boot-sub">Loading…</p>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
