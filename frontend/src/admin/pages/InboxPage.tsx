@@ -188,7 +188,9 @@ export default function InboxPage() {
       await api('/admin/contacts/read', { method: 'POST', body: { ids: [id] } })
       setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, read: true } : m)))
       setUnread((n) => Math.max(0, n - 1))
-    } catch {/* ignore */}
+    } catch (e) {
+      setError((e as Error).message)
+    }
   }
 
   const handleMarkAllRead = async () => {
@@ -198,7 +200,9 @@ export default function InboxPage() {
       await api('/admin/contacts/read', { method: 'POST', body: { ids: unreadIds } })
       setMessages((prev) => prev.map((m) => ({ ...m, read: true })))
       setUnread(0)
-    } catch {/* ignore */}
+    } catch (e) {
+      setError((e as Error).message)
+    }
   }
 
   const handleArchive = async (id: number, archive: boolean) => {
@@ -208,7 +212,9 @@ export default function InboxPage() {
       if (!archive) return // restored from archive — no unread change needed
       const wasUnread = messages.find((m) => m.id === id)?.read === false
       if (wasUnread) setUnread((n) => Math.max(0, n - 1))
-    } catch {/* ignore */}
+    } catch (e) {
+      setError((e as Error).message)
+    }
   }
 
   const handleDelete = async (id: number) => {
@@ -220,11 +226,13 @@ export default function InboxPage() {
     })
     if (!go) return
     try {
-      await api(`/admin/contacts/${id}`, { method: 'DELETE' })
+      await api(`/admin/contacts/${id}`, { method: 'DELETE', body: {} })
       const wasUnread = messages.find((m) => m.id === id)?.read === false
       setMessages((prev) => prev.filter((m) => m.id !== id))
       if (wasUnread) setUnread((n) => Math.max(0, n - 1))
-    } catch {/* ignore */}
+    } catch (e) {
+      setError((e as Error).message)
+    }
   }
 
   const hasUnread = messages.some((m) => !m.read)

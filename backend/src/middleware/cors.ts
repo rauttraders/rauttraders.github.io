@@ -16,7 +16,7 @@ export const isAllowedOrigin = (env: Env, origin: string | undefined | null): bo
 
 const corsHeaders = (origin: string): Record<string, string> => ({
   'Access-Control-Allow-Origin': origin,
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Authorization, Content-Type, Idempotency-Key',
   'Access-Control-Expose-Headers': 'Retry-After, Idempotent-Replayed',
   'Access-Control-Max-Age': '600',
