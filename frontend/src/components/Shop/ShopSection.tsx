@@ -54,7 +54,7 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
           </SectionHeader>
         </Reveal>
 
-        <div className="mb-6 mt-7 grid grid-cols-2 gap-4 max-sm:grid-cols-1 md:max-w-[560px]">
+        <div className="mb-6 mt-7 grid grid-cols-2 gap-4 max-sm:gap-2.5 md:max-w-[560px]">
           <FilterDropdown
             label="Category"
             icon={<LayoutGrid size={16} aria-hidden />}
