@@ -44,6 +44,8 @@ function useScrolled(): boolean {
 
 export interface NavbarProps {
   items?: NavItem[]
+  searchQuery?: string
+  onSearchChange?: (query: string) => void
   onSearch?: (query: string) => void
   theme?: 'light' | 'dark'
   onThemeChange?: (theme: 'light' | 'dark') => void
@@ -70,7 +72,7 @@ export const defaultNavItems: NavItem[] = [
   { label: 'Contact', href: '#contact' },
 ]
 
-function Navbar({ items = defaultNavItems, onSearch, theme = 'light', onThemeChange = noop, language = 'en', onLanguageChange = noop, basketItems, onRemoveItem, onQtyChange, onBag, onCheckout, basketOpen, onBasketOpenChange, cartCount, onNavigate, onLogoClick }: NavbarProps) {
+function Navbar({ items = defaultNavItems, searchQuery, onSearchChange, onSearch, theme = 'light', onThemeChange = noop, language = 'en', onLanguageChange = noop, basketItems, onRemoveItem, onQtyChange, onBag, onCheckout, basketOpen, onBasketOpenChange, cartCount, onNavigate, onLogoClick }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const active = useActiveSection()
@@ -95,7 +97,7 @@ function Navbar({ items = defaultNavItems, onSearch, theme = 'light', onThemeCha
         </div>
 
         <div className="ml-auto flex items-center gap-[22px] max-lg:gap-2 max-md:gap-1.5">
-          <SearchBar onSearch={onSearch} className="w-[340px] max-xl:w-[260px] max-lg:hidden" />
+          <SearchBar value={searchQuery} onChange={onSearchChange} onSearch={onSearch} className="w-[340px] max-xl:w-[260px] max-lg:hidden" />
           <button
             type="button"
             aria-label="Search"
@@ -133,7 +135,7 @@ function Navbar({ items = defaultNavItems, onSearch, theme = 'light', onThemeCha
 
       {searchOpen && (
         <div className="hidden px-4 pb-3 max-lg:block">
-          <SearchBar onSearch={onSearch} className="w-full" />
+          <SearchBar value={searchQuery} onChange={onSearchChange} onSearch={onSearch} className="w-full" />
         </div>
       )}
 

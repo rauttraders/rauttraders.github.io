@@ -40,7 +40,7 @@ export default function App() {
 
   return (
     <>
-      <Navbar theme={theme} onThemeChange={setTheme} language={language} onLanguageChange={setLanguage} onSearch={onSearch} cartCount={itemCount} basketItems={basketItems} onRemoveItem={removeFromBasket} onQtyChange={setQty} onBag={scrollToShop} onCheckout={() => setOrdering(true)} basketOpen={myOrderOpen} onBasketOpenChange={setMyOrderOpen} />
+      <Navbar theme={theme} onThemeChange={setTheme} language={language} onLanguageChange={setLanguage} searchQuery={query} onSearchChange={setQuery} onSearch={onSearch} cartCount={itemCount} basketItems={basketItems} onRemoveItem={removeFromBasket} onQtyChange={setQty} onBag={scrollToShop} onCheckout={() => setOrdering(true)} basketOpen={myOrderOpen} onBasketOpenChange={setMyOrderOpen} />
       <main>
         <PromoModal onPrimary={scrollToShop} onSecondary={() => setMyOrderOpen(true)} />
         <ShopSection query={query} qtys={qtys} onQty={setQty} />

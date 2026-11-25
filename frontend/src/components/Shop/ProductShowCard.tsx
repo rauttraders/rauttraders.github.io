@@ -1,5 +1,6 @@
 import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react'
 import { memo } from 'react'
+import HighlightText from '../ui/HighlightText'
 import QtyInput from '../ui/QtyInput'
 import { formatINR } from '../../lib/format'
 import type { Product as ShowcaseProduct } from '../../store/types'
@@ -9,19 +10,20 @@ interface ProductShowCardProps {
   qty: number
   /** Brand logo shown inside the company pill (optional). */
   brandLogo?: string
+  searchQuery?: string
   onQty: (id: string, qty: number) => void
 }
 
 const ctaBase =
   'flex h-[46px] w-full cursor-pointer items-center justify-center gap-2 rounded-full border-0 text-sm font-semibold transition-colors active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand'
 
-function ProductShowCard({ product, qty, brandLogo, onQty }: ProductShowCardProps) {
+function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: ProductShowCardProps) {
   return (
     <article className="flex h-full flex-col overflow-hidden group rounded-2xl border border-[#ececf0] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_12px_28px_rgba(239,83,80,0.18)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none">
       <div className="relative flex h-[190px] items-center justify-center bg-gradient-to-b from-cream to-white dark:from-[#3d3e44] dark:to-[#34353a]">
         <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-[#c62f2c] shadow-sm backdrop-blur dark:bg-[#2b2c30]/90 dark:text-[#ff8a87]">
           {brandLogo && <img src={brandLogo} alt="" draggable={false} className="logo-outline h-4 w-auto max-w-[44px] shrink-0 object-contain" />}
-          {product.company}
+          <HighlightText text={product.company} query={searchQuery} />
         </span>
         <img
           src={product.image}
@@ -37,8 +39,8 @@ function ProductShowCard({ product, qty, brandLogo, onQty }: ProductShowCardProp
       </div>
 
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="m-0 text-[15px] font-bold leading-snug text-ink">{product.name}</h3>
-        <p className="mb-3 mt-1.5 line-clamp-2 min-h-[2.6rem] text-[13px] leading-[1.3rem] text-muted">{product.description}</p>
+        <h3 className="m-0 text-[15px] font-bold leading-snug text-ink"><HighlightText text={product.name} query={searchQuery} /></h3>
+        <p className="mb-3 mt-1.5 line-clamp-2 min-h-[2.6rem] text-[13px] leading-[1.3rem] text-muted"><HighlightText text={product.description} query={searchQuery} /></p>
 
         <div className="mb-4 mt-auto flex items-baseline gap-2">
           {product.mrp && <span className="text-[13px] text-muted line-through">{formatINR(product.mrp)}</span>}

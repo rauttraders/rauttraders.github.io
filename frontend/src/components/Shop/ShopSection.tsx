@@ -73,6 +73,7 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
 
         <p className="mb-5 mt-0 text-[13px] font-semibold text-muted" aria-live="polite">
           Showing <span className="text-brand">{items.length}</span> {items.length === 1 ? 'product' : 'products'}
+          {query.trim() ? <> for “<span className="text-ink">{query.trim()}</span>”</> : null}
         </p>
 
         {!ready ? (
@@ -88,7 +89,7 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
             {items.map((p, i) => (
               <li key={p.id} className="min-w-0">
                 <Reveal delay={(i % 4) * 70} className="h-full">
-                  <ProductShowCard product={p} qty={qtys[p.id] ?? 0} brandLogo={logoOf.get(p.company) || undefined} onQty={onQty} />
+                  <ProductShowCard product={p} qty={qtys[p.id] ?? 0} brandLogo={logoOf.get(p.company) || undefined} searchQuery={query} onQty={onQty} />
                 </Reveal>
               </li>
             ))}
