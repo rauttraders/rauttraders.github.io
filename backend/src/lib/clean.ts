@@ -83,6 +83,10 @@ export function cleanSettings(v: unknown): unknown | null {
     for (const [field, type] of Object.entries(fields)) {
       const x = sec[field]
       if (x === undefined) continue
+      if (x === null && section === 'business' && (field === 'lat' || field === 'lng')) {
+        delete sec[field]
+        continue
+      }
       const ok = type === 's' ? typeof x === 'string' : type === 'n' ? typeof x === 'number' : type === 'b' ? typeof x === 'boolean' : Array.isArray(x)
       if (!ok) throw new HttpError(400, `The setting "${section}.${field}" has the wrong type.`)
     }

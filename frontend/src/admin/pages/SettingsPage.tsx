@@ -46,7 +46,12 @@ export default function SettingsPage() {
     if (!(d.about.foundedYear >= 1900 && d.about.foundedYear <= new Date().getFullYear())) errs.push('Founded year is not valid.')
     setErrors(errs)
     if (errs.length) return
-    updateSettings(d)
+    const next = structuredClone(d)
+    if (!hasLat || !hasLng) {
+      delete (next.business as { lat?: number }).lat
+      delete (next.business as { lng?: number }).lng
+    }
+    updateSettings(next)
     setSaved(true)
   }
 
@@ -95,8 +100,8 @@ export default function SettingsPage() {
           <TextInput label="Email" type="email" value={d.business.email} onChange={(e) => up('business', { email: e.target.value })} />
           <TextInput wrapClass="col-span-2 max-sm:col-span-1" label="Opening hours" value={d.business.hours} onChange={(e) => up('business', { hours: e.target.value })} />
           {/* ── Map location ── */}
-          <TextInput label="Map latitude" type="number" step="any" value={Number.isNaN(d.business.lat) ? '' : d.business.lat} onChange={(e) => up('business', { lat: num(e.target.value) })} hint="Right-click your shop in Google Maps and click the numbers." />
-          <TextInput label="Map longitude" type="number" step="any" value={Number.isNaN(d.business.lng) ? '' : d.business.lng} onChange={(e) => up('business', { lng: num(e.target.value) })} />
+          <TextInput label="Map latitude" type="number" step="any" value={d.business.lat == null || Number.isNaN(d.business.lat) ? '' : d.business.lat} onChange={(e) => up('business', { lat: num(e.target.value) })} hint="Right-click your shop in Google Maps and click the numbers." />
+          <TextInput label="Map longitude" type="number" step="any" value={d.business.lng == null || Number.isNaN(d.business.lng) ? '' : d.business.lng} onChange={(e) => up('business', { lng: num(e.target.value) })} />
           <div className="col-span-2 max-sm:col-span-1 flex flex-col gap-1.5">
             <button
               type="button"
