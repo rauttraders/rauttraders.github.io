@@ -87,7 +87,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3 border-t border-[#3a3b40] pt-5 text-[13px]">
-          <p className="m-0">© {new Date().getFullYear()} {company.name || 'Your Business'}. All rights reserved.</p>
+          <p className="m-0">© {new Date().getFullYear()} {company.name || 'Raut Traders'}. All rights reserved.</p>
         </div>
       </div>
     </footer>
