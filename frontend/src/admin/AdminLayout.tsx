@@ -36,7 +36,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
 const ALL = GROUPS.flatMap((g) => g.items)
 
 export default function AdminLayout() {
-  const { authed, logout, profile, prefs, usingDefaults } = useAuth()
+  const { authed, logout, profile, username, prefs, usingDefaults } = useAuth()
   const { settings, saveError, saving, ready, newOrders } = useStore()
   const [toast, setToast] = useState<{ id: number; text: string } | null>(null)
   const { theme, setTheme } = useTheme()
@@ -173,14 +173,20 @@ export default function AdminLayout() {
               aria-haspopup="menu"
               aria-expanded={menu.open}
               onClick={() => menu.setOpen((o) => !o)}
-              className={`flex cursor-pointer items-center gap-3 rounded-full border bg-white py-1.5 pl-1.5 pr-3 text-left outline-none transition-colors dark:bg-[#2b2c30] ${menu.open ? 'border-brand' : 'border-[#d8d8df] hover:border-brand/60 dark:border-[#55565d]'}`}
+              className={`flex cursor-pointer items-center gap-2 rounded-full border bg-white py-1 pl-1 pr-2.5 text-left outline-none transition-colors dark:bg-[#2b2c30] ${menu.open ? 'border-brand' : 'border-[#d8d8df] hover:border-brand/60 dark:border-[#55565d]'}`}
             >
-              <Avatar photo={profile.photo} name={profile.name} size={36} />
-              <span className="min-w-0 pl-0.5 leading-tight max-md:hidden">
-                <span className="block max-w-[190px] truncate text-[13px] font-bold text-ink">{profile.name}</span>
-                <span className="block max-w-[190px] truncate text-[11px] text-muted">{profile.email}</span>
+              <Avatar photo={profile.photo} name={profile.name || username} size={28} />
+              <span className="min-w-0 leading-tight max-md:hidden">
+                <span className="block max-w-[180px] truncate text-[12px] font-bold text-ink">{profile.name || username}</span>
+                {(username || profile.email) && (
+                  <span className="block max-w-[180px] truncate text-[10.5px] text-muted">
+                    {username ? `@${username}` : ''}
+                    {username && profile.email ? ' · ' : ''}
+                    {profile.email || ''}
+                  </span>
+                )}
               </span>
-              <ChevronDown size={16} aria-hidden className={`shrink-0 text-muted transition-transform ${menu.open ? 'rotate-180' : ''}`} />
+              <ChevronDown size={14} aria-hidden className={`shrink-0 text-muted transition-transform ${menu.open ? 'rotate-180' : ''}`} />
             </button>
 
             {menu.open &&
@@ -193,10 +199,11 @@ export default function AdminLayout() {
                   className="z-[300] w-[260px] max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border border-[#e3e3e8] bg-white shadow-[0_16px_40px_rgba(0,0,0,0.18)] dark:border-[#55565d] dark:bg-[#34353a]"
                 >
                   <div className="flex items-center gap-3 border-b border-[#ececf0] px-4 py-3.5 dark:border-[#45464c]">
-                    <Avatar photo={profile.photo} name={profile.name} size={40} />
+                    <Avatar photo={profile.photo} name={profile.name || username} size={36} />
                     <div className="min-w-0">
-                      <p className="m-0 truncate text-[14px] font-extrabold text-ink">{profile.name}</p>
-                      <p className="m-0 truncate text-xs text-muted">{profile.email}</p>
+                      <p className="m-0 truncate text-[14px] font-extrabold text-ink">{profile.name || username}</p>
+                      {username && <p className="m-0 truncate text-xs font-semibold text-brand">@{username}</p>}
+                      {profile.email && <p className="m-0 truncate text-xs text-muted">{profile.email}</p>}
                     </div>
                   </div>
                   <div className="border-b border-[#ececf0] p-2 dark:border-[#45464c]">
