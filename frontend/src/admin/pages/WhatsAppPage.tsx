@@ -7,7 +7,7 @@ import { useStore } from '../../store/StoreContext'
 import type { WhatsAppSettings } from '../../store/types'
 import type { BasketItem } from '../../components/Navbar/BasketMenu'
 import { Card, PanelHeader, btnPrimary, btnSoft } from '../ui/Card'
-import { TextArea, TextInput, Toggle } from '../ui/Inputs'
+import { TextArea, TextInput, Toggle, IndiaPhoneInput } from '../ui/Inputs'
 import Select from '../ui/Select'
 import WhatsAppPreview from '../ui/WhatsAppPreview'
 
@@ -47,13 +47,13 @@ export default function WhatsAppPage() {
   const text = useMemo(() => buildBasketMessage(sample, liveBusiness, d, 'RT-1042', SAMPLE_WHEN), [sample, liveBusiness, d])
 
   const save = () => {
-    const cleaned = whatsappNumber.trim()
-    if (cleaned && cleaned.replace(/\D/g, '').length < 10) {
-      setNumError('WhatsApp number must include country code (e.g. 919876543210).')
+    const digits = whatsappNumber.replace(/\D/g, '')
+    if (digits && digits.length < 12) {
+      setNumError('Enter a valid 10-digit mobile number.')
       return
     }
     setNumError('')
-    updateSettings({ ...settings, business: { ...settings.business, whatsappNumber: cleaned }, whatsapp: d })
+    updateSettings({ ...settings, business: { ...settings.business, whatsappNumber: digits }, whatsapp: d })
     setSaved(true)
   }
 
@@ -65,13 +65,12 @@ export default function WhatsAppPage() {
         <Card>
           <PanelHeader icon={MessageSquareText} title="Shop details" subtitle="Receiving number and the first lines of the message" />
           <div className="mb-5">
-            <TextInput
+            <IndiaPhoneInput
               label="WhatsApp number (receives orders)"
               value={whatsappNumber}
-              onChange={(e) => { setWhatsappNumber(e.target.value); setNumError(''); setSaved(false) }}
-              placeholder="e.g. 919876543210"
+              onValueChange={(v) => { setWhatsappNumber(v); setNumError(''); setSaved(false) }}
               error={numError}
-              hint="With country code, digits only. Saved to the database. Customer orders are sent here (also editable in Site settings)."
+              hint="Enter your 10-digit number after +91. Saved to the database (also editable in Site settings)."
             />
           </div>
           <p className="mb-4 mt-0 text-[13px] text-muted">Other business details come from <Link to="/admin/settings" className="font-semibold text-brand no-underline hover:underline">Site settings</Link>. Choose which ones to show here.</p>
@@ -140,9 +139,9 @@ export default function WhatsAppPage() {
           <div className="min-w-0 flex-1 text-[13px] max-sm:w-full max-sm:flex-none max-sm:text-xs">
             {saved ? <span className="inline-flex items-center gap-1.5 font-semibold text-[#1c6b3c] dark:text-[#7fd6a1]"><Check size={15} aria-hidden /> Saved. New orders use this message.</span> : dirty ? <span className="font-semibold text-ink">You have unsaved changes.</span> : <span className="text-muted">No changes.</span>}
           </div>
-          <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} onClick={() => { setD(structuredClone(defaultSettings.whatsapp)); setNumError(''); setSaved(false) }}><RotateCcw size={15} aria-hidden /> Reset to default</button>
+          <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} onClick={() => { setD(structuredClone(defaultSettings.whatsapp)); setNumError(''); setSaved(false) }}>Reset to default <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <RotateCcw size={15} aria-hidden /></button>
           <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={() => { setD(structuredClone(settings.whatsapp)); setWhatsappNumber(settings.business.whatsappNumber); setNumError('') }}>Discard</button>
-          <button type="button" className={`${btnPrimary} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={save}><Save size={15} aria-hidden /> Save changes</button>
+          <button type="button" className={`${btnPrimary} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={save}>Save changes <span aria-hidden className="h-4 w-px shrink-0 bg-white/40" /> <Save size={15} aria-hidden /></button>
         </div>
       </div>
     </div>

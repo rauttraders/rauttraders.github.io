@@ -100,7 +100,7 @@ function ProfileCard() {
             <Upload size={15} aria-hidden /> Upload photo
             <input type="file" accept="image/*" className="sr-only" onChange={(e) => { onPhoto(e.target.files?.[0]); e.target.value = '' }} />
           </label>
-          {profile.photo && <button type="button" className={`${btnDanger} !h-9 !px-4`} onClick={() => { void updateProfile({ photo: '' }).then(() => setOk('Photo removed')) }}><Trash2 size={14} aria-hidden /> Remove</button>}
+          {profile.photo && <button type="button" className={`${btnDanger} !h-9 !px-4`} onClick={() => { void updateProfile({ photo: '' }).then(() => setOk('Photo removed')) }}>Remove <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Trash2 size={14} aria-hidden /></button>}
         </div>
       </div>
 
@@ -111,7 +111,7 @@ function ProfileCard() {
         <TextInput label="Email" type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErr('') }} autoComplete="email" />
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-[#ececf0] pt-4 dark:border-[#45464c]">
-        <button type="button" className={btnPrimary} disabled={!dirty} onClick={() => void save()}><Save size={15} aria-hidden /> Save profile</button>
+        <button type="button" className={btnPrimary} disabled={!dirty} onClick={() => void save()}>Save profile <span aria-hidden className="h-4 w-px shrink-0 bg-white/40" /> <Save size={15} aria-hidden /></button>
         {err ? <span role="alert" className="text-[13px] font-semibold text-[#c62f2c]">{err}</span> : ok ? <Ok>{ok}</Ok> : null}
       </div>
     </Card>
@@ -181,7 +181,7 @@ function SecurityCard() {
         </button>
         <p className="m-0 text-xs text-muted">Leave the new password blank to change only the username. Use 8+ characters; mixing cases, numbers and symbols makes it stronger.</p>
         <div className="flex flex-wrap items-center gap-3 border-t border-[#ececf0] pt-4 dark:border-[#45464c]">
-          <button type="submit" className={btnPrimary} disabled={busy}><KeyRound size={15} aria-hidden /> Update sign-in details</button>
+          <button type="submit" className={btnPrimary} disabled={busy}>Update sign-in details <span aria-hidden className="h-4 w-px shrink-0 bg-white/40" /> <KeyRound size={15} aria-hidden /></button>
           {err ? <span role="alert" className="text-[13px] font-semibold text-[#c62f2c]">{err}</span> : ok ? <Ok>{ok}</Ok> : null}
         </div>
       </form>
@@ -247,12 +247,12 @@ function DataCard() {
       <PanelHeader icon={Download} title="Backup & session" subtitle="Your data lives on the server — keep a copy of it too" />
       <p className="mb-4 mt-0 text-[13px] text-muted">A backup has your products, brands, slides, orders and site text (not your password). The server also keeps a daily safety copy in its data folder.</p>
       <div className="flex flex-wrap items-center gap-3">
-        <button type="button" className={btnPrimary} onClick={() => void download()}><Download size={15} aria-hidden /> Download backup</button>
+        <button type="button" className={btnPrimary} onClick={() => void download()}>Download backup <span aria-hidden className="h-4 w-px shrink-0 bg-white/40" /> <Download size={15} aria-hidden /></button>
         <label className={btnSoft}>
           <Upload size={15} aria-hidden /> Restore from file
           <input type="file" accept="application/json,.json" className="sr-only" onChange={(e) => { void restore(e.target.files?.[0]); e.target.value = '' }} />
         </label>
-        <button type="button" className={`${btnDanger} ml-auto max-sm:ml-0`} onClick={logout}><LogOut size={15} aria-hidden /> Sign out</button>
+        <button type="button" className={`${btnDanger} ml-auto max-sm:ml-0`} onClick={logout}>Sign out <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <LogOut size={15} aria-hidden /></button>
       </div>
       {msg && (msg.ok ? <p className="mb-0 mt-3"><Ok>{msg.text}</Ok></p> : <p role="alert" className="mb-0 mt-3 text-[13px] font-semibold text-[#c62f2c]">{msg.text}</p>)}
     </Card>

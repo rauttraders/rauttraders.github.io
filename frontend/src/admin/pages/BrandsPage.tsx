@@ -51,7 +51,7 @@ function BrandForm({ initial, onClose }: { initial: Brand | null; onClose: () =>
                 Upload logo
                 <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
               </label>
-              {logo && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(logo)}><Crop size={15} aria-hidden /> Adjust</button>}
+              {logo && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(logo)}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
               {logo && <button type="button" className={`${btnDanger} !h-9 !px-4`} onClick={() => setLogo('')}>Remove</button>}
             </div>
           </div>

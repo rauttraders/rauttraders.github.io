@@ -35,6 +35,48 @@ export function TextInput({ label, hint, error, wrapClass, ...rest }: Common & I
   )
 }
 
+/**
+ * Indian phone/WhatsApp input with a non-editable gray "+91 " prefix.
+ * Stores/returns `91XXXXXXXXXX` (or `""` when empty) so backend and wa.me links stay unaffected.
+ */
+export function IndiaPhoneInput({
+  label,
+  hint,
+  error,
+  wrapClass,
+  value,
+  onValueChange,
+  placeholder = '9876543210',
+}: Common & { value: string; onValueChange: (full: string) => void; placeholder?: string }) {
+  const digitsOnly = value.replace(/\D/g, '')
+  const local = digitsOnly.startsWith('91') && digitsOnly.length > 10 ? digitsOnly.slice(2, 12) : digitsOnly === '91' ? '' : digitsOnly.slice(0, 10)
+  return (
+    <FieldWrap label={label} hint={hint} error={error} className={wrapClass}>
+      <div className={`flex h-[44px] max-md:h-[38px] w-full overflow-hidden rounded-xl border bg-white transition-all focus-within:border-brand focus-within:shadow-[0_0_0_3px_rgba(239,83,80,0.15)] dark:bg-[#2b2c30] ${error ? 'border-[#c62f2c]' : 'border-line'}`}>
+        <span
+          aria-hidden
+          className="flex shrink-0 select-none items-center border-r border-line bg-[#ececf0] px-3 text-sm font-bold text-[#596579] dark:border-[#45464c] dark:bg-[#3a3b41] dark:text-[#b4b4b8] max-md:px-2.5 max-md:text-[13px]"
+        >
+          +91&nbsp;
+        </span>
+        <input
+          type="tel"
+          inputMode="numeric"
+          maxLength={10}
+          value={local}
+          placeholder={placeholder}
+          aria-invalid={!!error}
+          onChange={(e) => {
+            const d = e.target.value.replace(/\D/g, '').slice(0, 10)
+            onValueChange(d ? `91${d}` : '')
+          }}
+          className="h-full min-w-0 flex-1 border-0 bg-transparent px-3.5 text-sm text-ink outline-none max-md:px-3 max-md:text-[13px]"
+        />
+      </div>
+    </FieldWrap>
+  )
+}
+
 export function TextArea({ label, hint, error, wrapClass, ...rest }: Common & TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <FieldWrap label={label} hint={hint} error={error} className={wrapClass}>

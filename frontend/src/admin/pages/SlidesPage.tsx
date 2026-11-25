@@ -37,7 +37,7 @@ function SlideForm({ initial, onSave, onClose }: { initial: Slide | null; onSave
             {image ? 'Replace image' : 'Upload image'}
             <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
           </label>
-          {image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(image)}><Crop size={15} aria-hidden /> Adjust</button>}
+          {image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(image)}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
         </div>
 
         <TextInput label="Name (used as the image description)" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Britannia 50-50" />

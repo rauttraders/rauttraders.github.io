@@ -99,7 +99,7 @@ function ProductForm({ initial, onClose }: { initial: Product | null; onClose: (
                 Upload image
                 <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
               </label>
-              {d.image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(d.image)}><Crop size={15} aria-hidden /> Adjust</button>}
+              {d.image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(d.image)}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
               {d.image && <button type="button" className={`${btnDanger} !h-9 !px-4`} onClick={() => set('image', '')}>Remove</button>}
             </div>
           </div>
@@ -213,7 +213,7 @@ export default function ProductsPage() {
           <button type="button" aria-label="Grid view" title="Grid view" aria-pressed={view === 'grid'} onClick={() => changeView('grid')} className={`${seg(view === 'grid')} flex w-9 items-center justify-center !px-0`}><LayoutGrid size={15} aria-hidden /></button>
           <button type="button" aria-label="List view" title="List view" aria-pressed={view === 'list'} onClick={() => changeView('list')} className={`${seg(view === 'list')} flex w-9 items-center justify-center !px-0`}><List size={15} aria-hidden /></button>
         </div>
-        <button type="button" className={`${btnPrimary} max-md:w-full`} onClick={() => setEditing({ p: null })}><Plus size={16} aria-hidden /> Add product</button>
+        <button type="button" className={`${btnPrimary} max-md:w-full`} onClick={() => setEditing({ p: null })}>Add product <span aria-hidden className="h-4 w-px shrink-0 bg-white/40" /> <Plus size={16} aria-hidden /></button>
       </div>
 
       <div className="-mt-1 flex items-center justify-between gap-3 px-1 text-[13px] text-muted">

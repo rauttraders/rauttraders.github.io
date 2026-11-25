@@ -126,7 +126,7 @@ function OrderRow({ order, open, onToggle, onReceipt }: { order: Order; open: bo
             </table>
           </div>
           <div className="mt-4 flex flex-wrap justify-end gap-2">
-            <button type="button" onClick={() => void copy()} className={btnSoft}><Copy size={14} aria-hidden /> {copied ? 'Copied ✓' : 'Copy order'}</button>
+            <button type="button" onClick={() => void copy()} className={btnSoft}>{copied ? 'Copied ✓' : 'Copy order'} <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Copy size={14} aria-hidden /></button>
             <button type="button" onClick={onReceipt} className={btnSoft}>Receipt <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <ReceiptText size={14} aria-hidden /></button>
             <button
               type="button"
@@ -135,7 +135,7 @@ function OrderRow({ order, open, onToggle, onReceipt }: { order: Order; open: bo
                 if (await confirm({ tone: 'danger', title: `Delete order ${order.id}?`, message: 'This removes the order from your records. It cannot be undone.', confirmLabel: 'Delete order' })) deleteOrder(order.id)
               }}
             >
-              <Trash2 size={14} aria-hidden /> Delete
+              Delete <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Trash2 size={14} aria-hidden />
             </button>
           </div>
         </div>
@@ -188,19 +188,19 @@ export default function OrdersPage() {
       {receiptOrder && (
         <ReceiptDialog order={receiptOrder} onClose={() => setReceiptOrder(null)} />
       )}
-      <div className="grid grid-cols-3 gap-3 max-md:gap-2">
+      <div className="grid grid-cols-3 gap-3 max-md:grid-cols-2 max-md:gap-2">
         {[
           { label: 'Orders', value: String(rows.length), Icon: ShoppingBag, tone: 'bg-brand/10 text-brand dark:bg-brand/20' },
           { label: 'Units ordered', value: String(totalUnits), Icon: Package, tone: 'bg-[#dff5e8] text-[#1c6b3c] dark:bg-[#1d3a2a] dark:text-[#7fd6a1]' },
           { label: 'Order value', value: inr(totalValue), Icon: IndianRupee, tone: 'bg-[#e3effd] text-[#17519c] dark:bg-[#1c3350] dark:text-[#8fbcf5]' },
-        ].map(({ label, value, Icon, tone }) => (
-          <div key={label} className="flex items-center gap-3 rounded-2xl border border-[#ececf0] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-md:flex-col max-md:items-start max-md:gap-2 max-md:rounded-xl max-md:p-2.5">
-            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl max-md:h-8 max-md:w-8 ${tone}`}>
+        ].map(({ label, value, Icon, tone }, i) => (
+          <div key={label} className={`flex items-center gap-3 rounded-2xl border border-[#ececf0] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-md:gap-2.5 max-md:rounded-xl max-md:p-3 ${i === 2 ? 'max-md:col-span-2' : ''}`}>
+            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl max-md:h-9 max-md:w-9 ${tone}`}>
               <Icon size={18} className="max-md:h-4 max-md:w-4" aria-hidden />
             </span>
             <div className="min-w-0 leading-tight">
-              <p className="m-0 text-[22px] font-extrabold text-ink max-lg:text-[19px] max-md:text-[15px]">{value}</p>
-              <p className="m-0 mt-0.5 text-[12px] font-semibold text-muted max-md:text-[10.5px]">{label}</p>
+              <p className="m-0 text-[22px] font-extrabold text-ink max-lg:text-[19px] max-md:text-[16px]">{value}</p>
+              <p className="m-0 mt-0.5 text-[12px] font-semibold text-muted max-md:text-[11px]">{label}</p>
             </div>
           </div>
         ))}
@@ -211,7 +211,7 @@ export default function OrdersPage() {
           <Search size={15} aria-hidden className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by order number or product" aria-label="Search orders" className="h-10 w-full rounded-full border border-transparent bg-white pl-10 pr-4 text-[13px] text-ink outline-none focus:border-brand dark:bg-[#34353a]" />
         </label>
-        <button type="button" onClick={exportCsv} disabled={!rows.length} className={btnSoft} title="Download the listed orders as CSV"><Download size={15} aria-hidden /> Export</button>
+        <button type="button" onClick={exportCsv} disabled={!rows.length} className={btnSoft} title="Download the listed orders as CSV">Export <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Download size={15} aria-hidden /></button>
       </div>
 
       <div role="group" aria-label="Filter by date" className="-mt-1 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

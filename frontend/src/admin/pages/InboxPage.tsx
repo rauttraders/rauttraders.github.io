@@ -241,7 +241,7 @@ export default function InboxPage() {
     <>
       {hasUnread && !showArchived && (
         <button type="button" className={`${btnSoft} !h-9`} onClick={() => void handleMarkAllRead()}>
-          <CheckCheck size={15} aria-hidden /> Mark all read
+          Mark all read <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <CheckCheck size={15} aria-hidden />
         </button>
       )}
       <button
@@ -249,8 +249,9 @@ export default function InboxPage() {
         className={`${btnSoft} !h-9`}
         onClick={() => setShowArchived((v) => !v)}
       >
-        {showArchived ? <Inbox size={15} aria-hidden /> : <Archive size={15} aria-hidden />}
         {showArchived ? 'Inbox' : 'Archive'}
+        <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" />
+        {showArchived ? <Inbox size={15} aria-hidden /> : <Archive size={15} aria-hidden />}
       </button>
       <button
         type="button"

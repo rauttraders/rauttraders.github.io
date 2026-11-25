@@ -5,7 +5,7 @@ import { useConfirm } from '../../components/ui/ConfirmDialog'
 import { useStore } from '../../store/StoreContext'
 import type { HighlightIcon, Settings } from '../../store/types'
 import { Card, PanelHeader, btnDanger, btnPrimary, btnSoft } from '../ui/Card'
-import { SelectInput, TextArea, TextInput } from '../ui/Inputs'
+import { SelectInput, TextArea, TextInput, IndiaPhoneInput } from '../ui/Inputs'
 
 const ICONS: { value: HighlightIcon; label: string }[] = [
   { value: 'shield', label: 'Shield (trust)' },
@@ -92,10 +92,10 @@ export default function SettingsPage() {
         <PanelHeader icon={Store} title="Business details" subtitle="Shown in the navbar, About section, footer and used for WhatsApp orders and the map." />
         <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
           <TextInput label="Business name" value={d.business.name} onChange={(e) => up('business', { name: e.target.value })} />
-          <TextInput label="WhatsApp number" value={d.business.whatsappNumber} onChange={(e) => up('business', { whatsappNumber: e.target.value })} hint="With country code, digits only. Orders are sent here." />
+          <IndiaPhoneInput label="WhatsApp number" value={d.business.whatsappNumber} onValueChange={(v) => up('business', { whatsappNumber: v })} hint="10-digit number after +91. Orders are sent here." />
           <TextArea wrapClass="col-span-2 max-sm:col-span-1" label="Tagline (footer)" rows={2} value={d.business.tagline} onChange={(e) => up('business', { tagline: e.target.value })} />
           <TextArea wrapClass="col-span-2 max-sm:col-span-1" label="Address" rows={2} value={d.business.address} onChange={(e) => up('business', { address: e.target.value })} />
-          <TextInput label="Phone" value={d.business.phone} onChange={(e) => up('business', { phone: e.target.value })} />
+          <IndiaPhoneInput label="Phone" value={d.business.phone} onValueChange={(v) => up('business', { phone: v })} />
           <TextInput label="Email" type="email" value={d.business.email} onChange={(e) => up('business', { email: e.target.value })} />
           <TextInput wrapClass="col-span-2 max-sm:col-span-1" label="Opening hours" value={d.business.hours} onChange={(e) => up('business', { hours: e.target.value })} />
           {/* ── Map location ── */}
@@ -108,8 +108,9 @@ export default function SettingsPage() {
               onClick={useDeviceLocation}
               className="inline-flex h-[44px] w-fit cursor-pointer items-center gap-2 rounded-xl border border-dashed border-brand bg-brand/5 px-4 text-[13px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white disabled:cursor-not-allowed disabled:opacity-60 dark:bg-brand/10"
             >
-              <LocateFixed size={15} aria-hidden className={geoState === 'loading' ? 'animate-pulse' : ''} />
               {geoState === 'loading' ? 'Detecting…' : 'Use my device location'}
+              <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" />
+              <LocateFixed size={15} aria-hidden className={geoState === 'loading' ? 'animate-pulse' : ''} />
             </button>
             {geoState === 'denied' && (
               <p className="text-[11px] text-[#c62f2c]">
@@ -176,7 +177,7 @@ export default function SettingsPage() {
         <PanelHeader icon={Database} title="Data" subtitle="Changes here are saved on the shop's server and appear for every customer. Customer orders are kept and are not affected by a reset." />
         <div className="flex flex-wrap gap-3">
           {sampleCount > 0 && <button type="button" className={btnSoft} onClick={async () => { if (await confirm({ tone: 'warning', title: 'Remove the sample orders?', message: 'Only the made-up demo orders are removed. Real customer orders are kept.', details: [{ label: 'Sample orders', value: sampleCount }], confirmLabel: 'Remove sample orders' })) void clearSampleOrders() }}>Clear {sampleCount} sample orders</button>}
-          <button type="button" className={btnDanger} onClick={async () => { if (await confirm({ tone: 'danger', title: 'Reset the shop catalogue and text?', message: 'Products, categories, brands, slides and all website text go back to the original defaults. This cannot be undone.', details: [{ label: 'Customer orders', value: 'Kept' }, { label: 'Admin login', value: 'Kept' }], confirmLabel: 'Yes, reset everything' })) { resetAll(); setD(structuredClone(defaultSettings)); setErrors([]) } }}><RotateCcw size={15} aria-hidden /> Reset catalogue &amp; text</button>
+          <button type="button" className={btnDanger} onClick={async () => { if (await confirm({ tone: 'danger', title: 'Reset the shop catalogue and text?', message: 'Products, categories, brands, slides and all website text go back to the original defaults. This cannot be undone.', details: [{ label: 'Customer orders', value: 'Kept' }, { label: 'Admin login', value: 'Kept' }], confirmLabel: 'Yes, reset everything' })) { resetAll(); setD(structuredClone(defaultSettings)); setErrors([]) } }}>Reset catalogue &amp; text <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <RotateCcw size={15} aria-hidden /></button>
         </div>
       </Card>
 
@@ -188,7 +189,7 @@ export default function SettingsPage() {
               : dirty ? <span className="font-semibold text-ink">You have unsaved changes.</span> : <span className="text-muted">No changes.</span>}
           </div>
           <button type="button" className={`${btnSoft} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={() => { setD(structuredClone(settings)); setErrors([]) }}>Discard</button>
-          <button type="button" className={`${btnPrimary} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={save}><Save size={15} aria-hidden /> Save changes</button>
+          <button type="button" className={`${btnPrimary} max-sm:!h-9 max-sm:flex-1 max-sm:!px-2 max-sm:!text-[12px]`} disabled={!dirty} onClick={save}>Save changes <span aria-hidden className="h-4 w-px shrink-0 bg-white/40" /> <Save size={15} aria-hidden /></button>
         </div>
       </div>
     </div>
