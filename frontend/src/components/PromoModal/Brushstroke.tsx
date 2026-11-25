@@ -5,7 +5,7 @@ export default function Brushstroke() {
       aria-hidden
       viewBox="0 0 500 320"
       preserveAspectRatio="none"
-      className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[330px] w-[96%] max-w-none -translate-x-1/2 -translate-y-1/2 max-md:h-[245px] max-md:w-[94%]"
+      className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[330px] w-[96%] max-w-none -translate-x-1/2 -translate-y-1/2 max-md:h-[205px] max-md:w-[82%]"
     >
       <defs>
         {/* Rough, dry-brush edges */}

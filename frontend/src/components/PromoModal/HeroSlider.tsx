@@ -86,7 +86,7 @@ export default function HeroSlider({ slides: slidesProp }: HeroSliderProps) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative h-[260px] w-full max-md:h-[210px]">
+      <div className="relative h-[260px] w-full max-md:h-[175px]">
         <Brushstroke />
         {multi && <button type="button" aria-label="Previous slide" onClick={(e) => { hop(e.currentTarget); prev(); setBump((b) => ({ dir: 'left', n: b.n + 1 })) }} className={`${arrowClass} -left-12 max-xl:left-1 max-md:left-0`}>
           <ChevronLeft key={`l${bump.n}`} size={20} strokeWidth={2} className={bump.dir === 'left' ? 'arrow-bounce-left' : undefined} />
@@ -110,7 +110,7 @@ export default function HeroSlider({ slides: slidesProp }: HeroSliderProps) {
                 className="flex h-full w-full shrink-0 items-center justify-center"
               >
                 {/* Safe box: always inside the brush stroke, whatever the picture's shape. */}
-                <img src={s.image} alt={s.title} className="h-[80%] w-[74%] -rotate-6 object-contain" draggable={false} />
+                <img src={s.image} alt={s.title} className="h-[80%] w-[74%] -rotate-6 object-contain max-md:h-[68%] max-md:w-[62%]" draggable={false} />
               </div>
             ))}
           </div>
