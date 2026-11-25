@@ -237,45 +237,50 @@ export default function InboxPage() {
 
   const hasUnread = messages.some((m) => !m.read)
 
+  const actions = (
+    <>
+      {hasUnread && !showArchived && (
+        <button type="button" className={`${btnSoft} !h-9`} onClick={() => void handleMarkAllRead()}>
+          <CheckCheck size={15} aria-hidden /> Mark all read
+        </button>
+      )}
+      <button
+        type="button"
+        className={`${btnSoft} !h-9`}
+        onClick={() => setShowArchived((v) => !v)}
+      >
+        {showArchived ? <Inbox size={15} aria-hidden /> : <Archive size={15} aria-hidden />}
+        {showArchived ? 'Inbox' : 'Archive'}
+      </button>
+      <button
+        type="button"
+        title="Refresh"
+        className={`${btnSoft} !h-9 !w-9 !px-0`}
+        onClick={() => void load()}
+        disabled={loading}
+      >
+        <RefreshCw size={15} aria-hidden className={loading ? 'animate-spin' : ''} />
+      </button>
+    </>
+  )
+
   return (
     <div className="mx-auto flex max-w-[860px] flex-col gap-5">
       <Card>
-        <div className="flex flex-wrap items-center gap-3">
-          <PanelHeader
-            icon={Inbox}
-            title="Inbox"
-            subtitle={
-              showArchived
-                ? 'Archived messages'
-                : unread > 0
-                ? `${unread} unread message${unread !== 1 ? 's' : ''}`
-                : 'All messages from your contact form'
-            }
-          />
-          <div className="ml-auto flex items-center gap-2">
-            {hasUnread && !showArchived && (
-              <button type="button" className={`${btnSoft} !h-9`} onClick={() => void handleMarkAllRead()}>
-                <CheckCheck size={15} aria-hidden /> Mark all read
-              </button>
-            )}
-            <button
-              type="button"
-              className={`${btnSoft} !h-9`}
-              onClick={() => setShowArchived((v) => !v)}
-            >
-              {showArchived ? <Inbox size={15} aria-hidden /> : <Archive size={15} aria-hidden />}
-              {showArchived ? 'Inbox' : 'Archive'}
-            </button>
-            <button
-              type="button"
-              title="Refresh"
-              className={`${btnSoft} !h-9 !w-9 !px-0`}
-              onClick={() => void load()}
-              disabled={loading}
-            >
-              <RefreshCw size={15} aria-hidden className={loading ? 'animate-spin' : ''} />
-            </button>
-          </div>
+        <PanelHeader
+          icon={Inbox}
+          title="Inbox"
+          subtitle={
+            showArchived
+              ? 'Archived messages'
+              : unread > 0
+              ? `${unread} unread message${unread !== 1 ? 's' : ''}`
+              : 'All messages from your contact form'
+          }
+          action={<div className="flex items-center gap-2 max-md:hidden">{actions}</div>}
+        />
+        <div className="hidden flex-wrap items-center justify-end gap-2 max-md:flex">
+          {actions}
         </div>
       </Card>
 
