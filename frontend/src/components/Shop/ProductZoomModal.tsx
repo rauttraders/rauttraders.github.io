@@ -132,7 +132,7 @@ export default function ProductZoomModal({ product, onClose }: Props) {
           <div className="min-w-0">
             <h3 className="m-0 truncate text-[15px] font-bold text-ink max-md:text-[13.5px]">{product.name}</h3>
             <p className="m-0 mt-0.5 truncate text-[12px] text-muted max-md:text-[11px]">
-              {product.company} · {product.size} · <span className="font-bold text-brand">{formatINR(product.price)}</span>
+              {product.company}{product.size && product.size !== '0' ? ` · ${product.size}` : ''} · <span className="font-bold text-brand">{formatINR(product.price)}</span>
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">

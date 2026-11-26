@@ -66,8 +66,8 @@ function buildMessage(items: BasketItem[], biz: MessageBusiness, wa: WhatsAppSet
   const shown = opt.maxItems ? items.slice(0, opt.maxItems) : items
   const lines = shown.map((i, n) =>
     compact
-      ? `${n + 1}. ${i.name} — ${i.qty} × ${formatINR(i.price)} = ${formatINR(i.qty * i.price)}`
-      : `${n + 1}. ${i.name} (${i.company}, ${i.size})\n    ${i.qty} × ${formatINR(i.price)} = ${formatINR(i.qty * i.price)}`,
+      ? `${n + 1}. ${i.name}: ${i.qty} × ${formatINR(i.price)} = ${formatINR(i.qty * i.price)}`
+      : `${n + 1}. ${i.name}\n    ${i.qty} × ${formatINR(i.price)} = ${formatINR(i.qty * i.price)}`,
   )
   if (shown.length < items.length) {
     const more = items.length - shown.length
@@ -82,7 +82,7 @@ function buildMessage(items: BasketItem[], biz: MessageBusiness, wa: WhatsAppSet
     ...(shop.length ? sep : []),
     ...block(`*${wa.orderLabel.trim() || 'ORDER'}${orderId ? ` ${orderId}` : ''}*`, wa.showDate && `Date: ${date}`),
     '',
-    wa.showCounts ? `*Items (${items.length}) — ${units} ${units === 1 ? 'unit' : 'units'}*` : '*Items*',
+    wa.showCounts ? `*Items (${items.length}): ${units} ${units === 1 ? 'unit' : 'units'}*` : '*Items*',
     ...lines,
     ...sep,
     ...(wa.showDiscount && savings > 0 ? [`Subtotal: ${formatINR(mrpTotal)}`, `Discount: − ${formatINR(savings)}`] : wa.showDiscount ? [`Subtotal: ${formatINR(total)}`] : []),

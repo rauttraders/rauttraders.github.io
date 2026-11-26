@@ -52,10 +52,8 @@ function ProductForm({ initial, onClose }: { initial: Product | null; onClose: (
     if (!d.name.trim()) err.name = 'Enter a product name'
     if (!d.company.trim()) err.company = 'Pick a brand or add a new one'
     if (!d.categoryId) err.categoryId = 'Pick a category (add one first if none exist)'
-    if (!d.size.trim()) err.size = 'Enter the pack size'
     if (!err.name) err.name = validateText(d.name, 200, 'Product name') ?? ''
     if (!err.company) err.company = validateText(d.company, 120, 'Brand') ?? ''
-    if (!err.size) err.size = validateText(d.size, 60, 'Pack size') ?? ''
     err.description = validateText(d.description, 1000, 'Description') ?? ''
     err.price = validatePrice(price, 'Price') ?? ''
     if (mrp !== undefined) err.mrp = validatePrice(mrp, 'MRP') ?? (mrp > price ? '' : 'MRP must be higher than the price (or leave empty)')
@@ -68,7 +66,7 @@ function ProductForm({ initial, onClose }: { initial: Product | null; onClose: (
       id = base
       for (let n = 2; products.some((p) => p.id === id); n++) id = `${base}-${n}`
     }
-    saveProduct({ id, name: d.name.trim(), company: d.company.trim(), categoryId: d.categoryId, description: d.description.trim(), size: d.size.trim(), price, mrp, image: d.image, isLogo: d.isLogo || undefined, active: d.active })
+    saveProduct({ id, name: d.name.trim(), company: d.company.trim(), categoryId: d.categoryId, description: d.description.trim(), size: '', price, mrp, image: d.image, isLogo: d.isLogo || undefined, active: d.active })
     onClose()
   }
 
@@ -82,7 +80,6 @@ function ProductForm({ initial, onClose }: { initial: Product | null; onClose: (
             {brandPick === NEW && <TextInput label="New brand name" value={d.company} onChange={(e) => set('company', e.target.value)} error={errors.company} placeholder="Brand name (added to Brands)" />}
           </div>
           <SelectInput label="Category" value={d.categoryId} error={errors.categoryId} onChange={(v) => set('categoryId', v)} options={categories.map((c) => ({ value: c.id, label: c.name }))} placeholder="Select a category…" />
-          <TextInput label="Pack size" value={d.size} onChange={(e) => set('size', e.target.value)} error={errors.size} placeholder="e.g. 70 g" />
           <TextInput label="Price (₹)" type="number" min="0" step="any" value={d.price} onChange={(e) => set('price', e.target.value)} error={errors.price} />
           <TextInput label="MRP (₹), optional" type="number" min="0" step="any" value={d.mrp} onChange={(e) => set('mrp', e.target.value)} error={errors.mrp} hint="Shown struck through when higher than the price." />
         </div>
@@ -245,7 +242,7 @@ export default function ProductsPage() {
               </div>
               <div className="flex flex-1 flex-col p-4 max-md:p-2.5">
                 <h3 className="m-0 truncate text-[15px] font-semibold text-ink max-md:text-[13px]" title={p.name}>{p.name}</h3>
-                <p className="m-0 mt-0.5 truncate text-xs text-muted max-md:text-[11px]">{p.size} · {catName(p.categoryId)}</p>
+                <p className="m-0 mt-0.5 truncate text-xs text-muted max-md:text-[11px]">{p.size && p.size !== '0' ? `${p.size} · ` : ''}{catName(p.categoryId)}</p>
                 <p className="mb-0 mt-2 text-[19px] max-md:mt-1.5 max-md:text-[15px]">{priceEl(p)}</p>
                 <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 border-t border-[#ececf0] pt-3 dark:border-[#45464c] max-md:mt-2.5 max-md:gap-1 max-md:pt-2">
                   <Toggle checked={p.active} onChange={(v) => saveProduct({ ...p, active: v })} label={p.active ? 'Visible' : 'Hidden'} />
@@ -267,7 +264,7 @@ export default function ProductsPage() {
                 </p>
                 <p className="m-0 mt-0.5 flex items-center gap-1.5 truncate text-xs text-muted">
                   {logoOf.get(p.company) ? <img src={logoOf.get(p.company)} alt="" draggable={false} className="logo-outline h-3.5 w-auto max-w-[34px] shrink-0 object-contain" /> : null}
-                  <span className="truncate">{p.company} · {p.size}</span>
+                  <span className="truncate">{p.company}{p.size && p.size !== '0' ? ` · ${p.size}` : ''}</span>
                 </p>
                 <p className="m-0 mt-1 text-[14px] lg:hidden">{priceEl(p)} <span className="text-xs text-muted">· {catName(p.categoryId)}</span></p>
               </div>

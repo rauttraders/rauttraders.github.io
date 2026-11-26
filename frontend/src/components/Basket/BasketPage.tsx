@@ -79,7 +79,7 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
                 <div className="flex min-w-0 flex-1 flex-col">
                   <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-brand/10 px-2.5 py-0.5 text-[11px] font-bold text-[#c62f2c] dark:bg-brand/20 dark:text-[#ff8a87] max-md:px-2 max-md:text-[10px]">{logoOf.get(i.company) && <img src={logoOf.get(i.company)} alt="" draggable={false} className="logo-outline h-3.5 w-auto max-w-[40px] shrink-0 object-contain" />}{i.company}</span>
                   <h3 className="m-0 mt-1.5 text-[16px] font-bold leading-snug text-ink max-md:mt-1 max-md:text-[14px]">{i.name}</h3>
-                  <p className="m-0 mt-0.5 text-[13px] text-muted max-md:text-[11.5px]">{i.size} · {i.qty} × {formatINR(i.price)} = <b className="text-ink">{formatINR(i.price * i.qty)}</b></p>
+                  <p className="m-0 mt-0.5 text-[13px] text-muted max-md:text-[11.5px]">{i.size && i.size !== '0' ? `${i.size} · ` : ''}{i.qty} × {formatINR(i.price)} = <b className="text-ink">{formatINR(i.price * i.qty)}</b></p>
 
                   <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-3 max-md:gap-2 max-md:pt-2">
                     <div className="flex items-center gap-1 rounded-full bg-brand/10 p-1 dark:bg-brand/20">

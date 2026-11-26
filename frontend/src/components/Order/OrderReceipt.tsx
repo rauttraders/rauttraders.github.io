@@ -169,7 +169,7 @@ export default function OrderReceipt({ order, businessName = 'Raut Traders', bus
                 <tr key={item.id} className={idx % 2 === 0 ? 'bg-[#fafafa]' : 'bg-white'}>
                   <td className="py-2 pr-2 text-[#111]">
                     <span className="block font-semibold leading-tight">{item.name}</span>
-                    <span className="block text-[11px] text-[#596579]">{item.company} · {item.size}</span>
+                    <span className="block text-[11px] text-[#596579]">{item.company}{item.size && item.size !== '0' ? ` · ${item.size}` : ''}</span>
                   </td>
                   <td className="py-2 text-center font-semibold text-[#111]">{item.qty}</td>
                   <td className="py-2 text-right text-[#596579]">{formatINR(item.price)}</td>

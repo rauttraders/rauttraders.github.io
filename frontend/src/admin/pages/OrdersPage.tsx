@@ -54,8 +54,8 @@ function toCsv(orders: Order[]) {
 
 function orderText(o: Order): string {
   return [
-    `Order ${o.id} — ${full(o.createdAt)}`,
-    ...o.items.map((i, n) => `${n + 1}. ${i.name} (${i.company}, ${i.size}) — ${i.qty} × ${formatINR(i.price)} = ${formatINR(i.qty * i.price)}`),
+    `Order ${o.id}: ${full(o.createdAt)}`,
+    ...o.items.map((i, n) => `${n + 1}. ${i.name}: ${i.qty} × ${formatINR(i.price)} = ${formatINR(i.qty * i.price)}`),
     `Total: ${formatINR(o.total)}`,
   ].join('\n')
 }
@@ -110,7 +110,7 @@ function OrderRow({ order, open, onToggle, onReceipt }: { order: Order; open: bo
                   <tr key={i.id} className="border-t border-[#f1f1f4] dark:border-[#45464c]">
                     <td className="py-2 pr-3 text-ink">
                       <span className="font-semibold">{i.name}</span>
-                      <span className="block text-xs text-muted">{i.company} · {i.size}</span>
+                      <span className="block text-xs text-muted">{i.company}{i.size && i.size !== '0' ? ` · ${i.size}` : ''}</span>
                     </td>
                     <td className="py-2 text-right text-ink">{i.qty}</td>
                     <td className="py-2 text-right text-ink">{formatINR(i.price)}</td>
