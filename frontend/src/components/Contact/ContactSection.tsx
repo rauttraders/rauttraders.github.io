@@ -8,11 +8,14 @@ import SectionHeader from '../ui/SectionHeader'
 import ContactIllustration from './ContactIllustration'
 import Field from '../Order/Field'
 import { useStore } from '../../store/StoreContext'
+import { useLanguage } from '../../hooks/useLanguage'
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
 
 export default function ContactSection() {
   const { settings } = useStore()
+  const { language, t } = useLanguage()
+  const isEn = language === 'en'
   const [form, setForm] = useState({ name: '', shopName: '', phone: '', message: '' })
   const [errors, setErrors] = useState<OrderErrors>({})
   const [status, setStatus] = useState<Status>('idle')
@@ -59,8 +62,8 @@ export default function ContactSection() {
       <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-4">
         <div className="grid grid-cols-2 items-start gap-10 max-lg:grid-cols-1 max-lg:gap-8 max-md:gap-5">
           <Reveal>
-            <SectionHeader title={settings.contact.title} titleId="contact-title">
-              {settings.contact.text}
+            <SectionHeader title={isEn ? settings.contact.title : t('contactTitle')} titleId="contact-title">
+              {isEn ? settings.contact.text : t('contactText')}
             </SectionHeader>
             <div className="mt-8 max-lg:mt-6 max-lg:flex max-lg:justify-center max-md:hidden">
               <ContactIllustration />
@@ -75,11 +78,11 @@ export default function ContactSection() {
                   <CheckCircle2 size={36} aria-hidden />
                 </span>
                 <div>
-                  <h3 className="m-0 text-[18px] font-bold text-ink">Message sent!</h3>
-                  <p className="m-0 mt-2 text-[14px] text-muted">Thanks for reaching out. We'll get back to you shortly.</p>
+                  <h3 className="m-0 text-[18px] font-bold text-ink">{t('messageSent')}</h3>
+                  <p className="m-0 mt-2 text-[14px] text-muted">{t('messageSentSub')}</p>
                 </div>
                 <button type="button" onClick={reset} className="mt-2 flex h-11 items-center gap-2 rounded-full bg-brand px-6 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(239,83,80,0.3)] transition-all hover:bg-brand-hover">
-                  <RotateCcw size={15} aria-hidden /> Send another message
+                  <RotateCcw size={15} aria-hidden /> {t('sendAnother')}
                 </button>
               </div>
             ) : (
@@ -90,14 +93,14 @@ export default function ContactSection() {
                     <MessageSquareText size={19} aria-hidden />
                   </span>
                   <div className="min-w-0">
-                    <h3 className="m-0 text-[16px] font-semibold leading-tight text-ink">Send us a message</h3>
-                    <p className="m-0 mt-0.5 text-[12.5px] text-muted">Tell us what you need and we'll get back to you</p>
+                    <h3 className="m-0 text-[16px] font-semibold leading-tight text-ink">{t('sendUsMessage')}</h3>
+                    <p className="m-0 mt-0.5 text-[12.5px] text-muted">{t('contactSub')}</p>
                   </div>
                 </div>
-                <Field label="Your name" value={form.name} onChange={set('name')} error={errors.name} autoComplete="name" />
-                <Field label="Shop name" value={form.shopName} onChange={set('shopName')} autoComplete="organization" optional />
-                <Field label="Phone number" type="tel" value={form.phone} onChange={set('phone')} error={errors.phone} autoComplete="tel" />
-                <Field label="Message" value={form.message} onChange={set('message')} multiline optional />
+                <Field label={t('yourName')} value={form.name} onChange={set('name')} error={errors.name} autoComplete="name" />
+                <Field label={t('shopNameOptional')} value={form.shopName} onChange={set('shopName')} autoComplete="organization" optional />
+                <Field label={t('phoneNumber')} type="tel" value={form.phone} onChange={set('phone')} error={errors.phone} autoComplete="tel" />
+                <Field label={t('messageOptional')} value={form.message} onChange={set('message')} multiline optional />
                 {serverError && (
                   <p role="alert" className="m-0 rounded-xl bg-[#fdeaea] px-4 py-2.5 text-[13px] font-semibold text-[#c62f2c] dark:bg-[#3a2a2a] dark:text-[#ff9f9d]">
                     {serverError}
@@ -109,7 +112,7 @@ export default function ContactSection() {
                     onClick={reset}
                     className="flex h-[46px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-brand/10 text-sm font-semibold text-brand transition-colors hover:bg-brand hover:text-white dark:bg-brand/20"
                   >
-                    Reset
+                    {t('reset')}
                     <span aria-hidden className="h-5 w-px bg-current opacity-30" />
                     <RotateCcw size={16} aria-hidden />
                   </button>
@@ -118,7 +121,7 @@ export default function ContactSection() {
                     disabled={status === 'sending'}
                     className="flex h-[46px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-brand text-sm font-semibold text-white shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-all hover:bg-brand-hover active:scale-[0.99] disabled:opacity-60"
                   >
-                    {status === 'sending' ? 'Sending…' : 'Send message'}
+                    {status === 'sending' ? t('sending') : t('sendMessage')}
                     <span aria-hidden className="h-5 w-px bg-white/50" />
                     <Send size={16} aria-hidden />
                   </button>

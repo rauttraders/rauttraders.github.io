@@ -1,6 +1,7 @@
 import { ArrowLeft, MessageCircle, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
 import { useEffect } from 'react'
 import { useStore } from '../../store/StoreContext'
+import { useLanguage } from '../../hooks/useLanguage'
 import { formatINR } from '../../lib/format'
 import QtyInput from '../ui/QtyInput'
 import type { BasketItem } from '../Navbar/BasketMenu'
@@ -20,6 +21,7 @@ const stepBtn =
 /** Full basket page: fills the viewport below the sticky navbar (which stays visible), with product photos. */
 export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, onCheckout }: BasketPageProps) {
   const { brands } = useStore()
+  const { t } = useLanguage()
   const logoOf = new Map(brands.map((b) => [b.name, b.logo]))
   const count = items.reduce((s, i) => s + i.qty, 0)
   const total = items.reduce((s, i) => s + i.price * i.qty, 0)
@@ -44,8 +46,8 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
           <ArrowLeft size={20} aria-hidden />
         </button>
         <h2 id="basket-title" className="m-0 flex items-center gap-2.5 text-[20px] font-extrabold text-ink max-md:gap-2 max-md:text-[16px]">
-          My order
-          {count > 0 && <span className="rounded-full bg-brand/10 px-2.5 py-0.5 text-[13px] font-bold text-brand dark:bg-brand/20 max-md:px-2 max-md:text-[11px]">{count} {count === 1 ? 'item' : 'items'}</span>}
+          {t('myOrder')}
+          {count > 0 && <span className="rounded-full bg-brand/10 px-2.5 py-0.5 text-[13px] font-bold text-brand dark:bg-brand/20 max-md:px-2 max-md:text-[11px]">{count} {count === 1 ? t('itemSingular') : t('itemPlural')}</span>}
         </h2>
         <button type="button" onClick={onClose} aria-label="Close my order" className="ml-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ink hover:bg-brand/10 hover:text-brand max-md:h-9 max-md:w-9">
           <X size={20} aria-hidden />
@@ -57,10 +59,10 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
           <span className="flex h-24 w-24 items-center justify-center rounded-full bg-brand/10 text-brand dark:bg-brand/20 max-md:h-16 max-md:w-16">
             <ShoppingBag size={42} className="max-md:h-7 max-md:w-7" aria-hidden />
           </span>
-          <h3 className="m-0 text-[22px] font-extrabold text-ink max-md:text-[18px]">You haven't added anything yet</h3>
-          <p className="m-0 max-w-[340px] text-[15px] text-muted max-md:text-[13.5px]">Add the products you need and they'll show up here with the price worked out, ready to send on WhatsApp.</p>
+          <h3 className="m-0 text-[22px] font-extrabold text-ink max-md:text-[18px]">{t('basketEmpty')}</h3>
+          <p className="m-0 max-w-[340px] text-[15px] text-muted max-md:text-[13.5px]">{t('basketEmptyHint')}</p>
           <button type="button" onClick={() => { onClose(); onBrowse() }} className="mt-2 h-[46px] cursor-pointer rounded-full border-0 bg-brand px-8 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-colors hover:bg-brand-hover max-md:h-[40px] max-md:px-6 max-md:text-[13px]">
-            Browse products
+            {t('browseProducts')}
           </button>
         </div>
       ) : (
@@ -102,25 +104,25 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
           </ul>
 
           <aside className="h-fit rounded-2xl border border-[#ececf0] bg-white p-6 shadow-[0_14px_40px_rgba(239,83,80,0.12)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-lg:p-5 max-md:rounded-xl max-md:p-4 lg:sticky lg:top-0">
-            <h3 className="m-0 text-[18px] font-extrabold text-ink max-md:text-[16px]">Order summary</h3>
+            <h3 className="m-0 text-[18px] font-extrabold text-ink max-md:text-[16px]">{t('orderSummary')}</h3>
             <dl className="m-0 mt-4 flex flex-col gap-3 text-[14px] max-md:mt-3 max-md:gap-2 max-md:text-[13px]">
-              <div className="flex justify-between"><dt className="text-muted">Products</dt><dd className="m-0 font-semibold text-ink">{items.length}</dd></div>
-              <div className="flex justify-between"><dt className="text-muted">Units</dt><dd className="m-0 font-semibold text-ink">{count}</dd></div>
-              <div className="flex justify-between"><dt className="text-muted">{savings > 0 ? 'Subtotal' : 'Items total'}</dt><dd className="m-0 font-semibold text-ink">{formatINR(mrpTotal)}</dd></div>
-              {savings > 0 && <div className="flex justify-between"><dt className="text-muted">Discount</dt><dd className="m-0 font-semibold text-[#2e9e55]">− {formatINR(savings)}</dd></div>}
-              <div className="flex justify-between"><dt className="text-muted">Delivery</dt><dd className="m-0 font-semibold text-ink">Confirmed on WhatsApp</dd></div>
+              <div className="flex justify-between"><dt className="text-muted">{t('statProducts')}</dt><dd className="m-0 font-semibold text-ink">{items.length}</dd></div>
+              <div className="flex justify-between"><dt className="text-muted">{t('units')}</dt><dd className="m-0 font-semibold text-ink">{count}</dd></div>
+              <div className="flex justify-between"><dt className="text-muted">{savings > 0 ? t('subtotal') : t('itemsTotal')}</dt><dd className="m-0 font-semibold text-ink">{formatINR(mrpTotal)}</dd></div>
+              {savings > 0 && <div className="flex justify-between"><dt className="text-muted">{t('discount')}</dt><dd className="m-0 font-semibold text-[#2e9e55]">− {formatINR(savings)}</dd></div>}
+              <div className="flex justify-between"><dt className="text-muted">{t('delivery')}</dt><dd className="m-0 font-semibold text-ink">{t('confirmedOnWa')}</dd></div>
             </dl>
             <div className="mt-4 flex items-baseline justify-between border-t border-dashed border-[#d8d8df] pt-4 dark:border-[#55565d] max-md:mt-3 max-md:pt-3">
-              <span className="text-[15px] font-bold text-ink max-md:text-[14px]">Total</span>
+              <span className="text-[15px] font-bold text-ink max-md:text-[14px]">{t('total')}</span>
               <span className="text-[26px] font-extrabold text-brand max-md:text-[21px]">{formatINR(total)}</span>
             </div>
             <button type="button" onClick={onCheckout} className="mt-5 flex h-[48px] w-full cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-brand text-sm font-semibold text-white shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-all hover:bg-brand-hover active:scale-[0.99] max-md:mt-4 max-md:h-[42px] max-md:text-[13px]">
-              Review &amp; send order
+              {t('reviewAndSend')}
               <span aria-hidden className="h-5 w-px bg-white/50" />
               <MessageCircle size={16} aria-hidden />
             </button>
             <button type="button" onClick={() => { onClose(); onBrowse() }} className="mt-3 h-[46px] w-full cursor-pointer rounded-full border-0 bg-brand/10 text-sm font-semibold text-brand transition-colors hover:bg-brand hover:text-white dark:bg-brand/20 max-md:mt-2.5 max-md:h-[40px] max-md:text-[13px]">
-              Continue shopping
+              {t('continueShopping')}
             </button>
           </aside>
         </div>

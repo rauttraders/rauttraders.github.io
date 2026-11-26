@@ -7,6 +7,7 @@ import type { NavItem } from './NavigationLinks'
 import SearchBar from './SearchBar'
 import HeaderActions from './HeaderActions'
 import type { BasketItem } from './BasketMenu'
+import { useLanguage } from '../../hooks/useLanguage'
 import './navbar.css'
 
 const SECTION_IDS = ['home', 'shop', 'about', 'contact']
@@ -72,7 +73,14 @@ export const defaultNavItems: NavItem[] = [
   { label: 'Contact', href: '#contact' },
 ]
 
-function Navbar({ items = defaultNavItems, searchQuery, onSearchChange, onSearch, theme = 'light', onThemeChange = noop, language = 'en', onLanguageChange = noop, basketItems, onRemoveItem, onQtyChange, onBag, onCheckout, basketOpen, onBasketOpenChange, cartCount, onNavigate, onLogoClick }: NavbarProps) {
+function Navbar({ items, searchQuery, onSearchChange, onSearch, theme = 'light', onThemeChange = noop, language = 'en', onLanguageChange = noop, basketItems, onRemoveItem, onQtyChange, onBag, onCheckout, basketOpen, onBasketOpenChange, cartCount, onNavigate, onLogoClick }: NavbarProps) {
+  const { t } = useLanguage()
+  const navItems: NavItem[] = items ?? [
+    { label: t('navHome'), href: '#home' },
+    { label: t('navProducts'), href: '#shop' },
+    { label: t('navAbout'), href: '#about' },
+    { label: t('navContact'), href: '#contact' },
+  ]
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const active = useActiveSection()
@@ -93,7 +101,7 @@ function Navbar({ items = defaultNavItems, searchQuery, onSearchChange, onSearch
         <BrandLogo onClick={onLogoClick} />
 
         <div className="max-lg:hidden">
-          <NavigationLinks items={items} onNavigate={onNavigate} activeHref={active} />
+          <NavigationLinks items={navItems} onNavigate={onNavigate} activeHref={active} />
         </div>
 
         <div className="ml-auto flex items-center gap-[22px] max-lg:gap-2 max-md:gap-1.5">
@@ -166,7 +174,7 @@ function Navbar({ items = defaultNavItems, searchQuery, onSearchChange, onSearch
             </div>
             <div className="flex-1 overflow-y-auto px-3 py-4">
               <NavigationLinks
-                items={items}
+                items={navItems}
                 orientation="column"
                 onNavigate={onNavigate}
                 activeHref={active}

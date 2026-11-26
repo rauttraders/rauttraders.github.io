@@ -1,6 +1,7 @@
 import { Search, X } from 'lucide-react'
 import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { useLanguage } from '../../hooks/useLanguage'
 
 interface SearchBarProps {
   placeholder?: string
@@ -11,12 +12,14 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({
-  placeholder = 'Search for products, brands and more',
+  placeholder,
   value: controlledValue,
   onChange,
   onSearch,
   className = '',
 }: SearchBarProps) {
+  const { t } = useLanguage()
+  const resolvedPlaceholder = placeholder ?? t('searchPlaceholder')
   const [internalValue, setInternalValue] = useState('')
   const ref = useRef<HTMLInputElement>(null)
   const value = controlledValue !== undefined ? controlledValue : internalValue
@@ -50,14 +53,14 @@ export default function SearchBar({
         type="search"
         value={value}
         onChange={(e) => update(e.target.value)}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         aria-label="Search"
         className="w-full min-w-0 border-0 bg-transparent text-[13px] text-[#111] outline-none dark:text-[#f3f3f3] placeholder:text-[#696E79]"
       />
       {value && (
         <button
           type="button"
-          aria-label="Clear search"
+          aria-label={t('clearSearch')}
           onClick={(e) => {
             e.stopPropagation()
             clear()

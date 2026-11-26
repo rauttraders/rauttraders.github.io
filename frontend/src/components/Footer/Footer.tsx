@@ -1,21 +1,22 @@
 import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import { whatsappUrl } from '../../lib/links'
 import { useStore } from '../../store/StoreContext'
+import { useLanguage } from '../../hooks/useLanguage'
 import PromoHeader from '../PromoModal/PromoHeader'
-
-const quickLinks = [
-  { label: 'Home', href: '#home' },
-  { label: 'Shop', href: '#shop' },
-  { label: 'About us', href: '#about' },
-  { label: 'Contact', href: '#contact' },
-]
 
 const linkCls = 'text-[14px] text-[#c9c9ce] no-underline transition-colors hover:translate-x-0.5 hover:text-white inline-block'
 const headCls = 'm-0 mb-4 inline-block border-b-2 border-brand pb-1.5 text-[13px] font-bold uppercase tracking-[0.1em] text-white'
 
 export default function Footer() {
   const { settings, categories } = useStore()
+  const { t } = useLanguage()
   const company = settings.business
+  const quickLinks = [
+    { label: t('navHome'), href: '#home' },
+    { label: t('navProducts'), href: '#shop' },
+    { label: t('navAbout'), href: '#about' },
+    { label: t('navContact'), href: '#contact' },
+  ]
 
   // Only render contact rows that have been filled in by the admin
   const contactRows = [
@@ -44,15 +45,15 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="mt-5 inline-flex h-10 items-center gap-2 rounded-full bg-brand px-5 text-[13px] font-semibold text-white no-underline shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-colors hover:bg-brand-hover"
               >
-                Chat on WhatsApp
+                {t('chatOnWhatsApp')}
                 <span aria-hidden className="h-4 w-px bg-white/40" />
                 <MessageCircle size={15} aria-hidden />
               </a>
             )}
           </div>
 
-          <nav aria-label="Quick links">
-            <h3 className={headCls}>Quick links</h3>
+          <nav aria-label={t('quickLinks')}>
+            <h3 className={headCls}>{t('quickLinks')}</h3>
             <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
               {quickLinks.map((l) => (
                 <li key={l.label}><a href={l.href} className={linkCls}>{l.label}</a></li>
@@ -60,20 +61,20 @@ export default function Footer() {
             </ul>
           </nav>
 
-          <nav aria-label="Categories">
-            <h3 className={headCls}>Categories</h3>
+          <nav aria-label={t('categoriesLabel')}>
+            <h3 className={headCls}>{t('categoriesLabel')}</h3>
             <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
               {categories.length > 0 ? categories.map((c) => (
                 <li key={c.id}><a href="#shop" className={linkCls}>{c.name}</a></li>
               )) : (
-                <li className="text-[13px] text-[#555]">No categories yet</li>
+                <li className="text-[13px] text-[#555]">{t('noCategoriesYet')}</li>
               )}
             </ul>
           </nav>
 
           {contactRows.length > 0 && (
             <div>
-              <h3 className={headCls}>Contact</h3>
+              <h3 className={headCls}>{t('contact')}</h3>
               <ul className="m-0 flex list-none flex-col gap-3 p-0 text-[14px]">
                 {contactRows.map(({ Icon, content }, i) => (
                   <li key={i} className="flex gap-2.5">
@@ -87,7 +88,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3 border-t border-[#3a3b40] pt-5 text-[13px]">
-          <p className="m-0">© {new Date().getFullYear()} {company.name || 'Raut Traders'}. All rights reserved.</p>
+          <p className="m-0">© {new Date().getFullYear()} {company.name || 'Raut Traders'}. {t('allRightsReserved')}</p>
         </div>
       </div>
     </footer>

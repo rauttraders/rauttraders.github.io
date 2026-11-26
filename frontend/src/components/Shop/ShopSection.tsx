@@ -1,6 +1,7 @@
 import { LayoutGrid, SearchX, Tag } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useStore } from '../../store/StoreContext'
+import { useLanguage } from '../../hooks/useLanguage'
 import Reveal from '../ui/Reveal'
 import SectionHeader from '../ui/SectionHeader'
 import FilterDropdown from './FilterDropdown'
@@ -14,6 +15,8 @@ interface ShopSectionProps {
 
 export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
   const { products, categories, brands: brandList, settings, ready } = useStore()
+  const { language, t } = useLanguage()
+  const isEn = language === 'en'
   const logoOf = useMemo(() => new Map(brandList.map((b) => [b.name, b.logo])), [brandList])
   const showcaseProducts = useMemo(() => products.filter((p) => p.active), [products])
   const showcaseCategories = categories
@@ -34,14 +37,14 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
   )
 
   const categoryOptions = [
-    { value: '', label: `All (${showcaseProducts.length})` },
+    { value: '', label: `${t('all')} (${showcaseProducts.length})` },
     ...showcaseCategories.map((c) => ({
       value: c.id,
       label: `${c.name} (${showcaseProducts.filter((p) => p.categoryId === c.id).length})`,
     })),
   ]
   const brandOptions = [
-    { value: '', label: `All brands (${brands.length})` },
+    { value: '', label: `${t('allBrands')} (${brands.length})` },
     ...brands.map((b) => ({ value: b, label: `${b} (${showcaseProducts.filter((p) => p.company === b).length})` })),
   ]
 
@@ -49,21 +52,21 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
     <section id="shop" aria-labelledby="shop-title" className="scroll-mt-16 bg-dots bg-[#faf7f7] py-16 dark:bg-[#26272b] max-md:py-10">
       <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-5">
         <Reveal>
-          <SectionHeader title={settings.shop.title} titleId="shop-title">
-            {settings.shop.text}
+          <SectionHeader title={isEn ? settings.shop.title : t('shopTitle')} titleId="shop-title">
+            {isEn ? settings.shop.text : t('shopSubtitle')}
           </SectionHeader>
         </Reveal>
 
         <div className="mb-6 mt-7 grid grid-cols-2 gap-4 max-sm:gap-2.5 md:max-w-[560px]">
           <FilterDropdown
-            label="Category"
+            label={t('category')}
             icon={<LayoutGrid size={16} aria-hidden />}
             value={category ?? ''}
             options={categoryOptions}
             onChange={(v) => setCategory(v || null)}
           />
           <FilterDropdown
-            label="Brand"
+            label={t('brand')}
             icon={<Tag size={16} aria-hidden />}
             value={brand ?? ''}
             options={brandOptions}
@@ -72,17 +75,17 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
         </div>
 
         <p className="mb-5 mt-0 text-[13px] font-semibold text-muted" aria-live="polite">
-          Showing <span className="text-brand">{items.length}</span> {items.length === 1 ? 'product' : 'products'}
-          {query.trim() ? <> for “<span className="text-ink">{query.trim()}</span>”</> : null}
+          {t('showing')} <span className="text-brand">{items.length}</span> {items.length === 1 ? t('productSingular') : t('productPlural')}
+          {query.trim() ? <> {t('forQuery')} “<span className="text-ink">{query.trim()}</span>”</> : null}
         </p>
 
         {!ready ? (
-          <p className="m-0 py-16 text-center text-[14px] text-muted">Loading products…</p>
+          <p className="m-0 py-16 text-center text-[14px] text-muted">{t('loadingProducts')}</p>
         ) : showcaseProducts.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-line py-16 text-center text-muted">
             <LayoutGrid size={32} aria-hidden className="opacity-30" />
-            <p className="m-0 text-[15px] font-semibold text-ink">No products added yet</p>
-            <p className="m-0 text-[13px]">The admin can add products, categories and brands in the Admin panel.</p>
+            <p className="m-0 text-[15px] font-semibold text-ink">{t('noProductsYet')}</p>
+            <p className="m-0 text-[13px]">{t('noProductsHint')}</p>
           </div>
         ) : items.length > 0 ? (
           <ul className="m-0 grid list-none grid-cols-4 gap-5 p-0 max-xl:grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1">
@@ -97,7 +100,7 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
         ) : (
           <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-line py-14 text-center text-muted">
             <SearchX size={28} aria-hidden />
-            <p className="m-0 text-[15px]">No products match{query ? ` “${query}”` : ' this category'}.</p>
+            <p className="m-0 text-[15px]">{t('noProductsMatch')}{query ? ` “${query}”` : ` ${t('thisCategory')}`}.</p>
           </div>
         )}
 

@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom'
 import { X, Printer } from 'lucide-react'
 import OrderReceipt, { type ReceiptOrder } from './OrderReceipt'
 import { useStore } from '../../store/StoreContext'
+import { useLanguage } from '../../hooks/useLanguage'
 
 interface Props {
   order: ReceiptOrder
@@ -15,6 +16,7 @@ interface Props {
 
 export default function ReceiptDialog({ order, onClose }: Props) {
   const { settings } = useStore()
+  const { t } = useLanguage()
 
   const handlePrint = () => window.print()
 
@@ -31,15 +33,15 @@ export default function ReceiptDialog({ order, onClose }: Props) {
 
         {/* Dialog header */}
         <div className="no-print flex shrink-0 items-center justify-between border-b border-[#ececf0] bg-white px-5 py-3.5 dark:border-[#45464c] dark:bg-[#34353a]">
-          <span className="text-[14px] font-bold text-[#111] dark:text-[#f3f3f3]">Order Receipt</span>
+          <span className="text-[14px] font-bold text-[#111] dark:text-[#f3f3f3]">{t('orderReceipt')}</span>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handlePrint}
               className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-0 bg-brand/10 px-4 text-[12.5px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white dark:bg-brand/20"
-              title="Print receipt"
+              title={t('print')}
             >
-              Print <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <Printer size={14} aria-hidden />
+              {t('print')} <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <Printer size={14} aria-hidden />
             </button>
             <button
               type="button"

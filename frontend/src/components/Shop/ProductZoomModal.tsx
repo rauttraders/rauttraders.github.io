@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { formatINR } from '../../lib/format'
 import type { Product } from '../../store/types'
+import { useLanguage } from '../../hooks/useLanguage'
 
 interface Props {
   product: Product
@@ -22,6 +23,7 @@ const touchDist = (t1: React.Touch, t2: React.Touch) => Math.hypot(t2.clientX - 
  * Supports two-finger pinch-to-zoom, mouse wheel zoom, drag-to-pan, and horizontal + vertical scrolling.
  */
 export default function ProductZoomModal({ product, onClose }: Props) {
+  const { t } = useLanguage()
   const [zoom, setZoom] = useState(1)
   const [baseSize, setBaseSize] = useState<{ w: number; h: number } | null>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
@@ -165,7 +167,7 @@ export default function ProductZoomModal({ product, onClose }: Props) {
                 title="Reset zoom"
                 className="flex h-8 cursor-pointer items-center gap-1.5 rounded-full border border-[#e3e3e8] bg-white px-2.5 text-[12px] font-semibold text-muted transition-colors hover:border-brand hover:text-brand dark:border-[#55565d] dark:bg-[#2b2c30]"
               >
-                Reset
+                {t('reset')}
                 <span aria-hidden className="h-3.5 w-px bg-current opacity-30" />
                 <RotateCcw size={13} aria-hidden />
               </button>
@@ -209,7 +211,7 @@ export default function ProductZoomModal({ product, onClose }: Props) {
         </div>
 
         <p className="m-0 shrink-0 border-t border-[#ececf0] bg-white px-4 py-2 text-center text-[11.5px] text-muted dark:border-[#45464c] dark:bg-[#34353a]">
-          {zoom > 1 ? 'Drag or scroll to inspect · Pinch or use + / − to zoom' : 'Pinch with two fingers, scroll wheel, or tap + to zoom'}
+          {zoom > 1 ? t('zoomHintActive') : t('zoomHintIdle')}
         </p>
       </div>
     </div>,

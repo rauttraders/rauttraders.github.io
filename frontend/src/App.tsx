@@ -25,7 +25,7 @@ export default function App() {
   }, [ready])
   const showcaseProducts = useMemo(() => allProducts.filter((p) => p.active), [allProducts])
   const { theme, setTheme } = useTheme()
-  const { language, setLanguage } = useLanguage()
+  const { language, setLanguage, t } = useLanguage()
   const { qtys, setQty, itemCount } = useShopCart()
   const [query, setQuery] = useState('')
   const [ordering, setOrdering] = useState(false)
@@ -47,7 +47,7 @@ export default function App() {
 
   return (
     <>
-      {showLoader && <PageLoader overlay visible={!ready} label="Loading catalogue…" />}
+      {showLoader && <PageLoader overlay visible={!ready} label={t('loadingCatalogue')} />}
       <Navbar theme={theme} onThemeChange={setTheme} language={language} onLanguageChange={setLanguage} searchQuery={query} onSearchChange={setQuery} onSearch={onSearch} cartCount={itemCount} basketItems={basketItems} onRemoveItem={removeFromBasket} onQtyChange={setQty} onBag={scrollToShop} onCheckout={() => setOrdering(true)} basketOpen={myOrderOpen} onBasketOpenChange={setMyOrderOpen} />
       <main>
         <PromoModal onPrimary={scrollToShop} onSecondary={() => setMyOrderOpen(true)} />

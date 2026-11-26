@@ -1,6 +1,6 @@
 import { Languages, Moon, Palette, Sun, UserRound } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
-import { languages } from '../../hooks/useLanguage'
+import { languages, useLanguage } from '../../hooks/useLanguage'
 
 export interface ProfileMenuProps {
   theme: 'light' | 'dark'
@@ -12,6 +12,7 @@ export interface ProfileMenuProps {
 
 /** Opens a small dropdown with the language and theme choices (there are no customer accounts). */
 export default function ProfileMenu({ theme, onThemeChange, language, onLanguageChange }: ProfileMenuProps) {
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const panelId = useId()
@@ -51,9 +52,9 @@ export default function ProfileMenu({ theme, onThemeChange, language, onLanguage
         >
           <div className="border-t border-[#ececf0] px-3 py-2.5 dark:border-[#45464c]">
             <p className="m-0 mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-muted">
-              <Languages size={12} className="text-brand" aria-hidden /> Language
+              <Languages size={12} className="text-brand" aria-hidden /> {t('language')}
             </p>
-            <div role="group" aria-label="Language" className="flex gap-1">
+            <div role="group" aria-label={t('language')} className="flex gap-1">
               {languages.map((l) => {
                 const on = language === l.code
                 return (
@@ -75,7 +76,7 @@ export default function ProfileMenu({ theme, onThemeChange, language, onLanguage
 
           <div className="flex items-center gap-2 border-t border-[#ececf0] px-3 py-2.5 dark:border-[#45464c]">
             <Palette size={14} aria-hidden className="shrink-0 text-brand" />
-            <span id={`${panelId}-theme`} className="flex-1 text-[13px] font-semibold text-ink">{theme === 'dark' ? 'Dark mode' : 'Light mode'}</span>
+            <span id={`${panelId}-theme`} className="flex-1 text-[13px] font-semibold text-ink">{theme === 'dark' ? t('darkMode') : t('lightMode')}</span>
             <button
               type="button"
               role="switch"

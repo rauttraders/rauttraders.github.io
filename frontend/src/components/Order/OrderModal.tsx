@@ -5,6 +5,7 @@ import { formatINR } from '../../lib/format'
 import { whatsappUrl, whatsappWebUrl } from '../../lib/links'
 import { basketTotal, buildBasketMessage } from '../../lib/order'
 import { useStore } from '../../store/StoreContext'
+import { useLanguage } from '../../hooks/useLanguage'
 import type { BasketItem } from '../Navbar/BasketMenu'
 import ReceiptDialog from './ReceiptDialog'
 
@@ -39,6 +40,7 @@ interface Placed {
  */
 export default function OrderModal({ items, onClose, onSent }: OrderModalProps) {
   const { settings, placeOrder } = useStore()
+  const { t } = useLanguage()
   const [busy, setBusy] = useState(false)
   // One key for this order. If the connection drops and the shop taps again, the same key is sent, so only one order is made.
   const orderKey = useRef(newOrderKey())
@@ -115,29 +117,28 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
           <span className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full max-md:h-12 max-md:w-12 ${placed.saved ? 'bg-[#dff5e8] text-[#1c6b3c] dark:bg-[#1d3a2a] dark:text-[#7fd6a1]' : 'bg-[#fdf0d5] text-[#8a5a00] dark:bg-[#4a3a16] dark:text-[#f0c56b]'}`}>
             {placed.saved ? <CheckCircle2 size={34} className="max-md:h-6 max-md:w-6" aria-hidden /> : <TriangleAlert size={32} className="max-md:h-6 max-md:w-6" aria-hidden />}
           </span>
-          <h2 id="order-done" className="mb-0 mt-4 text-xl font-semibold text-ink max-md:mt-3 max-md:text-lg">{placed.saved ? 'Order placed!' : 'Order ready on WhatsApp'}</h2>
+          <h2 id="order-done" className="mb-0 mt-4 text-xl font-semibold text-ink max-md:mt-3 max-md:text-lg">{placed.saved ? t('orderPlaced') : t('orderReadyWa')}</h2>
           {placed.id && (
             <>
-              <p className="mb-0 mt-1.5 text-[14px] text-muted max-md:text-[13px]">Your order number is</p>
+              <p className="mb-0 mt-1.5 text-[14px] text-muted max-md:text-[13px]">{t('yourOrderNumber')}</p>
               <p className="mb-0 mt-1 text-[26px] font-extrabold tracking-wide text-brand max-md:text-[22px]">{placed.id}</p>
             </>
           )}
           <p className="mb-0 mt-2 text-[13px] text-muted">
             {placed.saved
-              ? `Total ${formatINR(placed.total)}. WhatsApp should have opened with your order. Just press send. `
-              : `Total ${formatINR(placed.total)}. The shop's order system couldn't be reached, so please make sure you press send in WhatsApp; that message is your order. `}
-            {placed.saved && 'The shop will confirm delivery details with you on WhatsApp.'}
+              ? `${t('total')} ${formatINR(placed.total)}. ${t('waOpenedNote')}`
+              : `${t('total')} ${formatINR(placed.total)}. ${t('waFallbackNote')}`}
           </p>
           <div className="mt-6 flex flex-col gap-2.5">
             <a href={placed.waUrl} target="_blank" rel="noopener noreferrer" className="flex h-[46px] items-center justify-center gap-2 rounded-full bg-brand text-sm font-semibold text-white no-underline shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-colors hover:bg-brand-hover">
-              Open WhatsApp again <span aria-hidden className="h-5 w-px bg-white/50" /> <MessageCircle size={16} aria-hidden />
+              {t('openWaAgain')} <span aria-hidden className="h-5 w-px bg-white/50" /> <MessageCircle size={16} aria-hidden />
             </a>
             <div className="grid grid-cols-2 gap-2.5">
               <a href={placed.webUrl} target="_blank" rel="noopener noreferrer" title="For people using WhatsApp in a laptop or desktop browser" className="flex h-10 items-center justify-center gap-2 rounded-full bg-brand/10 text-[13px] font-semibold text-brand no-underline transition-colors hover:bg-brand hover:text-white dark:bg-brand/20">
-                WhatsApp Web <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <Globe size={14} aria-hidden />
+                {t('whatsappWeb')} <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <Globe size={14} aria-hidden />
               </a>
               <button type="button" onClick={() => void copy()} className="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-brand/10 text-[13px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white dark:bg-brand/20">
-                {copied ? 'Copied ✓' : 'Copy message'} <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <Copy size={14} aria-hidden />
+                {copied ? t('copied') : t('copyMessage')} <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <Copy size={14} aria-hidden />
               </button>
             </div>
             {placed.id && (
@@ -146,11 +147,11 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
                 onClick={() => setReceiptOpen(true)}
                 className="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-brand/10 text-[13px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white dark:bg-brand/20"
               >
-                View Receipt <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <ReceiptText size={14} aria-hidden />
+                {t('viewReceipt')} <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <ReceiptText size={14} aria-hidden />
               </button>
             )}
-            <p className="m-0 text-[11.5px] leading-snug text-muted">On a laptop? Use <b>WhatsApp Web</b>. No WhatsApp here? Copy the message and send it to {settings.business.phone} from your phone.</p>
-            <button type="button" onClick={onSent} className="h-10 cursor-pointer border-0 bg-transparent text-[13px] font-semibold text-muted hover:text-ink">Done</button>
+            <p className="m-0 text-[11.5px] leading-snug text-muted">{t('laptopTip')} {settings.business.phone}</p>
+            <button type="button" onClick={onSent} className="h-10 cursor-pointer border-0 bg-transparent text-[13px] font-semibold text-muted hover:text-ink">{t('done')}</button>
           </div>
         </div>
       </div>
@@ -163,8 +164,8 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
       <div role="dialog" aria-modal="true" aria-labelledby="order-title" className="max-h-full w-full max-w-[520px] overflow-y-auto rounded-2xl bg-white p-6 shadow-[0_12px_40px_rgba(0,0,0,0.25)] dark:bg-[#34353a] max-md:p-4">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id="order-title" className="m-0 text-xl font-semibold text-ink max-md:text-lg">Send your order</h2>
-            <p className="mb-0 mt-1 text-[13px] text-muted max-md:text-[12px]">We'll open WhatsApp with your order written out. Just press send. No personal details needed.</p>
+            <h2 id="order-title" className="m-0 text-xl font-semibold text-ink max-md:text-lg">{t('sendYourOrder')}</h2>
+            <p className="mb-0 mt-1 text-[13px] text-muted max-md:text-[12px]">{t('sendOrderSub')}</p>
           </div>
           <button type="button" aria-label="Close" onClick={onClose} className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-muted hover:bg-black/5 dark:hover:bg-white/10">
             <X size={18} aria-hidden />
@@ -180,13 +181,13 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
           ))}
         </ul>
         <p className="mb-0 mt-2 flex justify-between px-1 text-[15px] font-bold text-ink">
-          <span>Total</span>
+          <span>{t('total')}</span>
           <span className="text-brand">{formatINR(total)}</span>
         </p>
 
         {error && <p role="alert" className="mb-0 mt-4 rounded-xl bg-[#fdeaea] px-3 py-2 text-[13px] font-semibold text-[#c62f2c]">{error}</p>}
         <button type="button" disabled={busy} onClick={() => void submit()} className="mt-5 flex h-[48px] w-full cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-brand text-sm font-semibold text-white shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-all hover:bg-brand-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 max-md:mt-4 max-md:h-[42px] max-md:text-[13px]">
-          {busy ? 'Sending…' : 'Send on WhatsApp'}
+          {busy ? t('sending') : t('sendOnWhatsApp')}
           <span aria-hidden className="h-5 w-px bg-white/50" />
           <MessageCircle size={16} aria-hidden />
         </button>

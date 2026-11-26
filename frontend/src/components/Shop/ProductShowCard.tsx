@@ -4,6 +4,7 @@ import HighlightText from '../ui/HighlightText'
 import QtyInput from '../ui/QtyInput'
 import { formatINR } from '../../lib/format'
 import type { Product as ShowcaseProduct } from '../../store/types'
+import { useLanguage } from '../../hooks/useLanguage'
 import ProductZoomModal from './ProductZoomModal'
 
 interface ProductShowCardProps {
@@ -19,6 +20,7 @@ const ctaBase =
   'flex h-[46px] max-md:h-[42px] w-full cursor-pointer items-center justify-center gap-2 rounded-full border-0 text-sm max-md:text-[13.5px] font-semibold transition-colors active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand'
 
 function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: ProductShowCardProps) {
+  const { t } = useLanguage()
   const [zoomOpen, setZoomOpen] = useState(false)
 
   return (
@@ -61,7 +63,7 @@ function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: P
               onClick={() => onQty(product.id, 1)}
               className={`${ctaBase} min-w-0 flex-1 bg-brand/10 text-brand hover:bg-brand hover:text-white dark:bg-brand/20`}
             >
-              Add to basket
+              {t('addToBasket')}
               <span aria-hidden className="h-5 w-px shrink-0 bg-current opacity-30" />
               <ShoppingCart size={17} strokeWidth={2.5} aria-hidden />
             </button>
@@ -69,7 +71,7 @@ function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: P
               <button
                 type="button"
                 aria-label={`View ${product.name}`}
-                title="View & zoom image"
+                title={t('viewZoom')}
                 onClick={() => setZoomOpen(true)}
                 className="flex h-[46px] w-[46px] max-md:h-[42px] max-md:w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-brand/10 text-brand transition-colors hover:bg-brand hover:text-white active:scale-95 dark:bg-brand/20"
               >
@@ -102,7 +104,7 @@ function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: P
               <button
                 type="button"
                 aria-label={`View ${product.name}`}
-                title="View & zoom image"
+                title={t('viewZoom')}
                 onClick={() => setZoomOpen(true)}
                 className="flex h-[46px] w-[46px] max-md:h-[42px] max-md:w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-brand/10 text-brand transition-colors hover:bg-brand hover:text-white active:scale-95 dark:bg-brand/20"
               >
@@ -112,7 +114,7 @@ function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: P
             <button
               type="button"
               aria-label={`Remove ${product.name} from basket`}
-              title="Remove from basket"
+              title={t('removeFromBasket')}
               onClick={() => onQty(product.id, 0)}
               className="flex h-[46px] w-[46px] max-md:h-[42px] max-md:w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-[#fdeaea] text-[#c62f2c] transition-colors hover:bg-[#c62f2c] hover:text-white active:scale-95 dark:bg-[#4a2f2f] dark:text-[#ff8a87] dark:hover:bg-[#c62f2c] dark:hover:text-white"
             >

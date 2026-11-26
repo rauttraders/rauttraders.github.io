@@ -3,26 +3,29 @@ import SectionHeader from '../ui/SectionHeader'
 import { CalendarDays, Clock, Handshake, Layers, Mail, MapPin, Navigation, Package, Phone, ShieldCheck, Tag, Truck } from 'lucide-react'
 import { hasValidLocation, mapDirectionsUrl, mapEmbedUrl } from '../../lib/links'
 import { useStore } from '../../store/StoreContext'
+import { useLanguage } from '../../hooks/useLanguage'
 
 const statIcons = { tag: Tag, package: Package, calendar: CalendarDays }
 const icons = { shield: ShieldCheck, layers: Layers, truck: Truck, handshake: Handshake }
 
 export default function AboutSection() {
   const { settings, products } = useStore()
+  const { language, t } = useLanguage()
+  const isEn = language === 'en'
   const { business: company, about } = settings
   const visible = products.filter((p) => p.active)
   const hasLocation = hasValidLocation(settings)
   const aboutStats = [
-    { icon: 'tag', value: `${new Set(visible.map((p) => p.company)).size}+`, label: 'Brands' },
-    { icon: 'package', value: `${visible.length}+`, label: 'Products' },
-    { icon: 'calendar', value: `${Math.max(0, new Date().getFullYear() - about.foundedYear)}+`, label: 'Years' },
+    { icon: 'tag', value: `${new Set(visible.map((p) => p.company)).size}+`, label: t('statBrands') },
+    { icon: 'package', value: `${visible.length}+`, label: t('statProducts') },
+    { icon: 'calendar', value: `${Math.max(0, new Date().getFullYear() - about.foundedYear)}+`, label: t('statYears') },
   ]
   // Only show contact rows that have been filled in
   const contactRows = [
-    { Icon: MapPin, label: 'Address', value: company.address, href: undefined, span2: true },
-    { Icon: Phone, label: 'Phone', value: company.phone, href: `tel:${company.phone.replace(/\s/g, '')}`, span2: false },
-    { Icon: Mail, label: 'Email', value: company.email, href: `mailto:${company.email}`, span2: false },
-    { Icon: Clock, label: 'Hours', value: company.hours, href: undefined, span2: true },
+    { Icon: MapPin, label: t('address'), value: company.address, href: undefined, span2: true },
+    { Icon: Phone, label: t('phone'), value: company.phone, href: `tel:${company.phone.replace(/\s/g, '')}`, span2: false },
+    { Icon: Mail, label: t('email'), value: company.email, href: `mailto:${company.email}`, span2: false },
+    { Icon: Clock, label: t('hours'), value: company.hours, href: undefined, span2: true },
   ].filter((r) => r.value.trim())
 
   return (
@@ -30,8 +33,8 @@ export default function AboutSection() {
       <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-4">
         <div className="grid grid-cols-2 items-start gap-10 max-lg:grid-cols-1 max-lg:gap-8 max-md:gap-6">
           <Reveal>
-            <SectionHeader title={about.title} titleId="about-title" />
-            <p className="mb-0 mt-4 text-[15px] leading-[1.6rem] text-muted max-md:mt-2.5 max-md:text-[13.5px] max-md:leading-[1.35rem]">{about.intro}</p>
+            <SectionHeader title={isEn ? about.title : t('aboutTitle')} titleId="about-title" />
+            <p className="mb-0 mt-4 text-[15px] leading-[1.6rem] text-muted max-md:mt-2.5 max-md:text-[13.5px] max-md:leading-[1.35rem]">{isEn ? about.intro : t('aboutIntro')}</p>
 
             <dl className="m-0 mt-6 grid grid-cols-3 gap-3 max-md:mt-4 max-md:grid-cols-2 max-md:gap-2.5">
               {aboutStats.map((s, i) => {
@@ -92,7 +95,7 @@ export default function AboutSection() {
                     rel="noopener noreferrer"
                     className="absolute bottom-4 right-4 z-10 flex h-9 items-center gap-2 rounded-full bg-brand px-4 text-[12px] font-semibold text-white no-underline shadow-[0_4px_14px_rgba(239,83,80,0.45)] transition-colors hover:bg-brand-hover"
                   >
-                    Open in Maps
+                    {t('openInMaps')}
                     <span aria-hidden className="h-4 w-px bg-white/50" />
                     <Navigation size={13} aria-hidden />
                   </a>
@@ -102,7 +105,7 @@ export default function AboutSection() {
                 <div className="flex h-[180px] flex-col items-center justify-center gap-2 bg-[#faf7f7] dark:bg-[#2b2c30]">
                   <MapPin size={28} className="text-muted/40" aria-hidden />
                   <p className="m-0 text-center text-[13px] text-muted">
-                    Map not configured yet.<br />Set coordinates in <strong>Admin → Settings</strong>.
+                    {t('mapNotConfigured')}<br />{t('setCoordsInAdmin')}
                   </p>
                 </div>
               )}

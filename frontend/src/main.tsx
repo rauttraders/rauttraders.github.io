@@ -6,6 +6,7 @@ import App from './App'
 import { AuthProvider } from './admin/auth'
 import { ConfirmProvider } from './components/ui/ConfirmDialog'
 import { ToastProvider } from './components/ui/Toast'
+import { LanguageProvider } from './hooks/useLanguage'
 import AdminLayout from './admin/AdminLayout'
 import AccountPage from './admin/pages/AccountPage'
 import BrandsPage from './admin/pages/BrandsPage'
@@ -33,9 +34,10 @@ function mount() {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-      <ToastProvider>
-        <StoreProvider>
-          <ConfirmProvider>
+      <LanguageProvider>
+        <ToastProvider>
+          <StoreProvider>
+            <ConfirmProvider>
         <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Routes>
             <Route path="/" element={<App />} />
@@ -55,9 +57,10 @@ createRoot(document.getElementById('root')!).render(
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
-        </ConfirmProvider>
-        </StoreProvider>
-      </ToastProvider>
+          </ConfirmProvider>
+          </StoreProvider>
+        </ToastProvider>
+      </LanguageProvider>
     </AuthProvider>
   </StrictMode>,
 )

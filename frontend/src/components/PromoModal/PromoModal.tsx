@@ -6,6 +6,7 @@ import HeroSlider from './HeroSlider'
 import ClientLogos from './ClientLogos'
 import type { ClientLogo } from './ClientLogos'
 import { useStore } from '../../store/StoreContext'
+import { useLanguage } from '../../hooks/useLanguage'
 import './promo-modal.css'
 
 export interface PromoModalProps {
@@ -25,6 +26,8 @@ function PromoModal({
   logos,
 }: PromoModalProps) {
   const { hero } = useStore().settings
+  const { language, t } = useLanguage()
+  const isEn = language === 'en'
   return (
     <section
       id="home"
@@ -36,8 +39,8 @@ function PromoModal({
           <PromoHeader />
           <PromoContent />
           <PromoActions
-            primaryLabel={primaryLabel ?? hero.primaryLabel}
-            secondaryLabel={secondaryLabel ?? hero.secondaryLabel}
+            primaryLabel={primaryLabel ?? (isEn ? hero.primaryLabel : t('explore'))}
+            secondaryLabel={secondaryLabel ?? (isEn ? hero.secondaryLabel : t('myOrder'))}
             onPrimary={onPrimary}
             onSecondary={onSecondary}
           />

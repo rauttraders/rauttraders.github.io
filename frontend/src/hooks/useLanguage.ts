@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { createContext, createElement, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { TRANSLATIONS, type Lang, type TranslationKey } from '../i18n/translations'
 
 export interface LanguageOption {
-  code: string
+  code: Lang
   label: string
 }
 
@@ -13,19 +14,57 @@ export const languages: LanguageOption[] = [
 
 const KEY = 'language'
 
-function initial(): string {
-  const saved = localStorage.getItem(KEY)
-  return languages.some((l) => l.code === saved) ? (saved as string) : 'en'
+function initial(): Lang {
+  try {
+    const saved = localStorage.getItem(KEY)
+    return languages.some((l) => l.code === saved) ? (saved as Lang) : 'en'
+  } catch {
+    return 'en'
+  }
 }
 
-/** Remembers the visitor's language choice and sets <html lang>. (Text translation is not wired up yet.) */
-export function useLanguage() {
-  const [language, setLanguage] = useState<string>(initial)
+interface LanguageApi {
+  language: Lang
+  setLanguage: (code: string) => void
+  t: (key: TranslationKey) => string
+}
+
+const Ctx = createContext<LanguageApi | null>(null)
+
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  const [language, setLangState] = useState<Lang>(initial)
 
   useEffect(() => {
     document.documentElement.lang = language
-    localStorage.setItem(KEY, language)
+    try {
+      localStorage.setItem(KEY, language)
+    } catch {
+      /* ignore storage blocked */
+    }
   }, [language])
 
-  return { language, setLanguage }
+  const value = useMemo<LanguageApi>(
+    () => ({
+      language,
+      setLanguage: (code: string) => {
+        if (languages.some((l) => l.code === code)) setLangState(code as Lang)
+      },
+      t: (key: TranslationKey) => TRANSLATIONS[language][key] ?? TRANSLATIONS.en[key],
+    }),
+    [language],
+  )
+
+  return createElement(Ctx.Provider, { value }, children)
+}
+
+export function useLanguage() {
+  const ctx = useContext(Ctx)
+  if (!ctx) {
+    return {
+      language: 'en' as Lang,
+      setLanguage: () => {},
+      t: (key: TranslationKey) => TRANSLATIONS.en[key],
+    }
+  }
+  return ctx
 }

@@ -8,6 +8,7 @@
 
 import { formatINR } from '../../lib/format'
 import type { OrderItem } from '../../store/types'
+import { useLanguage } from '../../hooks/useLanguage'
 import logoUrl from '../../assets/sortlogo.png'
 
 export interface ReceiptOrder {
@@ -84,6 +85,7 @@ function BoxIllustration() {
 }
 
 export default function OrderReceipt({ order, businessName = 'Raut Traders', businessPhone, businessAddress }: Props) {
+  const { t } = useLanguage()
   const subtotal = order.items.reduce((s, i) => s + i.price * i.qty, 0)
 
   return (
@@ -100,7 +102,7 @@ export default function OrderReceipt({ order, businessName = 'Raut Traders', bus
             <span className="text-[15px] font-extrabold tracking-wide text-white">{businessName}</span>
           </div>
           <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-widest text-white">
-            Receipt
+            {t('receiptLabel')}
           </span>
         </div>
         <div className="mt-3" />
@@ -120,13 +122,13 @@ export default function OrderReceipt({ order, businessName = 'Raut Traders', bus
                   <circle cx="4" cy="4" r="4" fill="#1baf7a" />
                   <path d="M2 4l1.3 1.3L6 2.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                Confirmed
+                {t('confirmed')}
               </span>
             </div>
             <h2 className="m-0 text-[18px] font-extrabold leading-tight text-[#111]">
-              Order placed!
+              {t('orderPlaced')}
             </h2>
-            <p className="m-0 mt-0.5 text-[12px] text-[#596579]">Thank you for shopping with us</p>
+            <p className="m-0 mt-0.5 text-[12px] text-[#596579]">{t('thankYouOrder')}</p>
           </div>
           <BoxIllustration />
         </div>
@@ -136,16 +138,16 @@ export default function OrderReceipt({ order, businessName = 'Raut Traders', bus
 
         {/* Order info table */}
         <div className="py-4">
-          <p className="m-0 mb-2 text-[10px] font-bold uppercase tracking-widest text-[#596579]">Order Details</p>
+          <p className="m-0 mb-2 text-[10px] font-bold uppercase tracking-widest text-[#596579]">{t('orderDetails')}</p>
           <div className="grid grid-cols-2 gap-y-2.5 text-[13px]">
-            <span className="text-[#596579]">Order ID</span>
+            <span className="text-[#596579]">{t('orderId')}</span>
             <span className="text-right font-bold text-brand">{order.id}</span>
 
-            <span className="text-[#596579]">Date &amp; Time</span>
+            <span className="text-[#596579]">{t('dateTime')}</span>
             <span className="text-right font-semibold text-[#111]">{fmt(order.createdAt)}</span>
 
-            <span className="text-[#596579]">Status</span>
-            <span className="text-right font-semibold text-[#1baf7a]">Confirmed</span>
+            <span className="text-[#596579]">{t('status')}</span>
+            <span className="text-right font-semibold text-[#1baf7a]">{t('confirmed')}</span>
           </div>
         </div>
 
@@ -154,14 +156,14 @@ export default function OrderReceipt({ order, businessName = 'Raut Traders', bus
 
         {/* Items table */}
         <div className="py-4">
-          <p className="m-0 mb-3 text-[10px] font-bold uppercase tracking-widest text-[#596579]">Items Ordered</p>
+          <p className="m-0 mb-3 text-[10px] font-bold uppercase tracking-widest text-[#596579]">{t('itemsOrdered')}</p>
           <table className="w-full border-collapse text-[12.5px]">
             <thead>
               <tr className="text-[10px] uppercase tracking-wide text-[#596579]">
-                <th className="pb-2 text-left font-semibold">Product</th>
-                <th className="pb-2 text-center font-semibold">Qty</th>
-                <th className="pb-2 text-right font-semibold">Rate</th>
-                <th className="pb-2 text-right font-semibold">Amount</th>
+                <th className="pb-2 text-left font-semibold">{t('product')}</th>
+                <th className="pb-2 text-center font-semibold">{t('qty')}</th>
+                <th className="pb-2 text-right font-semibold">{t('rate')}</th>
+                <th className="pb-2 text-right font-semibold">{t('amount')}</th>
               </tr>
             </thead>
             <tbody>
@@ -185,20 +187,20 @@ export default function OrderReceipt({ order, businessName = 'Raut Traders', bus
 
         {/* Payment summary */}
         <div className="py-4">
-          <p className="m-0 mb-3 text-[10px] font-bold uppercase tracking-widest text-[#596579]">Payment Summary</p>
+          <p className="m-0 mb-3 text-[10px] font-bold uppercase tracking-widest text-[#596579]">{t('paymentSummary')}</p>
           <div className="space-y-2 text-[13px]">
             <div className="flex justify-between">
-              <span className="text-[#596579]">Subtotal ({order.items.reduce((s, i) => s + i.qty, 0)} items)</span>
+              <span className="text-[#596579]">{t('subtotal')} ({order.items.reduce((s, i) => s + i.qty, 0)} {t('itemsLabel')})</span>
               <span className="font-semibold text-[#111]">{formatINR(subtotal)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#596579]">Delivery</span>
-              <span className="font-semibold text-[#1baf7a]">As agreed on WhatsApp</span>
+              <span className="text-[#596579]">{t('delivery')}</span>
+              <span className="font-semibold text-[#1baf7a]">{t('agreedOnWa')}</span>
             </div>
           </div>
           {/* Grand total */}
           <div className="mt-3 flex items-center justify-between rounded-xl bg-[#fff4f4] px-4 py-3">
-            <span className="text-[14px] font-bold text-[#111]">Total</span>
+            <span className="text-[14px] font-bold text-[#111]">{t('total')}</span>
             <span className="text-[20px] font-extrabold text-brand">{formatINR(order.total)}</span>
           </div>
         </div>
@@ -217,10 +219,10 @@ export default function OrderReceipt({ order, businessName = 'Raut Traders', bus
             })}
           </div>
           <p className="m-0 text-[10px] font-bold uppercase tracking-widest text-[#596579]">{order.id}</p>
-          <p className="m-0 mt-3 text-[13px] font-semibold text-[#111]">🙏 Thank you for your order!</p>
-          <p className="m-0 mt-1 text-[11px] text-[#596579]">Your order confirmation is shared via WhatsApp.</p>
+          <p className="m-0 mt-3 text-[13px] font-semibold text-[#111]">🙏 {t('receiptThanks')}</p>
+          <p className="m-0 mt-1 text-[11px] text-[#596579]">{t('receiptWaNote')}</p>
           {businessPhone && (
-            <p className="m-0 mt-1 text-[11px] text-[#596579]">Queries? Call: {businessPhone}</p>
+            <p className="m-0 mt-1 text-[11px] text-[#596579]">{t('queriesCall')} {businessPhone}</p>
           )}
           {businessAddress && (
             <p className="m-0 mt-1 text-[11px] text-[#596579]">{businessAddress}</p>
