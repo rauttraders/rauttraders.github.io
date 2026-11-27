@@ -100,12 +100,12 @@ html.dark .checker-stage {
 /* Admin charts: categorical slots (validated reference palette) + chart ink, light and dark */
 .viz-root {
   --viz-brand: #e53935; --viz-brand-soft: rgba(229, 57, 53, 0.16);
-  --viz-1: #2a78d6; --viz-2: #eb6834; --viz-3: #1baf7a; --viz-4: #eda100; --viz-5: #e87ba4; --viz-6: #008300; --viz-other: #9b9ba3;
+  --viz-1: #12A5E8; --viz-2: #17B6A5; --viz-3: #F9A009; --viz-4: #F43F5E; --viz-5: #8B5CF6; --viz-6: #10B981; --viz-other: #94A3B8;
   --viz-surface: #ffffff; --viz-grid: #ececf0; --viz-axis: #596579;
 }
 html.dark .viz-root {
   --viz-brand: #ef5350; --viz-brand-soft: rgba(239, 83, 80, 0.2);
-  --viz-1: #3987e5; --viz-2: #d95926; --viz-3: #199e70; --viz-4: #c98500; --viz-5: #d55181; --viz-6: #0ca30c; --viz-other: #7a7b83;
+  --viz-1: #12A5E8; --viz-2: #17B6A5; --viz-3: #F9A009; --viz-4: #F43F5E; --viz-5: #A78BFA; --viz-6: #34D399; --viz-other: #64748B;
   --viz-surface: #34353a; --viz-grid: #45464c; --viz-axis: #b4b4b8;
 }
 
