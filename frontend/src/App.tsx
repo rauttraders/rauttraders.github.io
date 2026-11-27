@@ -45,10 +45,16 @@ export default function App() {
     scrollToShop()
   }, [])
 
+  const goToLanding = useCallback(() => {
+    setMyOrderOpen(false)
+    setOrdering(false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
   return (
     <>
       {showLoader && <PageLoader overlay visible={!ready} label={t('loadingCatalogue')} />}
-      <Navbar theme={theme} onThemeChange={setTheme} language={language} onLanguageChange={setLanguage} searchQuery={query} onSearchChange={setQuery} onSearch={onSearch} cartCount={itemCount} basketItems={basketItems} onRemoveItem={removeFromBasket} onQtyChange={setQty} onBag={scrollToShop} onCheckout={() => setOrdering(true)} basketOpen={myOrderOpen} onBasketOpenChange={setMyOrderOpen} />
+      <Navbar theme={theme} onThemeChange={setTheme} language={language} onLanguageChange={setLanguage} searchQuery={query} onSearchChange={setQuery} onSearch={onSearch} cartCount={itemCount} basketItems={basketItems} onRemoveItem={removeFromBasket} onQtyChange={setQty} onBag={scrollToShop} onCheckout={() => setOrdering(true)} basketOpen={myOrderOpen} onBasketOpenChange={setMyOrderOpen} onLogoClick={goToLanding} />
       <main>
         <PromoModal onPrimary={scrollToShop} onSecondary={() => setMyOrderOpen(true)} />
         <ShopSection query={query} qtys={qtys} onQty={setQty} />

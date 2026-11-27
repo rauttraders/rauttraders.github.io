@@ -6,6 +6,7 @@ import { whatsappUrl, whatsappWebUrl } from '../../lib/links'
 import { basketTotal, buildBasketMessage } from '../../lib/order'
 import { useStore } from '../../store/StoreContext'
 import { useLanguage } from '../../hooks/useLanguage'
+import { saveRecentOrder } from '../../hooks/useRecentOrders'
 import type { BasketItem } from '../Navbar/BasketMenu'
 import ReceiptDialog from './ReceiptDialog'
 
@@ -81,6 +82,20 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
     }
     const text = buildBasketMessage(items, settings.business, settings.whatsapp, id)
     const waUrl = whatsappUrl(settings, text)
+    saveRecentOrder({
+      id: id ?? `WA-${Date.now().toString(36).toUpperCase()}`,
+      createdAt: new Date().toISOString(),
+      items: items.map((i) => ({
+        id: i.id,
+        name: i.name,
+        company: i.company ?? '',
+        categoryId: '',
+        size: i.size ?? '',
+        price: i.price,
+        qty: i.qty,
+      })),
+      total,
+    })
     setPlaced({ id, total, text, waUrl, webUrl: whatsappWebUrl(settings, text), saved })
     setBusy(false)
     if (tab && !tab.closed) tab.location.href = waUrl

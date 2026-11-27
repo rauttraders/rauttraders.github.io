@@ -1,9 +1,12 @@
-import { ArrowLeft, MessageCircle, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
-import { useEffect } from 'react'
+import { ArrowLeft, Clock, MessageCircle, Minus, Plus, ReceiptText, ShoppingBag, Trash2, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useStore } from '../../store/StoreContext'
 import { useLanguage } from '../../hooks/useLanguage'
+import { useRecentOrders } from '../../hooks/useRecentOrders'
 import { formatINR } from '../../lib/format'
 import QtyInput from '../ui/QtyInput'
+import ReceiptDialog from '../Order/ReceiptDialog'
+import type { ReceiptOrder } from '../Order/OrderReceipt'
 import type { BasketItem } from '../Navbar/BasketMenu'
 
 interface BasketPageProps {
@@ -22,6 +25,8 @@ const stepBtn =
 export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, onCheckout }: BasketPageProps) {
   const { brands } = useStore()
   const { t } = useLanguage()
+  const { recentOrders, clearRecentOrders } = useRecentOrders()
+  const [receiptOrder, setReceiptOrder] = useState<ReceiptOrder | null>(null)
   const logoOf = new Map(brands.map((b) => [b.name, b.logo]))
   const count = items.reduce((s, i) => s + i.qty, 0)
   const total = items.reduce((s, i) => s + i.price * i.qty, 0)
@@ -39,7 +44,45 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
     }
   }, [onClose])
 
+  const recentOrdersSection = recentOrders.length > 0 && (
+    <section className="mx-auto mt-6 w-full max-w-[760px] rounded-2xl border border-[#ececf0] bg-white p-5 text-left shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-md:mt-4 max-md:rounded-xl max-md:p-3.5">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h3 className="m-0 flex items-center gap-2 text-[15px] font-extrabold text-ink max-md:text-[14px]">
+          <Clock size={16} className="text-brand" aria-hidden /> Recent orders (2h)
+        </h3>
+        <button
+          type="button"
+          onClick={clearRecentOrders}
+          className="cursor-pointer border-0 bg-transparent text-[12px] font-semibold text-muted hover:text-brand"
+        >
+          Clear
+        </button>
+      </div>
+      <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+        {recentOrders.map((o) => (
+          <li key={o.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#ececf0] bg-[#faf7f7] px-3.5 py-2.5 dark:border-[#45464c] dark:bg-[#2b2c30]">
+            <div className="min-w-0">
+              <p className="m-0 text-[13.5px] font-bold text-ink">{o.id} · <span className="text-brand">{formatINR(o.total)}</span></p>
+              <p className="m-0 mt-0.5 text-[11.5px] text-muted">
+                {new Date(o.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })} · {o.items.reduce((s, i) => s + i.qty, 0)} {t('itemsLabel')}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setReceiptOrder(o)}
+              className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full border-0 bg-brand/10 px-3 text-[12px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white dark:bg-brand/20"
+            >
+              {t('viewReceipt')} <span aria-hidden className="h-3.5 w-px bg-current opacity-30" /> <ReceiptText size={13} aria-hidden />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+
   return (
+    <>
+    {receiptOrder && <ReceiptDialog order={receiptOrder} onClose={() => setReceiptOrder(null)} />}
     <div role="dialog" aria-modal="true" aria-labelledby="basket-title" className="fixed inset-x-0 bottom-0 top-16 z-[900] flex flex-col bg-[#faf7f7] dark:bg-[#26272b] max-lg:top-14">
       <header className="flex h-16 shrink-0 items-center gap-3 border-b border-[#ececf0] bg-white px-6 dark:border-[#45464c] dark:bg-[#34353a] max-lg:h-14 max-md:gap-2 max-md:px-3">
         <button type="button" onClick={onClose} aria-label="Back to shop" className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ink hover:bg-brand/10 hover:text-brand max-md:h-9 max-md:w-9">
@@ -55,18 +98,20 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
       </header>
 
       {items.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center max-md:px-4">
+        <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-6 py-6 text-center max-md:px-4">
           <span className="flex h-24 w-24 items-center justify-center rounded-full bg-brand/10 text-brand dark:bg-brand/20 max-md:h-16 max-md:w-16">
             <ShoppingBag size={42} className="max-md:h-7 max-md:w-7" aria-hidden />
           </span>
-          <h3 className="m-0 text-[22px] font-extrabold text-ink max-md:text-[18px]">{t('basketEmpty')}</h3>
-          <p className="m-0 max-w-[340px] text-[15px] text-muted max-md:text-[13.5px]">{t('basketEmptyHint')}</p>
-          <button type="button" onClick={() => { onClose(); onBrowse() }} className="mt-2 h-[46px] cursor-pointer rounded-full border-0 bg-brand px-8 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-colors hover:bg-brand-hover max-md:h-[40px] max-md:px-6 max-md:text-[13px]">
+          <h3 className="m-0 mt-3 text-[22px] font-extrabold text-ink max-md:text-[18px]">{t('basketEmpty')}</h3>
+          <p className="m-0 mt-2 max-w-[340px] text-[15px] text-muted max-md:text-[13.5px]">{t('basketEmptyHint')}</p>
+          <button type="button" onClick={() => { onClose(); onBrowse() }} className="mt-4 h-[46px] cursor-pointer rounded-full border-0 bg-brand px-8 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-colors hover:bg-brand-hover max-md:h-[40px] max-md:px-6 max-md:text-[13px]">
             {t('browseProducts')}
           </button>
+          {recentOrdersSection}
         </div>
       ) : (
         <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_380px] gap-6 overflow-y-auto p-6 max-lg:grid-cols-1 max-lg:gap-4 max-lg:p-4 max-md:gap-3 max-md:p-3">
+          <div className="flex flex-col gap-4">
           <ul className="m-0 flex h-fit list-none flex-col gap-4 p-0 max-md:gap-2.5">
             {items.map((i) => (
               <li key={i.id} className="flex gap-4 rounded-2xl border border-[#ececf0] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-md:gap-3 max-md:rounded-xl max-md:p-3">
@@ -102,6 +147,8 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
               </li>
             ))}
           </ul>
+          {recentOrdersSection}
+          </div>
 
           <aside className="h-fit rounded-2xl border border-[#ececf0] bg-white p-6 shadow-[0_14px_40px_rgba(239,83,80,0.12)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-lg:p-5 max-md:rounded-xl max-md:p-4 lg:sticky lg:top-0">
             <h3 className="m-0 text-[18px] font-extrabold text-ink max-md:text-[16px]">{t('orderSummary')}</h3>
@@ -128,5 +175,6 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
         </div>
       )}
     </div>
+    </>
   )
 }
