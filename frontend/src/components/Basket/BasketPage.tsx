@@ -83,7 +83,7 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
   return (
     <>
     {receiptOrder && <ReceiptDialog order={receiptOrder} onClose={() => setReceiptOrder(null)} />}
-    <div role="dialog" aria-modal="true" aria-labelledby="basket-title" className="fixed inset-x-0 bottom-0 top-16 z-[900] flex flex-col bg-[#faf7f7] dark:bg-[#26272b] max-lg:top-14">
+    <div role="dialog" aria-modal="true" aria-labelledby="basket-title" className="fixed inset-0 z-[1150] flex flex-col bg-[#faf7f7] dark:bg-[#26272b]">
       <header className="flex h-16 shrink-0 items-center gap-3 border-b border-[#ececf0] bg-white px-6 dark:border-[#45464c] dark:bg-[#34353a] max-lg:h-14 max-md:gap-2 max-md:px-3">
         <button type="button" onClick={onClose} aria-label="Back to shop" className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ink hover:bg-brand/10 hover:text-brand max-md:h-9 max-md:w-9">
           <ArrowLeft size={20} aria-hidden />
@@ -97,7 +97,14 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
         </button>
       </header>
 
-      {items.length === 0 ? (
+      {items.length === 0 && recentOrders.length > 0 ? (
+        <div className="flex flex-1 flex-col items-center overflow-y-auto px-6 py-6 max-md:px-4">
+          {recentOrdersSection}
+          <button type="button" onClick={() => { onClose(); onBrowse() }} className="mt-5 h-[46px] shrink-0 cursor-pointer rounded-full border-0 bg-brand px-8 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-colors hover:bg-brand-hover max-md:h-[40px] max-md:px-6 max-md:text-[13px]">
+            {t('browseProducts')}
+          </button>
+        </div>
+      ) : items.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-6 py-6 text-center max-md:px-4">
           <span className="flex h-24 w-24 items-center justify-center rounded-full bg-brand/10 text-brand dark:bg-brand/20 max-md:h-16 max-md:w-16">
             <ShoppingBag size={42} className="max-md:h-7 max-md:w-7" aria-hidden />
@@ -107,7 +114,6 @@ export default function BasketPage({ items, onClose, onQty, onRemove, onBrowse, 
           <button type="button" onClick={() => { onClose(); onBrowse() }} className="mt-4 h-[46px] cursor-pointer rounded-full border-0 bg-brand px-8 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-colors hover:bg-brand-hover max-md:h-[40px] max-md:px-6 max-md:text-[13px]">
             {t('browseProducts')}
           </button>
-          {recentOrdersSection}
         </div>
       ) : (
         <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_380px] gap-6 overflow-y-auto p-6 max-lg:grid-cols-1 max-lg:gap-4 max-lg:p-4 max-md:gap-3 max-md:p-3">
