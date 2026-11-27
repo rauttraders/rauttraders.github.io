@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar/Navbar'
 import PromoModal from './components/PromoModal/PromoModal'
 import { useStore } from './store/StoreContext'
@@ -44,6 +45,16 @@ export default function App() {
     setQuery(q)
     scrollToShop()
   }, [])
+
+  const { hash } = useLocation()
+  useEffect(() => {
+    if (!hash) return
+    const id = hash.slice(1)
+    const timer = window.setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 60)
+    return () => window.clearTimeout(timer)
+  }, [hash])
 
   const goToLanding = useCallback(() => {
     setMyOrderOpen(false)

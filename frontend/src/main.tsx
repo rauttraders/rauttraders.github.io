@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import './index.css'
 import App from './App'
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
+import TermsPage from './pages/TermsPage'
+import ReturnPolicyPage from './pages/ReturnPolicyPage'
+import ImageCreditsPage from './pages/ImageCreditsPage'
 import { AuthProvider } from './admin/auth'
 import { ConfirmProvider } from './components/ui/ConfirmDialog'
 import { ToastProvider } from './components/ui/Toast'
@@ -41,6 +45,10 @@ createRoot(document.getElementById('root')!).render(
         <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Routes>
             <Route path="/" element={<App />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms-and-conditions" element={<TermsPage />} />
+            <Route path="/return-policy" element={<ReturnPolicyPage />} />
+            <Route path="/image-credits" element={<ImageCreditsPage />} />
             <Route path="/admin/login" element={<LoginPage />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<DashboardPage />} />

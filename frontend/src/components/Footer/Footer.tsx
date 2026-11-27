@@ -1,4 +1,5 @@
 import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { whatsappUrl } from '../../lib/links'
 import { useStore } from '../../store/StoreContext'
 import { useLanguage } from '../../hooks/useLanguage'
@@ -12,10 +13,16 @@ export default function Footer() {
   const { t } = useLanguage()
   const company = settings.business
   const quickLinks = [
-    { label: t('navHome'), href: '#home' },
-    { label: t('navProducts'), href: '#shop' },
-    { label: t('navAbout'), href: '#about' },
-    { label: t('navContact'), href: '#contact' },
+    { label: t('navHome'), to: '/#home' },
+    { label: t('navProducts'), to: '/#shop' },
+    { label: t('navAbout'), to: '/#about' },
+    { label: t('navContact'), to: '/#contact' },
+  ]
+  const infoLinks = [
+    { label: t('privacyPolicy'), to: '/privacy-policy' },
+    { label: t('termsConditions'), to: '/terms-and-conditions' },
+    { label: t('returnPolicy'), to: '/return-policy' },
+    { label: t('imageCredits'), to: '/image-credits' },
   ]
 
   // Only render contact rows that have been filled in by the admin
@@ -32,11 +39,11 @@ export default function Footer() {
     <footer className="relative bg-[#1f2023] text-[#c9c9ce]">
       <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand via-[#ff8a65] to-brand" />
       <div className="mx-auto w-full max-w-[1200px] px-3.5 pb-6 pt-12 max-xl:px-10 max-md:px-5">
-        <div className="grid grid-cols-[1.4fr_1fr_1.4fr] gap-10 max-lg:grid-cols-2 max-sm:grid-cols-1">
+        <div className="grid grid-cols-[1.4fr_1fr_1fr_1.4fr] gap-10 max-lg:grid-cols-2 max-sm:grid-cols-1">
           <div className="flex flex-col items-start">
-            <a href="#home" aria-label={`${company.name || 'Home'} — Home`} className="inline-block">
+            <Link to="/" aria-label={`${company.name || 'Home'} — Home`} className="inline-block">
               <PromoHeader alt="" sticker />
-            </a>
+            </Link>
             {company.tagline && <p className="mb-0 mt-4 max-w-[280px] text-[14px] leading-[1.4rem]">{company.tagline}</p>}
             {hasWhatsApp && (
               <a
@@ -56,7 +63,16 @@ export default function Footer() {
             <h3 className={headCls}>{t('quickLinks')}</h3>
             <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
               {quickLinks.map((l) => (
-                <li key={l.label}><a href={l.href} className={linkCls}>{l.label}</a></li>
+                <li key={l.label}><Link to={l.to} className={linkCls}>{l.label}</Link></li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-label={t('infoLabel')}>
+            <h3 className={headCls}>{t('infoLabel')}</h3>
+            <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+              {infoLinks.map((l) => (
+                <li key={l.to}><Link to={l.to} className={linkCls}>{l.label}</Link></li>
               ))}
             </ul>
           </nav>
