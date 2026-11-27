@@ -23,8 +23,6 @@ function initial(): Lang {
   }
 }
 
-const DEVANAGARI_RE = /[\u0900-\u097F]/
-
 interface LanguageApi {
   language: Lang
   setLanguage: (code: string) => void
@@ -55,9 +53,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       },
       t,
       tSetting: (settingValue: string | undefined, key: TranslationKey) => {
-        if (language !== 'en') return t(key)
-        if (settingValue && settingValue.trim() && !DEVANAGARI_RE.test(settingValue)) return settingValue
-        return TRANSLATIONS.en[key]
+        if (settingValue && settingValue.trim()) return settingValue
+        return t(key)
       },
     }
   }, [language])
@@ -73,7 +70,7 @@ export function useLanguage() {
       setLanguage: () => {},
       t: (key: TranslationKey) => TRANSLATIONS.en[key],
       tSetting: (settingValue: string | undefined, key: TranslationKey) =>
-        settingValue && settingValue.trim() && !DEVANAGARI_RE.test(settingValue) ? settingValue : TRANSLATIONS.en[key],
+        settingValue && settingValue.trim() ? settingValue : TRANSLATIONS.en[key],
     }
   }
   return ctx

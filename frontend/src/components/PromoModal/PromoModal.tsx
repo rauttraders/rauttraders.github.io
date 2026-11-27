@@ -6,7 +6,6 @@ import HeroSlider from './HeroSlider'
 import ClientLogos from './ClientLogos'
 import type { ClientLogo } from './ClientLogos'
 import { useStore } from '../../store/StoreContext'
-import { useLanguage } from '../../hooks/useLanguage'
 import { HeroSkeleton } from '../ui/Skeleton'
 import './promo-modal.css'
 
@@ -28,7 +27,6 @@ function PromoModal({
 }: PromoModalProps) {
   const { settings, ready } = useStore()
   const { hero } = settings
-  const { tSetting } = useLanguage()
   if (!ready) return <HeroSkeleton />
   return (
     <section
@@ -41,8 +39,8 @@ function PromoModal({
           <PromoHeader />
           <PromoContent />
           <PromoActions
-            primaryLabel={primaryLabel ?? tSetting(hero.primaryLabel, 'explore')}
-            secondaryLabel={secondaryLabel ?? tSetting(hero.secondaryLabel, 'myOrder')}
+            primaryLabel={primaryLabel ?? hero.primaryLabel}
+            secondaryLabel={secondaryLabel ?? hero.secondaryLabel}
             onPrimary={onPrimary}
             onSecondary={onSecondary}
           />
