@@ -32,7 +32,7 @@ const KEY_RE = /^[A-Za-z][A-Za-z0-9_]{0,40}$/
 
 /** Types of the settings the website relies on ('s' text, 'n' number, 'b' true/false, 'a' list). Anything else is only checked generically. */
 const KNOWN: Record<string, Record<string, 's' | 'n' | 'b' | 'a'>> = {
-  business: { name: 's', tagline: 's', address: 's', phone: 's', email: 's', hours: 's', whatsappNumber: 's', lat: 'n', lng: 'n' },
+  business: { name: 's', tagline: 's', address: 's', phone: 's', email: 's', hours: 's', whatsappNumber: 's', instagram: 's', facebook: 's', whatsappLink: 's', lat: 'n', lng: 'n' },
   hero: { line1: 's', line2: 's', highlight: 's', description: 's', badges: 'a', primaryLabel: 's', secondaryLabel: 's' },
   shop: { title: 's', text: 's' },
   about: { title: 's', intro: 's', foundedYear: 'n', highlights: 'a' },

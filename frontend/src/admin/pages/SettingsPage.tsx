@@ -1,4 +1,4 @@
-import { Check, Database, GalleryHorizontal, Info, LayoutTemplate, LocateFixed, RotateCcw, Save, Store } from 'lucide-react'
+import { Check, Database, GalleryHorizontal, Info, LayoutTemplate, LocateFixed, RotateCcw, Save, Share2, Store } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { defaultSettings } from '../../data/company'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
@@ -14,6 +14,15 @@ const ICONS: { value: HighlightIcon; label: string }[] = [
   { value: 'truck', label: 'Truck (delivery)' },
   { value: 'handshake', label: 'Handshake (support)' },
 ]
+
+const isSafeUrl = (v: string) => {
+  try {
+    const u = new URL(v.trim())
+    return u.protocol === 'https:' || u.protocol === 'http:'
+  } catch {
+    return false
+  }
+}
 
 export default function SettingsPage() {
   const confirm = useConfirm()
@@ -46,6 +55,9 @@ export default function SettingsPage() {
     if ((hasLat && !hasLng) || (!hasLat && hasLng)) errs.push('Enter both latitude and longitude, or leave both empty.')
     if ((hasLat && hasLng) && (Math.abs(b.lat) > 90 || Math.abs(b.lng) > 180)) errs.push('Map latitude / longitude are not valid numbers.')
     if (!(d.about.foundedYear >= 1900 && d.about.foundedYear <= new Date().getFullYear())) errs.push('Founded year is not valid.')
+    if (b.instagram?.trim() && !isSafeUrl(b.instagram)) errs.push('Instagram link must start with https:// or http://')
+    if (b.facebook?.trim() && !isSafeUrl(b.facebook)) errs.push('Facebook link must start with https:// or http://')
+    if (b.whatsappLink?.trim() && !isSafeUrl(b.whatsappLink)) errs.push('WhatsApp link must start with https:// or http://')
     setErrors(errs)
     if (errs.length) {
       toast.error(errs[0])
@@ -128,6 +140,35 @@ export default function SettingsPage() {
               </p>
             )}
           </div>
+        </div>
+      </Card>
+
+      <Card>
+        <PanelHeader icon={Share2} title="Social media links" subtitle="Shown in the footer under Social Media (Instagram, WhatsApp, Facebook)." />
+        <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
+          <TextInput
+            label="Instagram link"
+            type="url"
+            placeholder="https://instagram.com/yourpage"
+            value={d.business.instagram ?? ''}
+            onChange={(e) => up('business', { instagram: e.target.value })}
+          />
+          <TextInput
+            label="Facebook link"
+            type="url"
+            placeholder="https://facebook.com/yourpage"
+            value={d.business.facebook ?? ''}
+            onChange={(e) => up('business', { facebook: e.target.value })}
+          />
+          <TextInput
+            wrapClass="col-span-2 max-sm:col-span-1"
+            label="WhatsApp link (optional)"
+            type="url"
+            placeholder="https://wa.me/91..."
+            value={d.business.whatsappLink ?? ''}
+            onChange={(e) => up('business', { whatsappLink: e.target.value })}
+            hint="Leave empty to use your WhatsApp number above automatically."
+          />
         </div>
       </Card>
 

@@ -100,6 +100,9 @@ export interface Settings {
     hours: string
     /** With country code, digits only. Orders and enquiries are sent here. */
     whatsappNumber: string
+    instagram?: string
+    facebook?: string
+    whatsappLink?: string
     lat: number
     lng: number
   }
