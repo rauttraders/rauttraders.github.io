@@ -173,6 +173,136 @@ export function autoFit(img: HTMLImageElement): AutoFitResult {
   return { canvas: out, removedBackground, trimmed }
 }
 
+/**
+ * Smart edge-aware background removal (runs 100% on-device on canvas, or calls
+ * optional VITE_BG_REMOVE_URL service if configured). Samples multi-cluster border colors,
+ * respects strong object edges, and applies soft boundary feathering.
+ */
+export async function removeBackgroundSmart(img: HTMLImageElement): Promise<HTMLCanvasElement> {
+  const endpoint = (import.meta.env.VITE_BG_REMOVE_URL as string | undefined)?.trim()
+  const work = toCanvas(img, MAX_WORK)
+
+  if (endpoint) {
+    try {
+      const blob = await new Promise<Blob | null>((res) => work.toBlob(res, 'image/png'))
+      if (blob) {
+        const fd = new FormData()
+        fd.append('file', blob, 'image.png')
+        const resp = await fetch(endpoint, { method: 'POST', body: fd })
+        if (resp.ok) {
+          const outBlob = await resp.blob()
+          const objUrl = URL.createObjectURL(outBlob)
+          try {
+            const loaded = await loadImage(objUrl)
+            const c = document.createElement('canvas')
+            c.width = loaded.naturalWidth
+            c.height = loaded.naturalHeight
+            c.getContext('2d')!.drawImage(loaded, 0, 0)
+            return c
+          } finally {
+            URL.revokeObjectURL(objUrl)
+          }
+        }
+      }
+    } catch {
+      /* fall back to on-device segmentation */
+    }
+  }
+
+  const { width: w, height: h } = work
+  const ctx = work.getContext('2d', { willReadFrequently: true })!
+  const imgData = ctx.getImageData(0, 0, w, h)
+  const px = imgData.data
+  const n = w * h
+
+  // Collect representative background color seeds from all 4 borders
+  const seeds: [number, number, number][] = []
+  const addSeed = (x: number, y: number) => {
+    const o = (y * w + x) * 4
+    if (px[o + 3] < 32) return
+    const r = px[o], g = px[o + 1], b = px[o + 2]
+    if (!seeds.some(([sr, sg, sb]) => Math.hypot(r - sr, g - sg, b - sb) < 28) && seeds.length < 10) {
+      seeds.push([r, g, b])
+    }
+  }
+  const stepX = Math.max(1, Math.floor(w / 20))
+  const stepY = Math.max(1, Math.floor(h / 20))
+  for (let x = 0; x < w; x += stepX) { addSeed(x, 0); addSeed(x, h - 1) }
+  for (let y = 0; y < h; y += stepY) { addSeed(0, y); addSeed(w - 1, y) }
+
+  if (seeds.length > 0) {
+    const minSeedDist = (o: number) => {
+      const r = px[o], g = px[o + 1], b = px[o + 2]
+      let best = 999
+      for (let i = 0; i < seeds.length; i++) {
+        const d = Math.hypot(r - seeds[i][0], g - seeds[i][1], b - seeds[i][2])
+        if (d < best) best = d
+      }
+      return best
+    }
+
+    const TOL = 54
+    const EDGE_BARRIER = 42
+    const seen = new Uint8Array(n)
+    const queue = new Int32Array(n)
+    let head = 0, tail = 0
+
+    const trySeed = (x: number, y: number) => {
+      const i = y * w + x
+      if (!seen[i] && minSeedDist(i * 4) <= TOL) {
+        seen[i] = 1
+        queue[tail++] = i
+      }
+    }
+    for (let x = 0; x < w; x++) { trySeed(x, 0); trySeed(x, h - 1) }
+    for (let y = 0; y < h; y++) { trySeed(0, y); trySeed(w - 1, y) }
+
+    while (head < tail) {
+      const i = queue[head++]
+      const x = i % w, y = (i / w) | 0
+      const o = i * 4
+      const r = px[o], g = px[o + 1], b = px[o + 2]
+      const check = (nx: number, ny: number) => {
+        const ni = ny * w + nx
+        if (seen[ni]) return
+        const no = ni * 4
+        const localDiff = Math.hypot(px[no] - r, px[no + 1] - g, px[no + 2] - b)
+        if (localDiff <= EDGE_BARRIER && minSeedDist(no) <= TOL) {
+          seen[ni] = 1
+          queue[tail++] = ni
+        }
+      }
+      if (x > 0) check(x - 1, y)
+      if (x < w - 1) check(x + 1, y)
+      if (y > 0) check(x, y - 1)
+      if (y < h - 1) check(x, y + 1)
+    }
+
+    // Keep safety check so we never erase the entire image
+    if (tail / n < 0.94 && tail / n > 0.01) {
+      for (let i = 0; i < n; i++) {
+        if (seen[i]) px[i * 4 + 3] = 0
+      }
+      // Soft 2-ring edge feathering for natural, non-jagged product borders
+      for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+          const i = y * w + x
+          if (seen[i]) continue
+          const adjBg = seen[i - 1] + seen[i + 1] + seen[i - w] + seen[i + w]
+          if (adjBg > 0) {
+            const d = minSeedDist(i * 4)
+            if (d <= TOL * 1.45) {
+              px[i * 4 + 3] = Math.round(px[i * 4 + 3] * Math.min(1, d / (TOL * 1.6)) * 0.45)
+            }
+          }
+        }
+      }
+      ctx.putImageData(imgData, 0, 0)
+    }
+  }
+  return work
+}
+
 export interface CropPreset {
   /** Dialog heading. */
   title: string
