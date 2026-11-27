@@ -42,16 +42,15 @@ export default function AboutSection() {
             <SectionHeader title={tSetting(about.title, 'aboutTitle')} titleId="about-title" />
             <p className="mb-0 mt-4 text-[15px] leading-[1.6rem] text-muted max-md:mt-2.5 max-md:text-[13.5px] max-md:leading-[1.35rem]">{tSetting(about.intro, 'aboutIntro')}</p>
 
-            <dl className="m-0 mt-6 grid grid-cols-3 gap-3 max-md:mt-4 max-md:grid-cols-2 max-md:gap-2.5">
-              {aboutStats.map((s, i) => {
+            <dl className="m-0 mt-6 flex flex-wrap gap-3 max-md:mt-4 max-md:gap-2.5">
+              {aboutStats.map((s) => {
                 const Icon = statIcons[s.icon as keyof typeof statIcons]
-                const spanFull = aboutStats.length % 2 === 1 && i === aboutStats.length - 1
                 return (
-                  <div key={s.label} className={`flex items-center gap-3 rounded-xl border border-[#fbd5d4] bg-[#fff4f4] p-3 transition-all hover:-translate-y-0.5 hover:shadow-sm dark:border-[#5a3b3b] dark:bg-[#3a2a2a] max-md:gap-2.5 max-md:p-3 ${spanFull ? 'max-md:col-span-2' : ''}`}>
+                  <div key={s.label} className="flex flex-auto items-center gap-3 rounded-xl border border-[#fbd5d4] bg-[#fff4f4] px-4 py-3 transition-all hover:-translate-y-0.5 hover:shadow-sm dark:border-[#5a3b3b] dark:bg-[#3a2a2a] max-md:gap-2.5 max-md:px-3.5 max-md:py-2.5">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-[0_4px_10px_rgba(239,83,80,0.35)] max-md:h-9 max-md:w-9">
                       <Icon size={18} aria-hidden />
                     </span>
-                    <div className="flex items-baseline gap-1.5 max-md:flex-col max-md:gap-0.5">
+                    <div className="flex min-w-0 items-baseline gap-1.5 whitespace-nowrap max-md:flex-col max-md:gap-0.5">
                       <dd className="m-0 text-[26px] font-bold leading-none text-brand max-lg:text-[22px] max-md:text-[20px]">{s.value}</dd>
                       <dt className="text-sm font-semibold text-muted max-md:text-[12px]">{s.label}</dt>
                     </div>
