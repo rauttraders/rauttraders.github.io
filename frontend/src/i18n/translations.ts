@@ -121,6 +121,7 @@ const en = {
   // Receipt
   receiptLabel: 'Receipt',
   orderReceipt: 'Order Receipt',
+  whatsappLabel: 'WhatsApp',
   print: 'Print',
   confirmed: 'Confirmed',
   thankYouOrder: 'Thank you for shopping with us',
@@ -267,6 +268,7 @@ const hi: Dict = {
 
   receiptLabel: 'रसीद',
   orderReceipt: 'ऑर्डर रसीद',
+  whatsappLabel: 'व्हाट्सएप',
   print: 'प्रिंट',
   confirmed: 'पुष्टि हुई',
   thankYouOrder: 'हमारे साथ खरीदारी के लिए धन्यवाद',
@@ -410,6 +412,7 @@ const mr: Dict = {
 
   receiptLabel: 'पावती',
   orderReceipt: 'ऑर्डर पावती',
+  whatsappLabel: 'व्हॉट्सअॅप',
   print: 'प्रिंट',
   confirmed: 'निश्चित झाली',
   thankYouOrder: 'आमच्याकडे खरेदी केल्याबद्दल धन्यवाद',
