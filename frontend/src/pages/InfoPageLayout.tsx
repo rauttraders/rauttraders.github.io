@@ -1,4 +1,3 @@
-import { ArrowLeft } from 'lucide-react'
 import { useEffect, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import BrandLogo from '../components/Navbar/BrandLogo'
@@ -19,7 +18,7 @@ interface InfoPageLayoutProps {
 /** Shared layout for legal and attribution pages (Privacy Policy, Terms, Return Policy, Image Credits). */
 export default function InfoPageLayout({ title, subtitle, icon, children }: InfoPageLayoutProps) {
   const { theme, setTheme } = useTheme()
-  const { language, setLanguage, t } = useLanguage()
+  const { language, setLanguage } = useLanguage()
   const { ready } = useStore()
 
   useEffect(() => {
@@ -34,13 +33,6 @@ export default function InfoPageLayout({ title, subtitle, icon, children }: Info
             <BrandLogo href="/" />
           </Link>
           <div className="flex items-center gap-3">
-            <Link
-              to="/"
-              className="inline-flex h-9 items-center gap-1.5 rounded-full bg-brand/10 px-4 text-[13px] font-semibold text-brand no-underline transition-colors hover:bg-brand hover:text-white dark:bg-brand/20 max-sm:px-3 max-sm:text-[12px]"
-            >
-              <ArrowLeft size={14} aria-hidden />
-              <span>{t('navHome')}</span>
-            </Link>
             <ProfileMenu
               theme={theme}
               onThemeChange={setTheme}
