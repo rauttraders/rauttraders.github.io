@@ -59,9 +59,9 @@ export default function Footer() {
     }
   }
   const socialLinks = [
-    { label: t('instagramLabel'), Icon: InstagramIcon, href: safeExternal(company.instagram), badgeCls: 'bg-[#fde8ef] text-[#E4405F]' },
-    { label: t('whatsappLabel'), Icon: MessageCircle, href: safeExternal(company.whatsappLink) || (hasWhatsApp ? whatsappUrl(settings) : ''), badgeCls: 'bg-[#e7f9ee] text-[#16a34a]' },
-    { label: t('facebookLabel'), Icon: FacebookIcon, href: safeExternal(company.facebook), badgeCls: 'bg-[#e8f1ff] text-[#1877F2]' },
+    { label: t('instagramLabel'), Icon: InstagramIcon, href: safeExternal(company.instagram), badgeCls: 'bg-[linear-gradient(45deg,#f09433_0%,#e6683c_25%,#dc2743_50%,#cc2366_75%,#bc1888_100%)] text-white shadow-[0_4px_12px_rgba(220,39,67,0.45)]' },
+    { label: t('whatsappLabel'), Icon: MessageCircle, href: safeExternal(company.whatsappLink) || (hasWhatsApp ? whatsappUrl(settings) : ''), badgeCls: 'bg-[#25D366] text-white shadow-[0_4px_12px_rgba(37,211,102,0.42)]' },
+    { label: t('facebookLabel'), Icon: FacebookIcon, href: safeExternal(company.facebook), badgeCls: 'bg-[#1877F2] text-white shadow-[0_4px_12px_rgba(24,119,242,0.45)]' },
   ]
 
   return (
