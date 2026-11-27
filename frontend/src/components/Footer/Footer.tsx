@@ -67,8 +67,8 @@ export default function Footer() {
   return (
     <footer className="relative bg-[#1f2023] text-[#c9c9ce]">
       <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand via-[#ff8a65] to-brand" />
-      <div className="mx-auto w-full max-w-[1360px] px-10 pb-6 pt-12 max-xl:px-8 max-md:px-4 max-md:pt-9">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-8 max-[340px]:grid-cols-1 lg:flex lg:items-start lg:justify-between lg:gap-8">
+      <div className="mx-auto w-full max-w-[1200px] px-8 pb-6 pt-12 max-xl:px-10 max-md:px-6 max-md:pt-9">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-8 max-[340px]:grid-cols-1 lg:flex lg:items-start lg:justify-around lg:gap-8">
           <div className="col-span-2 flex flex-col items-start max-[340px]:col-span-1 lg:max-w-[280px]">
             <Link to="/" aria-label={`${company.name || 'Home'} — Home`} className="inline-block">
               <PromoHeader alt="" sticker />
