@@ -217,11 +217,13 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
   let y = headerH + 40
 
   ctx.fillStyle = '#e6f9f1'
-  roundRectPath(ctx, padX, y, 168, 36, 18)
+  roundRectPath(ctx, padX, y, 148, 36, 18)
   ctx.fill()
   ctx.fillStyle = '#1baf7a'
   ctx.font = `700 19px ${font}`
-  ctx.fillText('● CONFIRMED', padX + 18, y + 25)
+  ctx.textAlign = 'center'
+  ctx.fillText('CONFIRMED', padX + 74, y + 25)
+  ctx.textAlign = 'left'
 
   y += 66
   ctx.fillStyle = '#111111'

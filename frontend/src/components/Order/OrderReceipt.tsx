@@ -117,11 +117,7 @@ export default function OrderReceipt({ order, businessName = 'Raut Traders', bus
           <div>
             <div className="flex items-center gap-2 mb-1">
               {/* Green confirmed badge */}
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#e6f9f1] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[#1baf7a]">
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden>
-                  <circle cx="4" cy="4" r="4" fill="#1baf7a" />
-                  <path d="M2 4l1.3 1.3L6 2.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+              <span className="inline-flex items-center rounded-full bg-[#e6f9f1] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[#1baf7a]">
                 {t('confirmed')}
               </span>
             </div>
