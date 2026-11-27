@@ -14,12 +14,10 @@ interface ShopSectionProps {
 }
 
 export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
-  const { products, categories, brands: brandList, settings, ready } = useStore()
+  const { products, brands: brandList, settings, ready } = useStore()
   const { t, tSetting } = useLanguage()
   const logoOf = useMemo(() => new Map(brandList.map((b) => [b.name, b.logo])), [brandList])
   const showcaseProducts = useMemo(() => products.filter((p) => p.active), [products])
-  const showcaseCategories = categories
-  const [category, setCategory] = useState<string | null>(null)
   const [brand, setBrand] = useState<string | null>(null)
   const brands = useMemo(() => [...new Set(showcaseProducts.map((p) => p.company))].sort(), [showcaseProducts])
   const items = useMemo(
@@ -27,21 +25,13 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
       const term = query.trim().toLowerCase()
       return showcaseProducts.filter(
         (p) =>
-          (!category || p.categoryId === category) &&
           (!brand || p.company === brand) &&
           (!term || `${p.name} ${p.company} ${p.description}`.toLowerCase().includes(term)),
       )
     },
-    [showcaseProducts, category, query, brand],
+    [showcaseProducts, query, brand],
   )
 
-  const categoryOptions = [
-    { value: '', label: `${t('all')} (${showcaseProducts.length})` },
-    ...showcaseCategories.map((c) => ({
-      value: c.id,
-      label: `${c.name} (${showcaseProducts.filter((p) => p.categoryId === c.id).length})`,
-    })),
-  ]
   const brandOptions = [
     { value: '', label: `${t('allBrands')} (${brands.length})` },
     ...brands.map((b) => ({ value: b, label: `${b} (${showcaseProducts.filter((p) => p.company === b).length})` })),
@@ -49,21 +39,14 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
 
   return (
     <section id="shop" aria-labelledby="shop-title" className="scroll-mt-16 bg-dots bg-[#faf7f7] py-16 dark:bg-[#26272b] max-md:py-10">
-      <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-5">
+      <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-4">
         <Reveal>
           <SectionHeader title={tSetting(settings.shop.title, 'shopTitle')} titleId="shop-title">
             {tSetting(settings.shop.text, 'shopSubtitle')}
           </SectionHeader>
         </Reveal>
 
-        <div className="mb-6 mt-7 grid grid-cols-2 gap-4 max-sm:gap-2.5 md:max-w-[560px]">
-          <FilterDropdown
-            label={t('category')}
-            icon={<LayoutGrid size={16} aria-hidden />}
-            value={category ?? ''}
-            options={categoryOptions}
-            onChange={(v) => setCategory(v || null)}
-          />
+        <div className="mb-6 mt-7 max-w-[320px] max-sm:max-w-full">
           <FilterDropdown
             label={t('brand')}
             icon={<Tag size={16} aria-hidden />}
@@ -87,7 +70,7 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
             <p className="m-0 text-[13px]">{t('noProductsHint')}</p>
           </div>
         ) : items.length > 0 ? (
-          <ul className="m-0 grid list-none grid-cols-4 gap-5 p-0 max-xl:grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1">
+          <ul className="m-0 grid list-none grid-cols-4 gap-5 p-0 max-xl:grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-2 max-sm:gap-2.5">
             {items.map((p, i) => (
               <li key={p.id} className="min-w-0">
                 <Reveal delay={(i % 4) * 70} className="h-full">
