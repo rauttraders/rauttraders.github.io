@@ -8,6 +8,9 @@ interface PdfBusiness {
   businessAddress?: string
 }
 
+const A4_W = 595
+const A4_H = 842
+
 function loadImage(src: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
     const img = new Image()
@@ -49,12 +52,15 @@ function base64ToBytes(b64: string): Uint8Array {
   return out
 }
 
-/** Wraps a JPEG image into a single-page PDF 1.4 binary (no external dependencies). */
-function buildPdfFromJpeg(jpegBytes: Uint8Array, pxW: number, pxH: number): Uint8Array {
-  const pageW = 420
-  const pageH = Math.round((pxH / pxW) * pageW * 100) / 100
-  const enc = new TextEncoder()
+interface PageImage {
+  jpegBytes: Uint8Array
+  pxW: number
+  pxH: number
+}
 
+/** Builds a valid multi-page A4 PDF 1.4 binary from one or more JPEG page slices. */
+function buildMultiPageA4Pdf(pages: PageImage[]): Uint8Array {
+  const enc = new TextEncoder()
   const chunks: Uint8Array[] = []
   const offsets: number[] = [0]
   let pos = 0
@@ -74,24 +80,33 @@ function buildPdfFromJpeg(jpegBytes: Uint8Array, pxW: number, pxH: number): Uint
   offsets.push(pos)
   pushStr('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n')
 
+  const pageIds = pages.map((_, i) => `${3 + i * 3} 0 R`).join(' ')
   offsets.push(pos)
-  pushStr('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n')
+  pushStr(`2 0 obj\n<< /Type /Pages /Kids [${pageIds}] /Count ${pages.length} >>\nendobj\n`)
 
-  offsets.push(pos)
-  pushStr(
-    `3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>\nendobj\n`,
-  )
+  pages.forEach((p, i) => {
+    const pageObjId = 3 + i * 3
+    const imgObjId = 4 + i * 3
+    const contentObjId = 5 + i * 3
+    const drawH = Math.round((p.pxH / p.pxW) * A4_W * 100) / 100
+    const drawY = Math.max(0, A4_H - drawH)
 
-  offsets.push(pos)
-  pushStr(
-    `4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${pxW} /Height ${pxH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`,
-  )
-  pushBytes(jpegBytes)
-  pushStr('\nendstream\nendobj\n')
+    offsets.push(pos)
+    pushStr(
+      `${pageObjId} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${A4_W} ${A4_H}] /Resources << /XObject << /Im0 ${imgObjId} 0 R >> >> /Contents ${contentObjId} 0 R >>\nendobj\n`,
+    )
 
-  const content = `q ${pageW} 0 0 ${pageH} 0 0 cm /Im0 Do Q\n`
-  offsets.push(pos)
-  pushStr(`5 0 obj\n<< /Length ${content.length} >>\nstream\n${content}endstream\nendobj\n`)
+    offsets.push(pos)
+    pushStr(
+      `${imgObjId} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${p.pxW} /Height ${p.pxH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpegBytes.length} >>\nstream\n`,
+    )
+    pushBytes(p.jpegBytes)
+    pushStr('\nendstream\nendobj\n')
+
+    const content = `q ${A4_W} 0 0 ${drawH} 0 ${drawY} cm /Im0 Do Q\n`
+    offsets.push(pos)
+    pushStr(`${contentObjId} 0 obj\n<< /Length ${content.length} >>\nstream\n${content}endstream\nendobj\n`)
+  })
 
   const xrefPos = pos
   pushStr(`xref\n0 ${offsets.length}\n0000000000 65535 f \n`)
@@ -109,44 +124,63 @@ function buildPdfFromJpeg(jpegBytes: Uint8Array, pxW: number, pxH: number): Uint
   return pdf
 }
 
-/** Generates a real PDF File of the order receipt ready for sharing or downloading. */
+/** Generates a real multi-page A4 PDF File of the order receipt so every item and detail is visible. */
 export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusiness): Promise<File> {
   const businessName = biz.businessName?.trim() || 'Raut Traders'
   const W = 840
+  const pageSliceH = Math.floor((A4_H / A4_W) * W)
   const padX = 48
   const innerW = W - padX * 2
   const font = "'Nunito', 'Noto Sans', system-ui, -apple-system, sans-serif"
 
-  // Measure item rows first so canvas height fits any number of items
   const measureCanvas = document.createElement('canvas')
   const mctx = measureCanvas.getContext('2d')!
-  mctx.font = `700 24px ${font}`
+  mctx.font = `700 23px ${font}`
   const itemRows = order.items.map((item) => {
     const nameLines = wrapText(mctx, item.name, 330)
     const meta = `${item.company}${item.size && item.size !== '0' ? ` · ${item.size}` : ''}`
-    const rowH = Math.max(66, nameLines.length * 30 + (meta ? 34 : 16))
+    const rowH = Math.max(66, nameLines.length * 28 + (meta ? 34 : 16))
     return { item, nameLines, meta, rowH }
   })
-  const itemsTotalH = itemRows.reduce((s, r) => s + r.rowH, 0)
+
+  mctx.font = `500 20px ${font}`
+  const addressLines = biz.businessAddress ? wrapText(mctx, biz.businessAddress, innerW) : []
 
   const headerH = 126
-  const introH = 160
-  const detailsH = 196
-  const itemsHeaderH = 92
-  const summaryH = 260
-  const footerH = 160 + (biz.businessPhone ? 28 : 0) + (biz.businessAddress ? 28 : 0)
-  const H = headerH + introH + detailsH + itemsHeaderH + itemsTotalH + summaryH + footerH
+  const introTopY = headerH + 40 + 66 + 34 + 36 + 38
+  const detailsEndY = introTopY + 42 * 3 + 34 + 38
+  const itemsStartY = detailsEndY + 38 + 16
+
+  let simY = itemsStartY
+  const itemOffsets: number[] = []
+  for (const row of itemRows) {
+    const pageEnd = Math.ceil((simY + 1) / pageSliceH) * pageSliceH
+    if (simY + row.rowH > pageEnd - 24) {
+      simY = pageEnd + 36
+    }
+    itemOffsets.push(simY)
+    simY += row.rowH
+  }
+
+  const summaryBlockH = 22 + 38 + 42 * 2 + 28 + 82 + 28
+  const footerBlockH = 42 + 38 + 30 + (biz.businessPhone ? 28 : 0) + addressLines.length * 26 + 44
+  let summaryY = simY
+  const summaryPageEnd = Math.ceil((summaryY + 1) / pageSliceH) * pageSliceH
+  if (summaryY + summaryBlockH + footerBlockH > summaryPageEnd - 18) {
+    if (summaryBlockH + footerBlockH < pageSliceH - 60) {
+      summaryY = summaryPageEnd + 36
+    }
+  }
+  const totalH = summaryY + summaryBlockH + footerBlockH
 
   const canvas = document.createElement('canvas')
   canvas.width = W
-  canvas.height = H
+  canvas.height = totalH
   const ctx = canvas.getContext('2d')!
 
-  // White background
   ctx.fillStyle = '#ffffff'
-  ctx.fillRect(0, 0, W, H)
+  ctx.fillRect(0, 0, W, totalH)
 
-  // Brand header
   ctx.fillStyle = '#ef5350'
   ctx.fillRect(0, 0, W, headerH)
 
@@ -155,7 +189,6 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
   if (logo) {
     const lh = 56
     const lw = Math.round((logo.width / logo.height) * lh)
-    // Draw white-tinted logo using offscreen canvas
     const lc = document.createElement('canvas')
     lc.width = lw
     lc.height = lh
@@ -172,7 +205,6 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
   ctx.font = `800 30px ${font}`
   ctx.fillText(businessName, nameX, 72)
 
-  // RECEIPT pill
   ctx.fillStyle = 'rgba(255,255,255,0.22)'
   roundRectPath(ctx, W - padX - 134, 42, 134, 40, 20)
   ctx.fill()
@@ -184,7 +216,6 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
 
   let y = headerH + 40
 
-  // Confirmed badge
   ctx.fillStyle = '#e6f9f1'
   roundRectPath(ctx, padX, y, 168, 36, 18)
   ctx.fill()
@@ -218,7 +249,6 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
   drawDivider(y)
   y += 38
 
-  // Order details
   ctx.fillStyle = '#596579'
   ctx.font = `700 19px ${font}`
   ctx.fillText('ORDER DETAILS', padX, y)
@@ -252,7 +282,6 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
   drawDivider(y)
   y += 38
 
-  // Items table
   ctx.fillStyle = '#596579'
   ctx.font = `700 19px ${font}`
   ctx.fillText('ITEMS ORDERED', padX, y)
@@ -266,14 +295,14 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
   ctx.fillText('RATE', padX + 565, y)
   ctx.fillText('AMOUNT', W - padX, y)
   ctx.textAlign = 'left'
-  y += 16
 
   itemRows.forEach((row, idx) => {
+    const ry = itemOffsets[idx]
     if (idx % 2 === 0) {
       ctx.fillStyle = '#fafafa'
-      ctx.fillRect(padX - 8, y, innerW + 16, row.rowH)
+      ctx.fillRect(padX - 8, ry, innerW + 16, row.rowH)
     }
-    let ty = y + 30
+    let ty = ry + 30
     ctx.fillStyle = '#111111'
     ctx.font = `700 23px ${font}`
     row.nameLines.forEach((ln) => {
@@ -286,7 +315,7 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
       ctx.fillText(row.meta, padX, ty)
     }
 
-    const midY = y + 32
+    const midY = ry + 32
     ctx.fillStyle = '#111111'
     ctx.font = `700 23px ${font}`
     ctx.textAlign = 'center'
@@ -299,15 +328,12 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
     ctx.font = `700 23px ${font}`
     ctx.fillText(formatINR(row.item.price * row.item.qty), W - padX, midY)
     ctx.textAlign = 'left'
-
-    y += row.rowH
   })
 
-  y += 22
+  y = summaryY + 22
   drawDivider(y)
   y += 38
 
-  // Payment summary
   const subtotal = order.items.reduce((s, i) => s + i.price * i.qty, 0)
   const units = order.items.reduce((s, i) => s + i.qty, 0)
   ctx.fillStyle = '#596579'
@@ -334,7 +360,6 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
   drawDivider(y)
   y += 42
 
-  // Footer
   ctx.textAlign = 'center'
   ctx.fillStyle = '#596579'
   ctx.font = `700 19px ${font}`
@@ -354,18 +379,35 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
     y += 28
     ctx.fillText(`Queries? Call: ${biz.businessPhone}`, W / 2, y)
   }
-  if (biz.businessAddress) {
-    y += 28
-    ctx.fillText(biz.businessAddress, W / 2, y)
+  for (const ln of addressLines) {
+    y += 26
+    ctx.fillText(ln, W / 2, y)
   }
 
-  // Bottom brand bar
   ctx.fillStyle = '#ef5350'
-  ctx.fillRect(0, H - 18, W, 18)
+  ctx.fillRect(0, totalH - 18, W, 18)
 
-  const dataUrl = canvas.toDataURL('image/jpeg', 0.92)
-  const jpegBytes = base64ToBytes(dataUrl.split(',')[1])
-  const pdfBytes = buildPdfFromJpeg(jpegBytes, W, H)
+  const pageCount = Math.max(1, Math.ceil(totalH / pageSliceH))
+  const pages: PageImage[] = []
+  for (let p = 0; p < pageCount; p++) {
+    const srcY = p * pageSliceH
+    const sliceH = Math.min(pageSliceH, totalH - srcY)
+    const sliceCanvas = document.createElement('canvas')
+    sliceCanvas.width = W
+    sliceCanvas.height = sliceH
+    const sctx = sliceCanvas.getContext('2d')!
+    sctx.fillStyle = '#ffffff'
+    sctx.fillRect(0, 0, W, sliceH)
+    sctx.drawImage(canvas, 0, srcY, W, sliceH, 0, 0, W, sliceH)
+    const dataUrl = sliceCanvas.toDataURL('image/jpeg', 0.92)
+    pages.push({
+      jpegBytes: base64ToBytes(dataUrl.split(',')[1]),
+      pxW: W,
+      pxH: sliceH,
+    })
+  }
+
+  const pdfBytes = buildMultiPageA4Pdf(pages)
   const blob = new Blob([pdfBytes.buffer as ArrayBuffer], { type: 'application/pdf' })
   return new File([blob], `Receipt-${order.id}.pdf`, { type: 'application/pdf' })
 }

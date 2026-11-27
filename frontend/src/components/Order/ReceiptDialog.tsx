@@ -5,7 +5,7 @@
  */
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { MessageCircle, X, Printer } from 'lucide-react'
+import { Download, MessageCircle, X } from 'lucide-react'
 import OrderReceipt, { type ReceiptOrder } from './OrderReceipt'
 import { useStore } from '../../store/StoreContext'
 import { useLanguage } from '../../hooks/useLanguage'
@@ -19,13 +19,24 @@ interface Props {
   onClose: () => void
 }
 
+function triggerDownload(file: File) {
+  const url = URL.createObjectURL(file)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = file.name
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 5000)
+}
+
 export default function ReceiptDialog({ order, onClose }: Props) {
   const { settings } = useStore()
   const { t } = useLanguage()
   const toast = useToast()
   const [sharingWa, setSharingWa] = useState(false)
+  const [downloading, setDownloading] = useState(false)
 
-  const handlePrint = () => window.print()
   const waText = buildBasketMessage(
     order.items.map((i) => ({
       id: i.id,
@@ -42,15 +53,32 @@ export default function ReceiptDialog({ order, onClose }: Props) {
   )
   const waHref = whatsappUrl(settings, waText)
 
+  const makePdf = () =>
+    generateReceiptPdfFile(order, {
+      businessName: settings.business.name,
+      businessPhone: settings.business.phone,
+      businessAddress: settings.business.address,
+    })
+
+  const handleDownloadPdf = async () => {
+    if (downloading) return
+    setDownloading(true)
+    try {
+      const file = await makePdf()
+      triggerDownload(file)
+      toast.success(`Downloaded ${file.name}`)
+    } catch {
+      toast.error('Could not download receipt PDF. Please try again.')
+    } finally {
+      setDownloading(false)
+    }
+  }
+
   const sharePdfToWhatsApp = async () => {
     if (sharingWa) return
     setSharingWa(true)
     try {
-      const file = await generateReceiptPdfFile(order, {
-        businessName: settings.business.name,
-        businessPhone: settings.business.phone,
-        businessAddress: settings.business.address,
-      })
+      const file = await makePdf()
 
       if (typeof navigator.share === 'function' && navigator.canShare?.({ files: [file] })) {
         await navigator.share({
@@ -62,15 +90,7 @@ export default function ReceiptDialog({ order, onClose }: Props) {
       }
 
       // Desktop / unsupported browsers: download the actual PDF file and open WhatsApp to attach it
-      const url = URL.createObjectURL(file)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = file.name
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      setTimeout(() => URL.revokeObjectURL(url), 5000)
-
+      triggerDownload(file)
       toast.info(`Downloaded ${file.name} — attach it in WhatsApp`)
       window.open(waHref, '_blank', 'noopener,noreferrer')
     } catch (err) {
@@ -108,11 +128,12 @@ export default function ReceiptDialog({ order, onClose }: Props) {
             </button>
             <button
               type="button"
-              onClick={handlePrint}
-              className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-0 bg-brand/10 px-4 text-[12.5px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white dark:bg-brand/20 max-sm:px-3"
-              title={t('print')}
+              disabled={downloading}
+              onClick={() => void handleDownloadPdf()}
+              className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border-0 bg-brand/10 px-4 text-[12.5px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white disabled:cursor-wait disabled:opacity-60 dark:bg-brand/20 max-sm:px-3"
+              title={t('downloadLabel')}
             >
-              {t('print')} <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <Printer size={14} aria-hidden />
+              {t('downloadLabel')} <span aria-hidden className="h-4 w-px bg-current opacity-30" /> <Download size={14} aria-hidden />
             </button>
             <button
               type="button"
