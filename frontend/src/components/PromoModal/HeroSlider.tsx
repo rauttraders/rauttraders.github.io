@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, ImagePlus } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import Brushstroke from './Brushstroke'
 
 import { useStore } from '../../store/StoreContext'
@@ -31,6 +31,7 @@ export default function HeroSlider({ slides: slidesProp }: HeroSliderProps) {
   const [animate, setAnimate] = useState(true)
   const [paused, setPaused] = useState(false)
   const [bump, setBump] = useState<{ dir: 'left' | 'right' | null; n: number }>({ dir: null, n: 0 })
+  const clipId = useId()
   const active = (pos - 1 + count) % count
 
   const next = () => setPos((p) => Math.min(p + 1, count + 1))
@@ -95,7 +96,18 @@ export default function HeroSlider({ slides: slidesProp }: HeroSliderProps) {
           <ChevronRight key={`r${bump.n}`} size={20} strokeWidth={2} className={bump.dir === 'right' ? 'arrow-bounce-right' : undefined} />
         </button>}
 
-        <div className="relative z-20 mx-auto h-full w-[78%] overflow-hidden rounded-3xl max-md:w-[66%]">
+        <svg className="pointer-events-none absolute h-0 w-0" aria-hidden>
+          <defs>
+            <clipPath id={clipId} clipPathUnits="objectBoundingBox">
+              <path d="M0.075 0.22 C0.18 0.10, 0.38 0.13, 0.54 0.11 C0.72 0.095, 0.87 0.13, 0.93 0.26 C0.97 0.38, 0.945 0.62, 0.915 0.76 C0.87 0.89, 0.66 0.91, 0.48 0.89 C0.30 0.87, 0.14 0.90, 0.085 0.74 C0.04 0.60, 0.05 0.35, 0.075 0.22 Z" />
+            </clipPath>
+          </defs>
+        </svg>
+
+        <div
+          className="relative z-20 mx-auto h-full w-[94%] max-md:w-[80%]"
+          style={{ clipPath: `url(#${clipId})`, WebkitClipPath: `url(#${clipId})` }}
+        >
           <div
             className={`flex h-full ${animate ? 'transition-transform duration-500 ease-in-out' : ''}`}
             style={{ transform: `translateX(-${pos * 100}%)` }}
@@ -110,7 +122,7 @@ export default function HeroSlider({ slides: slidesProp }: HeroSliderProps) {
                 className="flex h-full w-full shrink-0 items-center justify-center"
               >
                 {/* Safe box: always inside the brush stroke, whatever the picture's shape. */}
-                <img src={s.image} alt={s.title} className="h-[80%] w-[92%] -rotate-6 object-contain max-md:h-[74%] max-md:w-[92%]" draggable={false} />
+                <img src={s.image} alt={s.title} className="h-[80%] w-[78%] -rotate-6 object-contain max-md:h-[74%] max-md:w-[76%]" draggable={false} />
               </div>
             ))}
           </div>
