@@ -1,4 +1,4 @@
-import { Crop, EyeOff, Eye, ImagePlus, LayoutGrid, List, Package, Pencil, Plus, Search, Tags, Trash2, Upload, X } from 'lucide-react'
+import { Camera, Crop, EyeOff, Eye, ImagePlus, LayoutGrid, List, Package, Pencil, Plus, Search, Tags, Trash2, Upload, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
 import { useStore } from '../../store/StoreContext'
@@ -94,7 +94,11 @@ function ProductForm({ initial, onClose }: { initial: Product | null; onClose: (
             <div className="flex flex-wrap items-center gap-2">
               <label className={`${btnSoft} !h-9`}>
                 Upload image <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Upload size={15} aria-hidden />
-                <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
+                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/bmp" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
+              </label>
+              <label className={`${btnSoft} !h-9`} title="Take a photo with your device camera">
+                Camera <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Camera size={15} aria-hidden />
+                <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
               </label>
               {d.image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(d.image)}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
               {d.image && <button type="button" className={`${btnDanger} !h-9 !px-4`} onClick={() => set('image', '')}>Remove</button>}
