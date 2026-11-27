@@ -49,9 +49,9 @@ export default function InfoPageLayout({ title, subtitle, icon, children }: Info
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[900px] flex-1 px-6 py-12 max-md:px-4 max-md:py-7">
-        <article className="rounded-3xl border border-[#ececf0] bg-white p-8 shadow-[0_8px_28px_rgba(0,0,0,0.06)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-md:rounded-2xl max-md:p-5">
-          <div className="mb-6 flex items-start gap-4 border-b border-[#ececf0] pb-6 dark:border-[#45464c] max-md:mb-5 max-md:gap-3 max-md:pb-4">
+      <main className="mx-auto w-full max-w-[900px] flex-1 px-6 py-10 max-md:px-4 max-md:py-6">
+        <article>
+          <div className="mb-7 flex items-start gap-4 border-b border-[#ececf0] pb-6 dark:border-[#45464c] max-md:mb-5 max-md:gap-3 max-md:pb-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand/10 text-brand dark:bg-brand/20 max-md:h-10 max-md:w-10 max-md:rounded-xl">
               {icon}
             </span>
