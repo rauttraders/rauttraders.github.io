@@ -8,7 +8,7 @@ const linkCls = 'text-[14px] text-[#c9c9ce] no-underline transition-colors hover
 const headCls = 'm-0 mb-4 inline-block border-b-2 border-brand pb-1.5 text-[13px] font-bold uppercase tracking-[0.1em] text-white'
 
 export default function Footer() {
-  const { settings, categories } = useStore()
+  const { settings } = useStore()
   const { t } = useLanguage()
   const company = settings.business
   const quickLinks = [
@@ -32,7 +32,7 @@ export default function Footer() {
     <footer className="relative bg-[#1f2023] text-[#c9c9ce]">
       <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand via-[#ff8a65] to-brand" />
       <div className="mx-auto w-full max-w-[1200px] px-3.5 pb-6 pt-12 max-xl:px-10 max-md:px-5">
-        <div className="grid grid-cols-[1.4fr_1fr_1fr_1.4fr] gap-10 max-lg:grid-cols-2 max-sm:grid-cols-1">
+        <div className="grid grid-cols-[1.4fr_1fr_1.4fr] gap-10 max-lg:grid-cols-2 max-sm:grid-cols-1">
           <div className="flex flex-col items-start">
             <a href="#home" aria-label={`${company.name || 'Home'} — Home`} className="inline-block">
               <PromoHeader alt="" sticker />
@@ -58,17 +58,6 @@ export default function Footer() {
               {quickLinks.map((l) => (
                 <li key={l.label}><a href={l.href} className={linkCls}>{l.label}</a></li>
               ))}
-            </ul>
-          </nav>
-
-          <nav aria-label={t('categoriesLabel')}>
-            <h3 className={headCls}>{t('categoriesLabel')}</h3>
-            <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
-              {categories.length > 0 ? categories.map((c) => (
-                <li key={c.id}><a href="#shop" className={linkCls}>{c.name}</a></li>
-              )) : (
-                <li className="text-[13px] text-[#555]">{t('noCategoriesYet')}</li>
-              )}
             </ul>
           </nav>
 
