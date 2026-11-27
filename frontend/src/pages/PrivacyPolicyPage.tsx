@@ -24,6 +24,7 @@ export default function PrivacyPolicyPage() {
         <h2 className="m-0 mb-2 text-[18px] font-bold text-ink max-md:text-[16px]">2. Information We Collect</h2>
         <ul className="m-0 list-disc space-y-1.5 pl-5">
           <li><strong>Order Details:</strong> Selected products, quantities, and order ID generated when you place an order.</li>
+          <li><strong>Optional Delivery Details:</strong> During checkout, you may optionally provide your full name, phone number, and email address to help us process and deliver your order faster. These fields are completely optional and are included on your order receipt and WhatsApp summary only when entered.</li>
           <li><strong>Contact Enquiries:</strong> Your name, optional shop/business name, phone number, and message submitted through our Contact Us form.</li>
         </ul>
       </section>

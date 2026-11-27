@@ -5,62 +5,85 @@ import { smoothPath } from './path'
 import { useWidth } from './useWidth'
 
 const H = 280
-const M = { t: 28, r: 22, b: 32, l: 50 }
+const M = { t: 32, r: 22, b: 32, l: 52 }
 
-/** Round axis steps (1, 2, 2.5, 5 × 10^n) so ticks read as ₹2k, ₹4k … rather than ₹1.3k. */
+/** Round axis steps (1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 7.5, 10 × 10^n) to avoid unnecessary empty space above the peak. */
 const niceStep = (v: number) => {
   if (v <= 0) return 250
   const raw = v / 4
   const p = 10 ** Math.floor(Math.log10(raw))
   const f = raw / p
-  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p
+  const snap = f <= 1 ? 1 : f <= 1.2 ? 1.2 : f <= 1.5 ? 1.5 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 3 ? 3 : f <= 4 ? 4 : f <= 5 ? 5 : f <= 7.5 ? 7.5 : 10
+  return snap * p
 }
 
-/** Smooth coral line chart with light-blue grid, highlighted peak/min markers, and upper-right legend. */
+/** Smooth coral line chart with chronological time-based X-axis, light-blue grid, highlighted markers, and upper-right legend. */
 export default function LineChart({ data, title }: { data: DayPoint[]; title: string }) {
   const [wrap, w] = useWidth<HTMLDivElement>(280, 640)
   const [hover, setHover] = useState<number | null>(null)
 
+  const sorted = [...data]
+    .map((d) => ({ ...d, revenue: Number.isFinite(d.revenue) ? Math.max(0, d.revenue) : 0 }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
+
   const iw = w - M.l - M.r
   const ih = H - M.t - M.b
-  const step4 = niceStep(Math.max(...data.map((d) => d.revenue), 0))
+  const maxRev = sorted.reduce((m, d) => Math.max(m, d.revenue), 0)
+  const step4 = niceStep(maxRev)
   const max = step4 * 4
-  const x = (i: number) => M.l + (data.length <= 1 ? iw / 2 : (i / (data.length - 1)) * iw)
+
+  const t0 = sorted[0]?.date.getTime() ?? 0
+  const tLast = sorted[sorted.length - 1]?.date.getTime() ?? t0
+  const tSpan = tLast - t0
+
+  const x = (i: number) => {
+    if (sorted.length <= 1 || tSpan <= 0) return M.l + iw / 2
+    return M.l + ((sorted[i].date.getTime() - t0) / tSpan) * iw
+  }
   const y = (v: number) => M.t + ih - (v / max) * ih
-  const pts = data.map((d, i): [number, number] => [x(i), y(d.revenue)])
+  const pts = sorted.map((d, i): [number, number] => [x(i), y(d.revenue)])
   const line = smoothPath(pts)
   const ticks = [0, 1, 2, 3, 4].map((i) => i * step4)
-  const labelEvery = Math.ceil(data.length / Math.max(2, Math.floor(iw / 84)))
+  const labelEvery = Math.ceil(sorted.length / Math.max(2, Math.floor(iw / 84)))
   const fmtDate = (d: Date) => d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 
-  const xLabelIndices = data
+  const xLabelIndices = sorted
     .map((_, i) => i)
-    .filter((i) => (i % labelEvery === 0 && data.length - 1 - i >= labelEvery * 0.6) || i === data.length - 1)
+    .filter((i) => (i % labelEvery === 0 && sorted.length - 1 - i >= labelEvery * 0.6) || i === sorted.length - 1)
 
-  // Highlight peak and lowest positive (or distinct min) points without cluttering every point
+  // Highlight peak and distinct lowest positive point without cluttering every point
   const highlighted: { idx: number; label: string; px: number; py: number }[] = []
-  if (data.length > 0) {
+  if (sorted.length > 0) {
     let maxIdx = 0
     let minIdx = -1
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].revenue > data[maxIdx].revenue) maxIdx = i
-      if (data[i].revenue > 0 && (minIdx === -1 || data[i].revenue < data[minIdx].revenue)) minIdx = i
+    for (let i = 0; i < sorted.length; i++) {
+      if (sorted[i].revenue > sorted[maxIdx].revenue) maxIdx = i
+      if (sorted[i].revenue > 0 && (minIdx === -1 || sorted[i].revenue < sorted[minIdx].revenue)) minIdx = i
     }
-    if (data[maxIdx].revenue > 0) {
-      highlighted.push({ idx: maxIdx, label: inrCompact(data[maxIdx].revenue), px: pts[maxIdx][0], py: pts[maxIdx][1] })
+    if (sorted[maxIdx].revenue > 0) {
+      highlighted.push({ idx: maxIdx, label: inrCompact(sorted[maxIdx].revenue), px: pts[maxIdx][0], py: pts[maxIdx][1] })
     }
     if (minIdx !== -1 && minIdx !== maxIdx && Math.abs(pts[minIdx][0] - pts[maxIdx][0]) > 56) {
-      highlighted.push({ idx: minIdx, label: inrCompact(data[minIdx].revenue), px: pts[minIdx][0], py: pts[minIdx][1] })
+      highlighted.push({ idx: minIdx, label: inrCompact(sorted[minIdx].revenue), px: pts[minIdx][0], py: pts[minIdx][1] })
     }
   }
 
   const onMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (data.length === 0) return
+    if (sorted.length === 0) return
     const r = e.currentTarget.getBoundingClientRect()
-    const i = Math.round(((e.clientX - r.left - M.l) / iw) * (data.length - 1))
-    setHover(Math.min(data.length - 1, Math.max(0, i)))
+    const px = e.clientX - r.left
+    let best = 0
+    let bestDist = Infinity
+    for (let i = 0; i < pts.length; i++) {
+      const dist = Math.abs(pts[i][0] - px)
+      if (dist < bestDist) {
+        bestDist = dist
+        best = i
+      }
+    }
+    setHover(best)
   }
-  const hp = hover === null ? null : data[hover]
+  const hp = hover === null ? null : sorted[hover]
 
   return (
     <div ref={wrap} className="viz-root relative w-full rounded-xl bg-white p-2 dark:bg-[#2b2c30]">
@@ -86,10 +109,10 @@ export default function LineChart({ data, title }: { data: DayPoint[]; title: st
 
         {/* Vertical light-blue grid lines + X-axis date labels */}
         {xLabelIndices.map((i) => (
-          <g key={data[i].key}>
+          <g key={sorted[i].key}>
             <line x1={x(i)} x2={x(i)} y1={M.t} y2={M.t + ih} stroke="#D5E8FF" strokeWidth="1" className="dark:opacity-20" />
             <text x={x(i)} y={H - 8} textAnchor="middle" fontSize="11" fontWeight="500" fill="#4784B9">
-              {fmtDate(data[i].date)}
+              {fmtDate(sorted[i].date)}
             </text>
           </g>
         ))}
@@ -97,12 +120,13 @@ export default function LineChart({ data, title }: { data: DayPoint[]; title: st
         {/* Smooth coral curve */}
         <path d={line} fill="none" stroke="#FF8585" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
 
-        {/* Highlighted data points + floating coral pill labels */}
+        {/* Highlighted data points + floating coral pill labels (clamped away from upper-right legend) */}
         {highlighted.map((hl) => {
           const pillW = Math.max(40, hl.label.length * 7 + 14)
           const pillX = Math.min(Math.max(hl.px - pillW / 2, M.l), w - M.r - pillW)
+          const inLegendZone = pillX + pillW > w - 115 && hl.py - 26 < 30
           const aboveY = hl.py - 26
-          const pillY = aboveY >= 4 ? aboveY : hl.py + 10
+          const pillY = !inLegendZone && aboveY >= 4 ? aboveY : hl.py + 10
           return (
             <g key={hl.idx} className="pointer-events-none">
               <circle cx={hl.px} cy={hl.py} r="4.5" fill="#FF7078" stroke="#FFFFFF" strokeWidth="2" />
@@ -148,7 +172,7 @@ export default function LineChart({ data, title }: { data: DayPoint[]; title: st
           </tr>
         </thead>
         <tbody>
-          {data.map((d) => (
+          {sorted.map((d) => (
             <tr key={d.key}>
               <td>{d.key}</td>
               <td>{inr(d.revenue)}</td>

@@ -1,4 +1,5 @@
-import { Copyright, ExternalLink } from 'lucide-react'
+import { Copyright, ExternalLink, Globe } from 'lucide-react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../store/StoreContext'
 import InfoPageLayout from './InfoPageLayout'
@@ -21,7 +22,36 @@ const BRAND_SOURCES = [
 const ASSET_SOURCES = [
   { name: 'Lucide Icons', website: 'https://lucide.dev', note: 'Open-source UI icons (ISC License)' },
   { name: 'Google Fonts (Nunito)', website: 'https://fonts.google.com/specimen/Nunito', note: 'Open-source typography (SIL Open Font License)' },
+  { name: 'Unbagrnd', website: 'https://github.com/zidniryi/unbagrnd', note: 'Open-source background removal engine used in admin image preparation' },
 ]
+
+function SiteFavicon({ website, label }: { website: string; label: string }) {
+  const [failed, setFailed] = useState(false)
+  let host = ''
+  try {
+    host = new URL(website).hostname
+  } catch {
+    host = ''
+  }
+  const src = host ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64` : ''
+  return (
+    <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#ececf0] bg-white p-1 dark:border-[#45464c] dark:bg-[#34353a]">
+      {src && !failed ? (
+        <img
+          src={src}
+          alt={`${label} icon`}
+          width={20}
+          height={20}
+          loading="lazy"
+          onError={() => setFailed(true)}
+          className="h-5 w-5 object-contain"
+        />
+      ) : (
+        <Globe size={16} className="text-muted" aria-hidden />
+      )}
+    </span>
+  )
+}
 
 export default function ImageCreditsPage() {
   const { business } = useStore().settings
@@ -44,39 +74,45 @@ export default function ImageCreditsPage() {
         <h2 className="m-0 mb-3 text-[18px] font-bold text-ink max-md:text-[16px]">2. Brand &amp; Product Image Sources</h2>
         <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
           {BRAND_SOURCES.map((item) => (
-            <div key={item.brand} className="rounded-xl border border-[#ececf0] bg-[#faf7f7] p-3.5 dark:border-[#45464c] dark:bg-[#2b2c30]">
-              <p className="m-0 text-[14px] font-bold text-ink">{item.brand}</p>
-              <p className="m-0 mt-0.5 text-[12.5px] text-muted">{item.note}</p>
-              <a
-                href={item.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-semibold text-brand no-underline hover:underline"
-              >
-                {item.website.replace(/^https?:\/\//, '')}
-                <ExternalLink size={11} aria-hidden />
-              </a>
+            <div key={item.brand} className="flex items-start gap-3 rounded-xl border border-[#ececf0] bg-[#faf7f7] p-3.5 dark:border-[#45464c] dark:bg-[#2b2c30]">
+              <SiteFavicon website={item.website} label={item.brand} />
+              <div className="min-w-0 flex-1">
+                <p className="m-0 text-[14px] font-bold text-ink">{item.brand}</p>
+                <p className="m-0 mt-0.5 text-[12.5px] text-muted">{item.note}</p>
+                <a
+                  href={item.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-semibold text-brand no-underline hover:underline"
+                >
+                  {item.website.replace(/^https?:\/\//, '')}
+                  <ExternalLink size={11} aria-hidden />
+                </a>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
       <section>
-        <h2 className="m-0 mb-3 text-[18px] font-bold text-ink max-md:text-[16px]">3. Open-Source Icons &amp; Fonts</h2>
+        <h2 className="m-0 mb-3 text-[18px] font-bold text-ink max-md:text-[16px]">3. Open-Source Tools, Icons &amp; Fonts</h2>
         <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
           {ASSET_SOURCES.map((item) => (
-            <div key={item.name} className="rounded-xl border border-[#ececf0] bg-[#faf7f7] p-3.5 dark:border-[#45464c] dark:bg-[#2b2c30]">
-              <p className="m-0 text-[14px] font-bold text-ink">{item.name}</p>
-              <p className="m-0 mt-0.5 text-[12.5px] text-muted">{item.note}</p>
-              <a
-                href={item.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-semibold text-brand no-underline hover:underline"
-              >
-                {item.website.replace(/^https?:\/\//, '')}
-                <ExternalLink size={11} aria-hidden />
-              </a>
+            <div key={item.name} className="flex items-start gap-3 rounded-xl border border-[#ececf0] bg-[#faf7f7] p-3.5 dark:border-[#45464c] dark:bg-[#2b2c30]">
+              <SiteFavicon website={item.website} label={item.name} />
+              <div className="min-w-0 flex-1">
+                <p className="m-0 text-[14px] font-bold text-ink">{item.name}</p>
+                <p className="m-0 mt-0.5 text-[12.5px] text-muted">{item.note}</p>
+                <a
+                  href={item.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-semibold text-brand no-underline hover:underline"
+                >
+                  {item.website.replace(/^https?:\/\//, '')}
+                  <ExternalLink size={11} aria-hidden />
+                </a>
+              </div>
             </div>
           ))}
         </div>
