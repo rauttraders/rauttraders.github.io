@@ -95,7 +95,7 @@ export default function HeroSlider({ slides: slidesProp }: HeroSliderProps) {
           <ChevronRight key={`r${bump.n}`} size={20} strokeWidth={2} className={bump.dir === 'right' ? 'arrow-bounce-right' : undefined} />
         </button>}
 
-        <div className="relative z-20 h-full w-full [overflow-x:clip]">
+        <div className="relative z-20 mx-auto h-full w-[78%] overflow-hidden rounded-3xl max-md:w-[66%]">
           <div
             className={`flex h-full ${animate ? 'transition-transform duration-500 ease-in-out' : ''}`}
             style={{ transform: `translateX(-${pos * 100}%)` }}
@@ -110,7 +110,7 @@ export default function HeroSlider({ slides: slidesProp }: HeroSliderProps) {
                 className="flex h-full w-full shrink-0 items-center justify-center"
               >
                 {/* Safe box: always inside the brush stroke, whatever the picture's shape. */}
-                <img src={s.image} alt={s.title} className="h-[80%] w-[74%] -rotate-6 object-contain max-md:h-[68%] max-md:w-[62%]" draggable={false} />
+                <img src={s.image} alt={s.title} className="h-[80%] w-[92%] -rotate-6 object-contain max-md:h-[74%] max-md:w-[92%]" draggable={false} />
               </div>
             ))}
           </div>
