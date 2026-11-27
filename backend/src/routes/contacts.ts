@@ -12,7 +12,7 @@ import type { AppEnv } from '../env'
 import { audit } from '../db/audit'
 import { HttpError } from '../lib/http'
 import { KB, maxBody } from '../middleware/limits'
-import { clientIp } from '../middleware/security'
+import { clientIp, requireAdmin } from '../middleware/security'
 import { sha256Hex } from '../lib/crypto'
 
 // ── Public: submit a contact message ──────────────────────────────────────────
@@ -56,6 +56,8 @@ publicContactRoutes.post('/contact', maxBody(8 * KB), async (c) => {
 // for the whole /api/admin/* prefix, so every route here is already protected.
 
 export const adminContactRoutes = new Hono<AppEnv>()
+adminContactRoutes.use('*', requireAdmin)
+adminContactRoutes.use('*', maxBody(8 * KB))
 
 adminContactRoutes.get('/contacts', async (c) => {
   const archived = c.req.query('archived') === '1'

@@ -74,18 +74,6 @@ export default function Footer() {
               <PromoHeader alt="" sticker />
             </Link>
             {company.tagline && <p className="mb-0 mt-4 max-w-[280px] text-[14px] leading-[1.4rem]">{company.tagline}</p>}
-            {hasWhatsApp && (
-              <a
-                href={whatsappUrl(settings)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 inline-flex h-10 items-center gap-2 rounded-full bg-brand px-5 text-[13px] font-semibold text-white no-underline shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-colors hover:bg-brand-hover"
-              >
-                {t('chatOnWhatsApp')}
-                <span aria-hidden className="h-4 w-px bg-white/40" />
-                <MessageCircle size={15} aria-hidden />
-              </a>
-            )}
           </div>
 
           <nav aria-label={t('quickLinks')}>
