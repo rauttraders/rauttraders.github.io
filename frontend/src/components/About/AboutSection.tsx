@@ -35,10 +35,10 @@ export default function AboutSection() {
   ].filter((r) => r.value.trim())
 
   return (
-    <section id="about" aria-labelledby="about-title" className="scroll-mt-16 bg-white py-16 dark:bg-[#2d2e33] max-lg:py-12 max-md:py-8">
+    <section id="about" aria-labelledby="about-title" className="scroll-mt-16 overflow-x-clip bg-white py-16 dark:bg-[#2d2e33] max-lg:py-12 max-md:py-8">
       <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-4">
         <div className="grid grid-cols-2 items-start gap-10 max-lg:grid-cols-1 max-lg:gap-8 max-md:gap-6">
-          <Reveal>
+          <Reveal className="min-w-0">
             <SectionHeader title={tSetting(about.title, 'aboutTitle')} titleId="about-title" />
             <p className="mb-0 mt-4 text-[15px] leading-[1.6rem] text-muted max-md:mt-2.5 max-md:text-[13.5px] max-md:leading-[1.35rem]">{tSetting(about.intro, 'aboutIntro')}</p>
 
@@ -78,7 +78,7 @@ export default function AboutSection() {
             </ul>
           </Reveal>
 
-          <Reveal delay={120}>
+          <Reveal delay={120} className="min-w-0">
             <div className="overflow-hidden rounded-3xl border border-[#ececf0] bg-white shadow-[0_14px_40px_rgba(239,83,80,0.14)] dark:border-[#45464c] dark:bg-[#34353a] dark:shadow-none max-md:rounded-2xl">
               {/* Map — only rendered when the admin has set valid coordinates */}
               {hasLocation ? (
@@ -92,9 +92,9 @@ export default function AboutSection() {
                   />
                   <span aria-hidden className="pointer-events-none absolute inset-x-0 -bottom-px h-10 bg-gradient-to-t from-white to-transparent dark:from-[#34353a]" />
                   {company.name && (
-                    <span className="pointer-events-none absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full bg-white/95 py-1.5 pl-1.5 pr-4 text-[13px] font-bold text-ink shadow-[0_4px_14px_rgba(0,0,0,0.18)] dark:bg-[#2b2c30]/95">
-                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand text-white"><MapPin size={14} aria-hidden /></span>
-                      {company.name}
+                    <span className="pointer-events-none absolute left-4 top-4 z-10 flex max-w-[calc(100%-32px)] items-center gap-2 rounded-full bg-white/95 py-1.5 pl-1.5 pr-4 text-[13px] font-bold text-ink shadow-[0_4px_14px_rgba(0,0,0,0.18)] dark:bg-[#2b2c30]/95">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-white"><MapPin size={14} aria-hidden /></span>
+                      <span className="truncate">{company.name}</span>
                     </span>
                   )}
                   <a
@@ -129,7 +129,7 @@ export default function AboutSection() {
                         {href ? (
                           <a href={href} className="break-words font-semibold text-ink no-underline hover:text-brand">{value}</a>
                         ) : (
-                          <span className="font-semibold text-ink">{value}</span>
+                          <span className="break-words font-semibold text-ink">{value}</span>
                         )}
                       </div>
                     </li>

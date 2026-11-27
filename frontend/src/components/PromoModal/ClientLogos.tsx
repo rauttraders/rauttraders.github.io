@@ -18,7 +18,7 @@ export default function ClientLogos({ logos: logosProp }: ClientLogosProps) {
   if (logos.length === 0) return null
   return (
     <div
-      className="logo-marquee overflow-hidden"
+      className="logo-marquee w-full min-w-0 overflow-hidden"
       aria-label="Our partner companies"
       style={{ ['--marquee-time' as string]: `${logos.length * 3.2}s` }}
     >

@@ -34,15 +34,22 @@ export default function HeroSlider({ slides: slidesProp }: HeroSliderProps) {
   const clipId = useId()
   const active = (pos - 1 + count) % count
 
-  const next = () => setPos((p) => Math.min(p + 1, count + 1))
-  const prev = () => setPos((p) => Math.max(p - 1, 0))
+  const next = () => {
+    setAnimate(true)
+    setPos((p) => (p >= count + 1 ? count + 1 : p + 1))
+  }
+  const prev = () => {
+    setAnimate(true)
+    setPos((p) => (p <= 0 ? 0 : p - 1))
+  }
 
   // After sliding onto a clone, jump (without animation) to the matching real slide.
-  const onTransitionEnd = () => {
-    if (pos === count + 1) {
+  const onTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return
+    if (pos >= count + 1) {
       setAnimate(false)
       setPos(1)
-    } else if (pos === 0) {
+    } else if (pos <= 0) {
       setAnimate(false)
       setPos(count)
     }
@@ -105,11 +112,11 @@ export default function HeroSlider({ slides: slidesProp }: HeroSliderProps) {
         </svg>
 
         <div
-          className="relative z-20 mx-auto h-full w-[94%] max-md:w-[80%]"
+          className="relative z-20 isolate mx-auto h-full w-[94%] max-md:w-[80%]"
           style={{ clipPath: `url(#${clipId})`, WebkitClipPath: `url(#${clipId})` }}
         >
           <div
-            className={`flex h-full ${animate ? 'transition-transform duration-500 ease-in-out' : ''}`}
+            className={`flex h-full will-change-transform ${animate ? 'transition-transform duration-500 ease-in-out' : ''}`}
             style={{ transform: `translateX(-${pos * 100}%)` }}
             onTransitionEnd={onTransitionEnd}
           >
