@@ -14,6 +14,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api } from '../../lib/api'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
+import { InboxSkeleton } from '../../components/ui/Skeleton'
 import { useToast } from '../../components/ui/Toast'
 import { btnSoft, Card, PanelHeader } from '../ui/Card'
 
@@ -307,7 +308,7 @@ export default function InboxPage() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center py-20 text-[14px] font-semibold text-muted">Loading…</div>
+        <InboxSkeleton />
       ) : messages.length === 0 ? (
         <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-[#d8d8df] bg-white py-20 text-center dark:border-[#45464c] dark:bg-[#2d2e33]">
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 text-brand dark:bg-brand/20">

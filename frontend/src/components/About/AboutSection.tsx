@@ -1,5 +1,6 @@
 import Reveal from '../ui/Reveal'
 import SectionHeader from '../ui/SectionHeader'
+import { AboutSkeleton } from '../ui/Skeleton'
 import { CalendarDays, Clock, Handshake, Layers, Mail, MapPin, Navigation, Package, Phone, ShieldCheck, Tag, Truck } from 'lucide-react'
 import { hasValidLocation, mapDirectionsUrl, mapEmbedUrl } from '../../lib/links'
 import { useStore } from '../../store/StoreContext'
@@ -16,8 +17,9 @@ const highlightKeys = [
 ] as const
 
 export default function AboutSection() {
-  const { settings, products } = useStore()
+  const { settings, products, ready } = useStore()
   const { t, tSetting } = useLanguage()
+  if (!ready) return <AboutSkeleton />
   const { business: company, about } = settings
   const visible = products.filter((p) => p.active)
   const hasLocation = hasValidLocation(settings)

@@ -7,6 +7,7 @@ import ClientLogos from './ClientLogos'
 import type { ClientLogo } from './ClientLogos'
 import { useStore } from '../../store/StoreContext'
 import { useLanguage } from '../../hooks/useLanguage'
+import { HeroSkeleton } from '../ui/Skeleton'
 import './promo-modal.css'
 
 export interface PromoModalProps {
@@ -25,8 +26,10 @@ function PromoModal({
   secondaryLabel,
   logos,
 }: PromoModalProps) {
-  const { hero } = useStore().settings
+  const { settings, ready } = useStore()
+  const { hero } = settings
   const { tSetting } = useLanguage()
+  if (!ready) return <HeroSkeleton />
   return (
     <section
       id="home"

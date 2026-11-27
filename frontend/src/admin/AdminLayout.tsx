@@ -5,7 +5,7 @@ import { Link, NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
 import logo from '../assets/logo.png'
 import { useTheme } from '../hooks/useTheme'
 import { useStore } from '../store/StoreContext'
-import PageLoader from '../components/ui/PageLoader'
+import { AdminSkeleton } from '../components/ui/Skeleton'
 import { inr } from './analytics'
 import { useAuth } from './auth'
 import { usePopover } from './ui/usePopover'
@@ -93,7 +93,7 @@ export default function AdminLayout() {
     }
   }, [authed, prefs.idleMinutes, logout])
 
-  if (authed === null || (authed && !ready)) return <PageLoader label="Loading admin panel…" />
+  if (authed === null || (authed && !ready)) return <AdminSkeleton />
   if (!authed) return <Navigate to="/admin/login" replace />
 
   // Force admin to change their temporary password before accessing anything else

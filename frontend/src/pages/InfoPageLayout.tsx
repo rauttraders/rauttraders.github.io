@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom'
 import BrandLogo from '../components/Navbar/BrandLogo'
 import ProfileMenu from '../components/Navbar/ProfileMenu'
 import Footer from '../components/Footer/Footer'
+import { InfoPageSkeleton } from '../components/ui/Skeleton'
 import { useLanguage } from '../hooks/useLanguage'
 import { useTheme } from '../hooks/useTheme'
+import { useStore } from '../store/StoreContext'
 
 interface InfoPageLayoutProps {
   title: string
@@ -18,6 +20,7 @@ interface InfoPageLayoutProps {
 export default function InfoPageLayout({ title, subtitle, icon, children }: InfoPageLayoutProps) {
   const { theme, setTheme } = useTheme()
   const { language, setLanguage, t } = useLanguage()
+  const { ready } = useStore()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -62,7 +65,7 @@ export default function InfoPageLayout({ title, subtitle, icon, children }: Info
           </div>
 
           <div className="space-y-6 text-[15px] leading-[1.7] text-muted max-md:space-y-5 max-md:text-[14px]">
-            {children}
+            {ready ? children : <InfoPageSkeleton />}
           </div>
         </article>
       </main>

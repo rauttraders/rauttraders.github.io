@@ -4,6 +4,7 @@ import { useStore } from '../../store/StoreContext'
 import { useLanguage } from '../../hooks/useLanguage'
 import Reveal from '../ui/Reveal'
 import SectionHeader from '../ui/SectionHeader'
+import { ProductGridSkeleton } from '../ui/Skeleton'
 import FilterDropdown from './FilterDropdown'
 import ProductShowCard from './ProductShowCard'
 
@@ -62,7 +63,7 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
         </p>
 
         {!ready ? (
-          <p className="m-0 py-16 text-center text-[14px] text-muted">{t('loadingProducts')}</p>
+          <ProductGridSkeleton />
         ) : showcaseProducts.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-line py-16 text-center text-muted">
             <LayoutGrid size={32} aria-hidden className="opacity-30" />
