@@ -14,8 +14,7 @@ type Status = 'idle' | 'sending' | 'sent' | 'error'
 
 export default function ContactSection() {
   const { settings } = useStore()
-  const { language, t } = useLanguage()
-  const isEn = language === 'en'
+  const { t, tSetting } = useLanguage()
   const [form, setForm] = useState({ name: '', shopName: '', phone: '', message: '' })
   const [errors, setErrors] = useState<OrderErrors>({})
   const [status, setStatus] = useState<Status>('idle')
@@ -62,8 +61,8 @@ export default function ContactSection() {
       <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-4">
         <div className="grid grid-cols-2 items-start gap-10 max-lg:grid-cols-1 max-lg:gap-8 max-md:gap-5">
           <Reveal>
-            <SectionHeader title={isEn ? settings.contact.title : t('contactTitle')} titleId="contact-title">
-              {isEn ? settings.contact.text : t('contactText')}
+            <SectionHeader title={tSetting(settings.contact.title, 'contactTitle')} titleId="contact-title">
+              {tSetting(settings.contact.text, 'contactText')}
             </SectionHeader>
             <div className="mt-8 max-lg:mt-6 max-lg:flex max-lg:justify-center max-md:hidden">
               <ContactIllustration />

@@ -15,8 +15,7 @@ interface ShopSectionProps {
 
 export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
   const { products, categories, brands: brandList, settings, ready } = useStore()
-  const { language, t } = useLanguage()
-  const isEn = language === 'en'
+  const { t, tSetting } = useLanguage()
   const logoOf = useMemo(() => new Map(brandList.map((b) => [b.name, b.logo])), [brandList])
   const showcaseProducts = useMemo(() => products.filter((p) => p.active), [products])
   const showcaseCategories = categories
@@ -52,8 +51,8 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
     <section id="shop" aria-labelledby="shop-title" className="scroll-mt-16 bg-dots bg-[#faf7f7] py-16 dark:bg-[#26272b] max-md:py-10">
       <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-5">
         <Reveal>
-          <SectionHeader title={isEn ? settings.shop.title : t('shopTitle')} titleId="shop-title">
-            {isEn ? settings.shop.text : t('shopSubtitle')}
+          <SectionHeader title={tSetting(settings.shop.title, 'shopTitle')} titleId="shop-title">
+            {tSetting(settings.shop.text, 'shopSubtitle')}
           </SectionHeader>
         </Reveal>
 

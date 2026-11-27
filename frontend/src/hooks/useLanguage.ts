@@ -23,10 +23,13 @@ function initial(): Lang {
   }
 }
 
+const DEVANAGARI_RE = /[\u0900-\u097F]/
+
 interface LanguageApi {
   language: Lang
   setLanguage: (code: string) => void
   t: (key: TranslationKey) => string
+  tSetting: (settingValue: string | undefined, key: TranslationKey) => string
 }
 
 const Ctx = createContext<LanguageApi | null>(null)
@@ -43,16 +46,21 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, [language])
 
-  const value = useMemo<LanguageApi>(
-    () => ({
+  const value = useMemo<LanguageApi>(() => {
+    const t = (key: TranslationKey) => TRANSLATIONS[language][key] ?? TRANSLATIONS.en[key]
+    return {
       language,
       setLanguage: (code: string) => {
         if (languages.some((l) => l.code === code)) setLangState(code as Lang)
       },
-      t: (key: TranslationKey) => TRANSLATIONS[language][key] ?? TRANSLATIONS.en[key],
-    }),
-    [language],
-  )
+      t,
+      tSetting: (settingValue: string | undefined, key: TranslationKey) => {
+        if (language !== 'en') return t(key)
+        if (settingValue && settingValue.trim() && !DEVANAGARI_RE.test(settingValue)) return settingValue
+        return TRANSLATIONS.en[key]
+      },
+    }
+  }, [language])
 
   return createElement(Ctx.Provider, { value }, children)
 }
@@ -64,6 +72,8 @@ export function useLanguage() {
       language: 'en' as Lang,
       setLanguage: () => {},
       t: (key: TranslationKey) => TRANSLATIONS.en[key],
+      tSetting: (settingValue: string | undefined, key: TranslationKey) =>
+        settingValue && settingValue.trim() && !DEVANAGARI_RE.test(settingValue) ? settingValue : TRANSLATIONS.en[key],
     }
   }
   return ctx

@@ -26,8 +26,7 @@ function PromoModal({
   logos,
 }: PromoModalProps) {
   const { hero } = useStore().settings
-  const { language, t } = useLanguage()
-  const isEn = language === 'en'
+  const { tSetting } = useLanguage()
   return (
     <section
       id="home"
@@ -39,8 +38,8 @@ function PromoModal({
           <PromoHeader />
           <PromoContent />
           <PromoActions
-            primaryLabel={primaryLabel ?? (isEn ? hero.primaryLabel : t('explore'))}
-            secondaryLabel={secondaryLabel ?? (isEn ? hero.secondaryLabel : t('myOrder'))}
+            primaryLabel={primaryLabel ?? tSetting(hero.primaryLabel, 'explore')}
+            secondaryLabel={secondaryLabel ?? tSetting(hero.secondaryLabel, 'myOrder')}
             onPrimary={onPrimary}
             onSecondary={onSecondary}
           />

@@ -8,10 +8,16 @@ import { useLanguage } from '../../hooks/useLanguage'
 const statIcons = { tag: Tag, package: Package, calendar: CalendarDays }
 const icons = { shield: ShieldCheck, layers: Layers, truck: Truck, handshake: Handshake }
 
+const highlightKeys = [
+  ['highlight1Title', 'highlight1Text'],
+  ['highlight2Title', 'highlight2Text'],
+  ['highlight3Title', 'highlight3Text'],
+  ['highlight4Title', 'highlight4Text'],
+] as const
+
 export default function AboutSection() {
   const { settings, products } = useStore()
-  const { language, t } = useLanguage()
-  const isEn = language === 'en'
+  const { t, tSetting } = useLanguage()
   const { business: company, about } = settings
   const visible = products.filter((p) => p.active)
   const hasLocation = hasValidLocation(settings)
@@ -33,8 +39,8 @@ export default function AboutSection() {
       <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-4">
         <div className="grid grid-cols-2 items-start gap-10 max-lg:grid-cols-1 max-lg:gap-8 max-md:gap-6">
           <Reveal>
-            <SectionHeader title={isEn ? about.title : t('aboutTitle')} titleId="about-title" />
-            <p className="mb-0 mt-4 text-[15px] leading-[1.6rem] text-muted max-md:mt-2.5 max-md:text-[13.5px] max-md:leading-[1.35rem]">{isEn ? about.intro : t('aboutIntro')}</p>
+            <SectionHeader title={tSetting(about.title, 'aboutTitle')} titleId="about-title" />
+            <p className="mb-0 mt-4 text-[15px] leading-[1.6rem] text-muted max-md:mt-2.5 max-md:text-[13.5px] max-md:leading-[1.35rem]">{tSetting(about.intro, 'aboutIntro')}</p>
 
             <dl className="m-0 mt-6 grid grid-cols-3 gap-3 max-md:mt-4 max-md:grid-cols-2 max-md:gap-2.5">
               {aboutStats.map((s, i) => {
@@ -55,15 +61,18 @@ export default function AboutSection() {
             </dl>
 
             <ul className="m-0 mt-8 grid list-none grid-cols-2 gap-4 p-0 max-lg:mt-6 max-md:mt-5 max-md:gap-2.5">
-              {about.highlights.map((h) => {
+              {about.highlights.map((h, idx) => {
                 const Icon = icons[h.icon]
+                const keys = highlightKeys[idx]
+                const title = keys ? tSetting(h.title, keys[0]) : h.title
+                const text = keys ? tSetting(h.text, keys[1]) : h.text
                 return (
                   <li key={h.title} className="group rounded-2xl border border-[#ececf0] bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_10px_24px_rgba(239,83,80,0.15)] dark:border-[#45464c] dark:bg-[#34353a] max-md:rounded-xl max-md:p-3">
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand transition-colors group-hover:bg-brand group-hover:text-white max-md:h-8 max-md:w-8">
                       <Icon size={17} aria-hidden />
                     </span>
-                    <h3 className="mb-0 mt-3 text-[15px] font-bold text-ink max-md:mt-2 max-md:text-[13px] max-md:leading-tight">{h.title}</h3>
-                    <p className="mb-0 mt-1 text-[13px] leading-[1.3rem] text-muted max-md:text-[11.5px] max-md:leading-[1.05rem]">{h.text}</p>
+                    <h3 className="mb-0 mt-3 text-[15px] font-bold text-ink max-md:mt-2 max-md:text-[13px] max-md:leading-tight">{title}</h3>
+                    <p className="mb-0 mt-1 text-[13px] leading-[1.3rem] text-muted max-md:text-[11.5px] max-md:leading-[1.05rem]">{text}</p>
                   </li>
                 )
               })}
