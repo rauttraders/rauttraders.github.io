@@ -67,16 +67,16 @@ export default function Footer() {
   return (
     <footer className="relative bg-[#1f2023] text-[#c9c9ce]">
       <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand via-[#ff8a65] to-brand" />
-      <div className="mx-auto w-full max-w-[1200px] px-3.5 pb-6 pt-12 max-xl:px-10 max-md:px-5">
-        <div className="grid grid-cols-[1.4fr_1fr_1fr_1.3fr_1.4fr] gap-8 max-lg:grid-cols-2 max-sm:grid-cols-1">
-          <div className="flex flex-col items-start">
+      <div className="mx-auto w-full max-w-[1360px] px-10 pb-6 pt-12 max-xl:px-8 max-md:px-4 max-md:pt-9">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 max-[340px]:grid-cols-1 lg:flex lg:items-start lg:justify-between lg:gap-8">
+          <div className="col-span-2 flex flex-col items-start max-[340px]:col-span-1 lg:max-w-[280px]">
             <Link to="/" aria-label={`${company.name || 'Home'} — Home`} className="inline-block">
               <PromoHeader alt="" sticker />
             </Link>
             {company.tagline && <p className="mb-0 mt-4 max-w-[280px] text-[14px] leading-[1.4rem]">{company.tagline}</p>}
           </div>
 
-          <nav aria-label={t('quickLinks')}>
+          <nav aria-label={t('quickLinks')} className="min-w-0">
             <h3 className={headCls}>{t('quickLinks')}</h3>
             <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
               {quickLinks.map((l) => (
@@ -85,7 +85,7 @@ export default function Footer() {
             </ul>
           </nav>
 
-          <nav aria-label={t('infoLabel')}>
+          <nav aria-label={t('infoLabel')} className="min-w-0">
             <h3 className={headCls}>{t('infoLabel')}</h3>
             <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
               {infoLinks.map((l) => (
@@ -94,7 +94,7 @@ export default function Footer() {
             </ul>
           </nav>
 
-          <nav aria-label={t('socialMedia')}>
+          <nav aria-label={t('socialMedia')} className="min-w-0">
             <h3 className={headCls}>{t('socialMedia')}</h3>
             <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
               {socialLinks.map(({ label, Icon, href, badgeCls }) => (
@@ -125,13 +125,13 @@ export default function Footer() {
           </nav>
 
           {contactRows.length > 0 && (
-            <div>
+            <div className="min-w-0 lg:max-w-[280px]">
               <h3 className={headCls}>{t('contact')}</h3>
               <ul className="m-0 flex list-none flex-col gap-3 p-0 text-[14px]">
                 {contactRows.map(({ Icon, content }, i) => (
                   <li key={i} className="flex gap-2.5">
                     <Icon size={16} aria-hidden className="mt-0.5 shrink-0 text-brand" />
-                    {content}
+                    <span className="min-w-0 break-words">{content}</span>
                   </li>
                 ))}
               </ul>
