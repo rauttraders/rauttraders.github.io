@@ -1,8 +1,9 @@
 import { HttpError } from '../lib/http'
 
-/** The order ledger: what was ordered and the calculated total. Nothing about the buyer is stored. */
+/** The order ledger: what was ordered, optional customer contact details, and the calculated total. */
+export interface OrderCustomerDTO { name?: string; phone?: string; email?: string }
 export interface OrderItemDTO { id: string; name: string; company: string; categoryId: string; size: string; price: number; qty: number }
-export interface OrderDTO { id: string; createdAt: string; items: OrderItemDTO[]; total: number; sample?: boolean }
+export interface OrderDTO { id: string; createdAt: string; items: OrderItemDTO[]; total: number; customer?: OrderCustomerDTO; sample?: boolean }
 
 const ORDER_ID = "'RT-' || (SELECT value FROM counters WHERE name = 'order')"
 
@@ -20,7 +21,12 @@ export const findIdempotent = (db: D1Database, key: string) =>
     .bind(key)
     .first<PlacedOrder & { fingerprint: string }>()
 
-export async function placeOrder(db: D1Database, lines: { id: string; qty: number }[], idem?: Idempotency): Promise<PlacedOrder & { replayed?: { fingerprint: string } }> {
+export async function placeOrder(
+  db: D1Database,
+  lines: { id: string; qty: number }[],
+  idem?: Idempotency,
+  customer?: OrderCustomerDTO,
+): Promise<PlacedOrder & { replayed?: { fingerprint: string } }> {
   const ids = lines.map((l) => l.id)
   const found = await db
     .prepare('SELECT id, name, company, category_id, size, price FROM products WHERE active = 1 AND id IN (SELECT value FROM json_each(?1))')
@@ -36,7 +42,9 @@ export async function placeOrder(db: D1Database, lines: { id: string; qty: numbe
 
   const statements = [
     db.prepare("UPDATE counters SET value = value + 1 WHERE name = 'order'"),
-    db.prepare(`INSERT INTO orders (id, total) VALUES (${ORDER_ID}, ?1)`).bind(total),
+    db
+      .prepare(`INSERT INTO orders (id, total, customer_name, customer_phone, customer_email) VALUES (${ORDER_ID}, ?1, ?2, ?3, ?4)`)
+      .bind(total, customer?.name ?? '', customer?.phone ?? '', customer?.email ?? ''),
     db
       .prepare(
         `INSERT INTO order_items (order_id, product_id, name, company, category_id, size, price, qty)
@@ -65,7 +73,7 @@ export async function placeOrder(db: D1Database, lines: { id: string; qty: numbe
 
 export async function listOrders(db: D1Database, limit = 2000): Promise<OrderDTO[]> {
   const [orders, items] = await db.batch([
-    db.prepare('SELECT id, created_at, total, sample FROM orders ORDER BY created_at DESC, id DESC LIMIT ?1').bind(limit),
+    db.prepare('SELECT id, created_at, total, sample, customer_name, customer_phone, customer_email FROM orders ORDER BY created_at DESC, id DESC LIMIT ?1').bind(limit),
     db.prepare(
       `SELECT order_id, product_id, name, company, category_id, size, price, qty FROM order_items
        WHERE order_id IN (SELECT id FROM orders ORDER BY created_at DESC, id DESC LIMIT ?1)`,
@@ -77,13 +85,24 @@ export async function listOrders(db: D1Database, limit = 2000): Promise<OrderDTO
     list.push({ id: r.product_id, name: r.name, company: r.company, categoryId: r.category_id, size: r.size, price: r.price, qty: r.qty })
     lines.set(r.order_id, list)
   }
-  return (orders.results as { id: string; created_at: string; total: number; sample: number }[]).map((o) => ({
-    id: o.id,
-    createdAt: o.created_at,
-    items: lines.get(o.id) ?? [],
-    total: o.total,
-    ...(o.sample ? { sample: true } : {}),
-  }))
+  return (orders.results as { id: string; created_at: string; total: number; sample: number; customer_name?: string; customer_phone?: string; customer_email?: string }[]).map((o) => {
+    const customer: OrderCustomerDTO | undefined =
+      o.customer_name || o.customer_phone || o.customer_email
+        ? {
+            ...(o.customer_name ? { name: o.customer_name } : {}),
+            ...(o.customer_phone ? { phone: o.customer_phone } : {}),
+            ...(o.customer_email ? { email: o.customer_email } : {}),
+          }
+        : undefined
+    return {
+      id: o.id,
+      createdAt: o.created_at,
+      items: lines.get(o.id) ?? [],
+      total: o.total,
+      ...(customer ? { customer } : {}),
+      ...(o.sample ? { sample: true } : {}),
+    }
+  })
 }
 
 export async function deleteOrder(db: D1Database, id: string): Promise<void> {

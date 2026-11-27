@@ -1,13 +1,15 @@
-import { CheckCircle2, Copy, Globe, MessageCircle, ReceiptText, TriangleAlert, X } from 'lucide-react'
+import { CheckCircle2, ChevronDown, Copy, Globe, MessageCircle, ReceiptText, TriangleAlert, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError } from '../../lib/api'
 import { formatINR } from '../../lib/format'
 import { whatsappUrl, whatsappWebUrl } from '../../lib/links'
 import { basketTotal, buildBasketMessage } from '../../lib/order'
 import { useStore } from '../../store/StoreContext'
+import type { OrderCustomerInfo } from '../../store/types'
 import { useLanguage } from '../../hooks/useLanguage'
 import { saveRecentOrder } from '../../hooks/useRecentOrders'
 import type { BasketItem } from '../Navbar/BasketMenu'
+import Field from './Field'
 import ReceiptDialog from './ReceiptDialog'
 
 /** A random 128-bit key (works on plain http too, where crypto.randomUUID is not available). */
@@ -26,6 +28,7 @@ interface OrderModalProps {
 interface Placed {
   id?: string
   total: number
+  customer?: OrderCustomerInfo
   /** The order message text (for "Copy message"). */
   text: string
   waUrl: string
@@ -49,6 +52,11 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
   const [placed, setPlaced] = useState<Placed | null>(null)
   const [copied, setCopied] = useState(false)
   const [receiptOpen, setReceiptOpen] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
+  const [fullName, setFullName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<{ phone?: string; email?: string }>({})
   const total = basketTotal(items)
 
   useEffect(() => {
@@ -63,6 +71,27 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
   }, [onClose, onSent, placed])
 
   const submit = async () => {
+    const trimmedName = fullName.trim()
+    const trimmedPhone = phone.trim()
+    const trimmedEmail = email.trim()
+    const errs: { phone?: string; email?: string } = {}
+    if (trimmedPhone && trimmedPhone.replace(/\D/g, '').length < 7) errs.phone = t('invalidPhone')
+    if (trimmedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) errs.email = t('invalidEmail')
+    if (errs.phone || errs.email) {
+      setFieldErrors(errs)
+      setShowDetails(true)
+      return
+    }
+    setFieldErrors({})
+    const customer: OrderCustomerInfo | undefined =
+      trimmedName || trimmedPhone || trimmedEmail
+        ? {
+            ...(trimmedName ? { name: trimmedName } : {}),
+            ...(trimmedPhone ? { phone: trimmedPhone } : {}),
+            ...(trimmedEmail ? { email: trimmedEmail } : {}),
+          }
+        : undefined
+
     setBusy(true)
     setError('')
     // Open the chat tab right now, inside the tap, so the browser doesn't block it; it gets its address once the order is saved.
@@ -70,7 +99,7 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
     let id: string | undefined
     let saved = true
     try {
-      id = (await placeOrder({ key: orderKey.current, items: items.map((i) => ({ id: i.id, qty: i.qty })) })).id
+      id = (await placeOrder({ key: orderKey.current, items: items.map((i) => ({ id: i.id, qty: i.qty })), customer })).id
     } catch (err) {
       if (err instanceof ApiError && err.status >= 400 && err.status < 500) {
         tab?.close()
@@ -80,7 +109,7 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
       }
       saved = false // server unreachable: still send the WhatsApp message so the order isn't lost
     }
-    const text = buildBasketMessage(items, settings.business, settings.whatsapp, id)
+    const text = buildBasketMessage(items, settings.business, settings.whatsapp, id, undefined, customer)
     const waUrl = whatsappUrl(settings, text)
     saveRecentOrder({
       id: id ?? `WA-${Date.now().toString(36).toUpperCase()}`,
@@ -95,8 +124,9 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
         qty: i.qty,
       })),
       total,
+      ...(customer ? { customer } : {}),
     })
-    setPlaced({ id, total, text, waUrl, webUrl: whatsappWebUrl(settings, text), saved })
+    setPlaced({ id, total, customer, text, waUrl, webUrl: whatsappWebUrl(settings, text), saved })
     setBusy(false)
     if (tab && !tab.closed) tab.location.href = waUrl
     else window.location.href = waUrl
@@ -123,7 +153,13 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
       <>
         {receiptOpen && placed.id && (
           <ReceiptDialog
-            order={{ id: placed.id, createdAt: new Date().toISOString(), items: items.map(i => ({ id: i.id, name: i.name, company: i.company ?? '', categoryId: '', size: i.size ?? '', price: i.price, qty: i.qty })), total: placed.total }}
+            order={{
+              id: placed.id,
+              createdAt: new Date().toISOString(),
+              items: items.map(i => ({ id: i.id, name: i.name, company: i.company ?? '', categoryId: '', size: i.size ?? '', price: i.price, qty: i.qty })),
+              total: placed.total,
+              ...(placed.customer ? { customer: placed.customer } : {}),
+            }}
             onClose={() => setReceiptOpen(false)}
           />
         )}
@@ -199,6 +235,59 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
           <span>{t('total')}</span>
           <span className="text-brand">{formatINR(total)}</span>
         </p>
+
+        <div className="mt-4">
+          <button
+            type="button"
+            aria-expanded={showDetails}
+            onClick={() => setShowDetails((v) => !v)}
+            className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-line bg-[#fafafa] px-3.5 py-2.5 text-left text-[13px] font-semibold text-ink transition-colors hover:border-brand/50 hover:bg-brand/[0.04] dark:bg-[#2a2b30]"
+          >
+            <span className="flex min-w-0 items-center gap-2">
+              <span className="truncate">{t('fasterDeliveryToggle')}</span>
+              <span className="shrink-0 rounded-full bg-brand/10 px-2 py-0.5 text-[10.5px] font-semibold text-brand">{t('optionalBadge')}</span>
+            </span>
+            <ChevronDown size={16} aria-hidden className={`shrink-0 text-muted transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`} />
+          </button>
+
+          {showDetails && (
+            <div className="mt-2.5 grid gap-3 rounded-xl border border-line bg-[#fafafa] p-3.5 dark:bg-[#2a2b30]">
+              <Field
+                label={t('fullName')}
+                value={fullName}
+                onChange={setFullName}
+                autoComplete="name"
+                placeholder="e.g. Rajesh Sharma"
+              />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field
+                  label={t('phoneNumber')}
+                  type="tel"
+                  value={phone}
+                  onChange={(v) => {
+                    setPhone(v)
+                    if (fieldErrors.phone) setFieldErrors((e) => ({ ...e, phone: undefined }))
+                  }}
+                  error={fieldErrors.phone}
+                  autoComplete="tel"
+                  placeholder="e.g. 98765 43210"
+                />
+                <Field
+                  label={t('emailAddress')}
+                  type="email"
+                  value={email}
+                  onChange={(v) => {
+                    setEmail(v)
+                    if (fieldErrors.email) setFieldErrors((e) => ({ ...e, email: undefined }))
+                  }}
+                  error={fieldErrors.email}
+                  autoComplete="email"
+                  placeholder="e.g. rajesh@shop.com"
+                />
+              </div>
+            </div>
+          )}
+        </div>
 
         {error && <p role="alert" className="mb-0 mt-4 rounded-xl bg-[#fdeaea] px-3 py-2 text-[13px] font-semibold text-[#c62f2c]">{error}</p>}
         <button type="button" disabled={busy} onClick={() => void submit()} className="mt-5 flex h-[48px] w-full cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-brand text-sm font-semibold text-white shadow-[0_4px_12px_rgba(239,83,80,0.35)] transition-all hover:bg-brand-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 max-md:mt-4 max-md:h-[42px] max-md:text-[13px]">

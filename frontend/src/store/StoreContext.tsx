@@ -4,7 +4,7 @@ import { useToast } from '../components/ui/Toast'
 import { defaultSettings } from '../data/company'
 import { api } from '../lib/api'
 import { imageFromStored, imageToStored, makeSampleOrders, seedLogoFor, slugify } from './seed'
-import type { Brand, Category, Order, OrderItem, Product, Settings, Slide, StoreState } from './types'
+import type { Brand, Category, Order, OrderCustomerInfo, OrderItem, Product, Settings, Slide, StoreState } from './types'
 
 /**
  * All shared data lives on the Node server (server/index.mjs):
@@ -72,6 +72,7 @@ export interface NewOrder {
   /** One random key per order attempt, re-sent on a retry, so the server never creates the same order twice. */
   key?: string
   items: Pick<OrderItem, 'id' | 'qty'>[]
+  customer?: OrderCustomerInfo
 }
 
 export interface PlacedOrder {
@@ -276,8 +277,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // ---- orders
   const placeOrder = useCallback(async (o: NewOrder): Promise<PlacedOrder> => {
-    // Only what was ordered is sent: product ids and quantities. Prices come from the server's catalogue.
-    const r = await api<{ id: string; total: number }>('/orders', { body: { items: o.items.map((i) => ({ id: i.id, qty: i.qty })) }, headers: o.key ? { 'Idempotency-Key': o.key } : undefined })
+    // Only what was ordered is sent: product ids and quantities (plus optional customer details if provided). Prices come from the server's catalogue.
+    const r = await api<{ id: string; total: number }>('/orders', {
+      body: { items: o.items.map((i) => ({ id: i.id, qty: i.qty })), ...(o.customer ? { customer: o.customer } : {}) },
+      headers: o.key ? { 'Idempotency-Key': o.key } : undefined,
+    })
     return { id: r.id, total: r.total }
   }, [])
 

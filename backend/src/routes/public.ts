@@ -4,7 +4,7 @@ import { externalizeImages, readImage } from '../db/images'
 import { hit } from '../db/limits'
 import { findIdempotent, placeOrder, type Idempotency } from '../db/orders'
 import type { AppEnv } from '../env'
-import { cleanCatalogue, cleanOrderLines } from '../lib/clean'
+import { cleanCatalogue, cleanOrderCustomer, cleanOrderLines } from '../lib/clean'
 import { sha256Hex } from '../lib/crypto'
 import { HttpError } from '../lib/http'
 import { KB, MB, maxBody, rateLimit } from '../middleware/limits'
@@ -61,8 +61,9 @@ const ORDERS_SITE_WIDE_PER_HOUR = 300
  */
 publicRoutes.post('/orders', maxBody(32 * KB), async (c) => {
   requireJson(c)
-  const body = (await c.req.json().catch(() => null)) as { items?: unknown } | null
+  const body = (await c.req.json().catch(() => null)) as { items?: unknown; customer?: unknown } | null
   const lines = cleanOrderLines(body?.items)
+  const customer = cleanOrderCustomer(body?.customer)
 
   // Optional "Idempotency-Key": the browser makes one per order and re-sends the same one on a retry, so a double tap or a
   // flaky connection can never create two orders. The same key with a different basket is refused.
@@ -82,7 +83,7 @@ publicRoutes.post('/orders', maxBody(32 * KB), async (c) => {
 
   if ((await hit(c.env.DB, await visitorKey('order', clientIp(c)), 3600_000)) > ORDERS_PER_VISITOR_PER_HOUR) throw new HttpError(429, 'Too many orders from this device. Please try again later.')
   if ((await hit(c.env.DB, 'order:all', 3600_000)) > ORDERS_SITE_WIDE_PER_HOUR) throw new HttpError(429, 'We are receiving a lot of orders right now. Please try again in a little while, or message us on WhatsApp.')
-  const placed = await placeOrder(c.env.DB, lines, idem)
+  const placed = await placeOrder(c.env.DB, lines, idem, customer)
   if (placed.replayed) {
     if (idem && placed.replayed.fingerprint !== idem.fingerprint) throw new HttpError(422, 'That order key was already used for a different order.')
     c.header('Idempotent-Replayed', 'true')

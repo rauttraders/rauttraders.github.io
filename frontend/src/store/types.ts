@@ -52,12 +52,19 @@ export interface OrderItem {
  * A placed order, as the admin sees it: what was ordered and the calculated total — nothing about the customer.
  * (The server may still send older fields such as `customer` or `status` on existing orders; they are ignored.)
  */
+export interface OrderCustomerInfo {
+  name?: string
+  phone?: string
+  email?: string
+}
+
 export interface Order {
   id: string
   /** ISO date-time. */
   createdAt: string
   items: OrderItem[]
   total: number
+  customer?: OrderCustomerInfo
   /** Generated demo order (can be cleared in one click). */
   sample?: boolean
 }

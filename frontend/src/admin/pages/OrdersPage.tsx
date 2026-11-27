@@ -45,16 +45,22 @@ function inRange(o: Order, r: Range): boolean {
 function toCsv(orders: Order[]) {
   // A cell that starts with = + - @ would be run as a formula by Excel/Sheets; a leading apostrophe keeps it plain text.
   const esc = (v: string | number) => `"${(/^[=+\-@\t\r]/.test(String(v)) ? "'" : '') + String(v).replace(/"/g, '""')}"`
-  const rows = [['Order', 'Date', 'Product', 'Brand', 'Size', 'Quantity', 'Unit price', 'Line total', 'Order total']]
+  const rows = [['Order', 'Date', 'Customer name', 'Customer phone', 'Customer email', 'Product', 'Brand', 'Size', 'Quantity', 'Unit price', 'Line total', 'Order total']]
   for (const o of orders) {
-    for (const i of o.items) rows.push([o.id, new Date(o.createdAt).toISOString(), i.name, i.company, i.size, String(i.qty), String(i.price), String(i.qty * i.price), String(o.total)])
+    for (const i of o.items) rows.push([o.id, new Date(o.createdAt).toISOString(), o.customer?.name ?? '', o.customer?.phone ?? '', o.customer?.email ?? '', i.name, i.company, i.size, String(i.qty), String(i.price), String(i.qty * i.price), String(o.total)])
   }
   return rows.map((r) => r.map(esc).join(',')).join('\n')
 }
 
 function orderText(o: Order): string {
+  const customerLines = [
+    o.customer?.name ? `Customer: ${o.customer.name}` : '',
+    o.customer?.phone ? `Phone: ${o.customer.phone}` : '',
+    o.customer?.email ? `Email: ${o.customer.email}` : '',
+  ].filter(Boolean)
   return [
     `Order ${o.id}: ${full(o.createdAt)}`,
+    ...customerLines,
     ...o.items.map((i, n) => `${n + 1}. ${i.name}: ${i.qty} × ${formatINR(i.price)} = ${formatINR(i.qty * i.price)}`),
     `Total: ${formatINR(o.total)}`,
   ].join('\n')
@@ -95,6 +101,13 @@ function OrderRow({ order, open, onToggle, onReceipt }: { order: Order; open: bo
       {open && (
         <div className="border-t border-[#ececf0] px-4 pb-4 pt-3 dark:border-[#45464c]">
           <p className="m-0 mb-2 text-xs text-muted">{full(order.createdAt)}</p>
+          {(order.customer?.name || order.customer?.phone || order.customer?.email) && (
+            <div className="mb-3 flex flex-wrap gap-x-5 gap-y-1 rounded-lg bg-[#fafafa] px-3 py-2 text-xs dark:bg-[#2a2b30]">
+              {order.customer?.name && <span><span className="text-muted">Name: </span><strong className="text-ink">{order.customer.name}</strong></span>}
+              {order.customer?.phone && <span><span className="text-muted">Phone: </span><strong className="text-ink">{order.customer.phone}</strong></span>}
+              {order.customer?.email && <span><span className="text-muted">Email: </span><strong className="text-ink">{order.customer.email}</strong></span>}
+            </div>
+          )}
           <div className="overflow-x-auto">
             <table className="w-full min-w-[480px] border-collapse text-[13px]">
               <thead>

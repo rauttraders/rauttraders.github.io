@@ -171,3 +171,26 @@ export function cleanOrderLines(v: unknown): { id: string; qty: number }[] {
   }
   return [...merged].map(([id, qty]) => ({ id, qty }))
 }
+
+export interface CleanOrderCustomer {
+  name?: string
+  phone?: string
+  email?: string
+}
+
+/** Optional customer contact details for faster order delivery. Empty fields are omitted; non-empty phone/email are checked. */
+export function cleanOrderCustomer(v: unknown): CleanOrderCustomer | undefined {
+  if (v === undefined || v === null) return undefined
+  if (!isObj(v)) throw new HttpError(400, 'Invalid customer details.')
+  const name = str(v.name, 120)
+  const phone = str(v.phone, 32)
+  const email = str(v.email, 160)
+  if (phone && phone.replace(/\D/g, '').length < 7) throw new HttpError(400, 'Please enter a valid phone number.')
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpError(400, 'Please enter a valid email address.')
+  if (!name && !phone && !email) return undefined
+  return {
+    ...(name ? { name } : {}),
+    ...(phone ? { phone } : {}),
+    ...(email ? { email } : {}),
+  }
+}

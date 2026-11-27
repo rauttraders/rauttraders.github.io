@@ -1,5 +1,5 @@
 import type { BasketItem } from '../components/Navbar/BasketMenu'
-import type { WhatsAppSettings } from '../store/types'
+import type { OrderCustomerInfo, WhatsAppSettings } from '../store/types'
 import { formatINR } from './format'
 
 export interface OrderCustomer {
@@ -47,7 +47,15 @@ interface MessageOptions {
   maxItems?: number
 }
 
-function buildMessage(items: BasketItem[], biz: MessageBusiness, wa: WhatsAppSettings, orderId: string | undefined, when: Date, opt: MessageOptions): string {
+function buildMessage(
+  items: BasketItem[],
+  biz: MessageBusiness,
+  wa: WhatsAppSettings,
+  orderId: string | undefined,
+  when: Date,
+  opt: MessageOptions,
+  customer?: OrderCustomerInfo,
+): string {
   const units = items.reduce((n, i) => n + i.qty, 0)
   const total = basketTotal(items)
   const mrpTotal = items.reduce((n, i) => n + i.qty * (i.mrp ?? i.price), 0)
@@ -76,11 +84,17 @@ function buildMessage(items: BasketItem[], biz: MessageBusiness, wa: WhatsAppSet
 
   const block = (...parts: (string | string[] | false)[]) => parts.flat().filter((x): x is string => typeof x === 'string' && x !== '')
   const sep = divider ? [divider] : ['']
+  const customerLines = block(
+    !!customer?.name?.trim() && `${e('👤', 'Name')}${customer.name.trim()}`,
+    !!customer?.phone?.trim() && `${e('📱', 'Phone')}${customer.phone.trim()}`,
+    !!customer?.email?.trim() && `${e('✉️', 'Email')}${customer.email.trim()}`,
+  )
   const out: string[] = [
     ...(wa.intro.trim() ? [wa.intro.trim(), ''] : []),
     ...shop,
     ...(shop.length ? sep : []),
     ...block(`*${wa.orderLabel.trim() || 'ORDER'}${orderId ? ` ${orderId}` : ''}*`, wa.showDate && `Date: ${date}`),
+    ...(customerLines.length ? ['', ...customerLines] : []),
     '',
     wa.showCounts ? `*Items (${items.length}): ${units} ${units === 1 ? 'unit' : 'units'}*` : '*Items*',
     ...lines,
@@ -97,14 +111,21 @@ function buildMessage(items: BasketItem[], biz: MessageBusiness, wa: WhatsAppSet
 const MAX_ENCODED = 3000
 
 /** The full order message; automatically shortened for very long baskets so the WhatsApp link still works. */
-export function buildBasketMessage(items: BasketItem[], biz: MessageBusiness, wa: WhatsAppSettings, orderId?: string, when: Date = new Date()): string {
+export function buildBasketMessage(
+  items: BasketItem[],
+  biz: MessageBusiness,
+  wa: WhatsAppSettings,
+  orderId?: string,
+  when: Date = new Date(),
+  customer?: OrderCustomerInfo,
+): string {
   const fits = (t: string) => encodeURIComponent(t).length <= MAX_ENCODED
-  let msg = buildMessage(items, biz, wa, orderId, when, {})
+  let msg = buildMessage(items, biz, wa, orderId, when, {}, customer)
   if (fits(msg)) return msg
-  msg = buildMessage(items, biz, wa, orderId, when, { compact: true })
+  msg = buildMessage(items, biz, wa, orderId, when, { compact: true }, customer)
   if (fits(msg)) return msg
   for (let n = items.length - 1; n >= 1; n--) {
-    msg = buildMessage(items, biz, wa, orderId, when, { compact: true, maxItems: n })
+    msg = buildMessage(items, biz, wa, orderId, when, { compact: true, maxItems: n }, customer)
     if (fits(msg)) return msg
   }
   return msg

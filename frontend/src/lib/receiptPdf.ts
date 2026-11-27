@@ -146,9 +146,14 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
   mctx.font = `500 20px ${font}`
   const addressLines = biz.businessAddress ? wrapText(mctx, biz.businessAddress, innerW) : []
 
+  const customerRows: [string, string][] = []
+  if (order.customer?.name) customerRows.push(['Name', order.customer.name])
+  if (order.customer?.phone) customerRows.push(['Phone', order.customer.phone])
+  if (order.customer?.email) customerRows.push(['Email', order.customer.email])
+
   const headerH = 126
   const introTopY = headerH + 40 + 66 + 34 + 36 + 38
-  const detailsEndY = introTopY + 42 * 3 + 34 + 38
+  const detailsEndY = introTopY + 42 * (3 + customerRows.length) + 34 + 38
   const itemsStartY = detailsEndY + 38 + 16
 
   let simY = itemsStartY
@@ -279,6 +284,9 @@ export async function generateReceiptPdfFile(order: ReceiptOrder, biz: PdfBusine
   drawRow('Order ID', order.id, '#ef5350')
   drawRow('Date & Time', fmtDate, '#111111', false)
   drawRow('Status', 'Confirmed', '#1baf7a')
+  for (const [lbl, val] of customerRows) {
+    drawRow(lbl, val, '#111111', false)
+  }
 
   y += 34
   drawDivider(y)

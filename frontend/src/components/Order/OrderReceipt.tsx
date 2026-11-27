@@ -7,7 +7,7 @@
  */
 
 import { formatINR } from '../../lib/format'
-import type { OrderItem } from '../../store/types'
+import type { OrderCustomerInfo, OrderItem } from '../../store/types'
 import { useLanguage } from '../../hooks/useLanguage'
 import logoUrl from '../../assets/sortlogo.png'
 
@@ -16,6 +16,7 @@ export interface ReceiptOrder {
   createdAt: string
   items: OrderItem[]
   total: number
+  customer?: OrderCustomerInfo
 }
 
 interface Props {
@@ -144,6 +145,25 @@ export default function OrderReceipt({ order, businessName = 'Raut Traders', bus
 
             <span className="text-[#596579]">{t('status')}</span>
             <span className="text-right font-semibold text-[#1baf7a]">{t('confirmed')}</span>
+
+            {order.customer?.name && (
+              <>
+                <span className="text-[#596579]">{t('customerName')}</span>
+                <span className="text-right font-semibold text-[#111]">{order.customer.name}</span>
+              </>
+            )}
+            {order.customer?.phone && (
+              <>
+                <span className="text-[#596579]">{t('customerPhone')}</span>
+                <span className="text-right font-semibold text-[#111]">{order.customer.phone}</span>
+              </>
+            )}
+            {order.customer?.email && (
+              <>
+                <span className="text-[#596579]">{t('customerEmail')}</span>
+                <span className="text-right font-semibold text-[#111] break-all">{order.customer.email}</span>
+              </>
+            )}
           </div>
         </div>
 
