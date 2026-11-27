@@ -1,4 +1,4 @@
-import { Crop, GalleryHorizontal, GripVertical, ImagePlus, Pencil, Plus, Trash2, Upload } from 'lucide-react'
+import { Crop, Eraser, GalleryHorizontal, GripVertical, ImagePlus, Pencil, Plus, Trash2, Upload } from 'lucide-react'
 import { useState } from 'react'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
 import { useStore } from '../../store/StoreContext'
@@ -15,6 +15,7 @@ function SlideForm({ initial, onSave, onClose }: { initial: Slide | null; onSave
   const [title, setTitle] = useState(initial?.title ?? '')
   const [image, setImage] = useState(initial?.image ?? '')
   const [cropSrc, setCropSrc] = useState<File | string | null>(null)
+  const [cropAutoBg, setCropAutoBg] = useState(false)
   const [err, setErr] = useState('')
 
   const submit = (e: React.FormEvent) => {
@@ -35,9 +36,10 @@ function SlideForm({ initial, onSave, onClose }: { initial: Slide | null; onSave
         <div className="flex flex-wrap items-center gap-3">
           <label className={`${btnSoft} !h-9`}>
             {image ? 'Replace image' : 'Upload image'} <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Upload size={15} aria-hidden />
-            <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
+            <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setCropAutoBg(false); setCropSrc(f) } e.target.value = '' }} />
           </label>
-          {image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(image)}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
+          {image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => { setCropAutoBg(false); setCropSrc(image) }}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
+          {image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => { setCropAutoBg(true); setCropSrc(image) }}>Remove BG <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Eraser size={15} aria-hidden /></button>}
         </div>
 
         <TextInput label="Name (used as the image description)" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Britannia 50-50" />
@@ -48,7 +50,7 @@ function SlideForm({ initial, onSave, onClose }: { initial: Slide | null; onSave
           <button type="submit" className={btnPrimary}>{initial ? 'Save changes' : 'Add slide'}</button>
         </div>
       </form>
-      {cropSrc && <ImageCropDialog src={cropSrc} preset={CROP_PRESETS.slide} onCancel={() => setCropSrc(null)} onApply={(url) => { setImage(url); setErr(''); setCropSrc(null) }} />}
+      {cropSrc && <ImageCropDialog src={cropSrc} preset={CROP_PRESETS.slide} autoRemoveBg={cropAutoBg} onCancel={() => { setCropSrc(null); setCropAutoBg(false) }} onApply={(url) => { setImage(url); setErr(''); setCropSrc(null); setCropAutoBg(false) }} />}
     </Modal>
   )
 }

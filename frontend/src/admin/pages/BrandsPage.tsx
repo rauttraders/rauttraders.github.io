@@ -1,4 +1,4 @@
-import { BadgeCheck, Crop, ImagePlus, Pencil, Plus, Trash2, Upload } from 'lucide-react'
+import { BadgeCheck, Crop, Eraser, ImagePlus, Pencil, Plus, Trash2, Upload } from 'lucide-react'
 import { useState } from 'react'
 import { useStore } from '../../store/StoreContext'
 import { useConfirm, useNotice } from '../../components/ui/ConfirmDialog'
@@ -18,6 +18,7 @@ function BrandForm({ initial, onClose }: { initial: Brand | null; onClose: () =>
   const [err, setErr] = useState('')
 
   const [cropSrc, setCropSrc] = useState<File | string | null>(null)
+  const [cropAutoBg, setCropAutoBg] = useState(false)
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,9 +50,10 @@ function BrandForm({ initial, onClose }: { initial: Brand | null; onClose: () =>
             <div className="flex flex-wrap items-center gap-2">
               <label className={`${btnSoft} !h-9`}>
                 Upload logo <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Upload size={15} aria-hidden />
-                <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
+                <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setCropAutoBg(false); setCropSrc(f) } e.target.value = '' }} />
               </label>
-              {logo && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(logo)}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
+              {logo && <button type="button" className={`${btnSoft} !h-9`} onClick={() => { setCropAutoBg(false); setCropSrc(logo) }}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
+              {logo && <button type="button" className={`${btnSoft} !h-9`} onClick={() => { setCropAutoBg(true); setCropSrc(logo) }}>Remove BG <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Eraser size={15} aria-hidden /></button>}
               {logo && <button type="button" className={`${btnDanger} !h-9 !px-4`} onClick={() => setLogo('')}>Remove</button>}
             </div>
           </div>
@@ -61,7 +63,7 @@ function BrandForm({ initial, onClose }: { initial: Brand | null; onClose: () =>
           <button type="submit" className={btnPrimary}>{initial ? 'Save changes' : 'Add brand'}</button>
         </div>
       </form>
-      {cropSrc && <ImageCropDialog src={cropSrc} preset={CROP_PRESETS.logo} onCancel={() => setCropSrc(null)} onApply={(url) => { setLogo(url); setErr(''); setCropSrc(null) }} />}
+      {cropSrc && <ImageCropDialog src={cropSrc} preset={CROP_PRESETS.logo} autoRemoveBg={cropAutoBg} onCancel={() => { setCropSrc(null); setCropAutoBg(false) }} onApply={(url) => { setLogo(url); setErr(''); setCropSrc(null); setCropAutoBg(false) }} />}
     </Modal>
   )
 }

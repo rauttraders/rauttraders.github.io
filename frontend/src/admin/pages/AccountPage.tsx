@@ -1,4 +1,4 @@
-import { Camera, Check, Download, Eye, EyeOff, KeyRound, LogOut, Palette, Save, SlidersHorizontal, Trash2, Upload, UserRound } from 'lucide-react'
+import { Camera, Check, Crop, Download, Eraser, Eye, EyeOff, KeyRound, LogOut, Palette, Save, SlidersHorizontal, Trash2, Upload, UserRound } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
 import { useToast } from '../../components/ui/Toast'
@@ -64,12 +64,17 @@ function ProfileCard() {
   }, [profile.name, profile.email])
 
   const [cropSrc, setCropSrc] = useState<File | string | null>(null)
+  const [cropAutoBg, setCropAutoBg] = useState(false)
   const onPhoto = (f?: File) => {
-    if (f) setCropSrc(f)
+    if (f) {
+      setCropAutoBg(false)
+      setCropSrc(f)
+    }
   }
   const toast = useToast()
   const applyPhoto = async (url: string) => {
     setCropSrc(null)
+    setCropAutoBg(false)
     const e = await updateProfile({ photo: url })
     if (e) { setErr(e); toast.error(e); return }
     setErr('')
@@ -104,11 +109,13 @@ function ProfileCard() {
             Upload photo <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Upload size={15} aria-hidden />
             <input type="file" accept="image/*" className="sr-only" onChange={(e) => { onPhoto(e.target.files?.[0]); e.target.value = '' }} />
           </label>
+          {profile.photo && <button type="button" className={`${btnSoft} !h-9`} onClick={() => { setCropAutoBg(false); setCropSrc(profile.photo!) }}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
+          {profile.photo && <button type="button" className={`${btnSoft} !h-9`} onClick={() => { setCropAutoBg(true); setCropSrc(profile.photo!) }}>Remove BG <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Eraser size={15} aria-hidden /></button>}
           {profile.photo && <button type="button" className={`${btnDanger} !h-9 !px-4`} onClick={() => { void updateProfile({ photo: '' }).then(() => setOk('Photo removed')) }}>Remove <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Trash2 size={14} aria-hidden /></button>}
         </div>
       </div>
 
-      {cropSrc && <ImageCropDialog src={cropSrc} preset={CROP_PRESETS.avatar} onCancel={() => setCropSrc(null)} onApply={(u) => void applyPhoto(u)} />}
+      {cropSrc && <ImageCropDialog src={cropSrc} preset={CROP_PRESETS.avatar} autoRemoveBg={cropAutoBg} onCancel={() => { setCropSrc(null); setCropAutoBg(false) }} onApply={(u) => void applyPhoto(u)} />}
 
       <div className="mt-6 grid grid-cols-2 gap-4 max-sm:grid-cols-1">
         <TextInput label="Display name" value={name} onChange={(e) => { setName(e.target.value); setErr('') }} autoComplete="name" />

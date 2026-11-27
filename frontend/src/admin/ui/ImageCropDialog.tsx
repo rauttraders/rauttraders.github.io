@@ -8,6 +8,8 @@ interface Props {
   /** A freshly chosen file, or the URL of an existing picture to re-adjust. */
   src: File | string
   preset: CropPreset
+  /** When true, automatically runs background removal as soon as the image loads. */
+  autoRemoveBg?: boolean
   onApply: (dataUrl: string) => void
   onCancel: () => void
 }
@@ -19,7 +21,7 @@ const MAX_STAGE_H = 340
  * Crop dialog like a profile-photo editor: drag to move, slider / wheel to zoom, rule-of-thirds grid.
  * "Auto-fit" first removes a plain background and trims empty space so the subject is centred and sized to the frame.
  */
-export default function ImageCropDialog({ src, preset, onApply, onCancel }: Props) {
+export default function ImageCropDialog({ src, preset, autoRemoveBg = false, onApply, onCancel }: Props) {
   const [img, setImg] = useState<HTMLImageElement | null>(null)
   const [error, setError] = useState('')
   const [aspectIdx, setAspectIdx] = useState(0)
@@ -36,6 +38,7 @@ export default function ImageCropDialog({ src, preset, onApply, onCancel }: Prop
   const stageRef = useRef<HTMLDivElement>(null)
   const drag = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null)
   const splitDrag = useRef(false)
+  const autoBgRan = useRef(false)
 
   const aspect = preset.aspects[aspectIdx]
   const stageW = Math.min(MAX_STAGE_W, Math.round(MAX_STAGE_H * aspect.ratio), typeof window === 'undefined' ? MAX_STAGE_W : window.innerWidth - 72)
@@ -43,11 +46,34 @@ export default function ImageCropDialog({ src, preset, onApply, onCancel }: Prop
 
   useEffect(() => {
     let alive = true
+    autoBgRan.current = false
     loadImage(src).then((i) => alive && setImg(i)).catch((e: Error) => alive && setError(e.message))
     return () => {
       alive = false
     }
   }, [src])
+
+  useEffect(() => {
+    if (!autoRemoveBg || !img || autoBgRan.current) return
+    autoBgRan.current = true
+    let alive = true
+    setBgBusy(true)
+    removeBackgroundSmart(img)
+      .then((cut) => {
+        if (!alive) return
+        setBgCanvas(cut)
+        setBgRemoved(true)
+        setCompareOn(true)
+        setSplitPct(15)
+        requestAnimationFrame(() => alive && setSplitPct(50))
+      })
+      .finally(() => {
+        if (alive) setBgBusy(false)
+      })
+    return () => {
+      alive = false
+    }
+  }, [autoRemoveBg, img])
 
   // The picture we actually draw: original, background-removed, or auto-fitted.
   const fitted = useMemo(() => {

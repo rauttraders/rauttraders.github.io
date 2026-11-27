@@ -1,4 +1,4 @@
-import { Camera, Crop, EyeOff, Eye, ImagePlus, LayoutGrid, List, Package, Pencil, Plus, Search, Tags, Trash2, Upload, X } from 'lucide-react'
+import { Camera, Crop, Eraser, EyeOff, Eye, ImagePlus, LayoutGrid, List, Package, Pencil, Plus, Search, Tags, Trash2, Upload, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useConfirm } from '../../components/ui/ConfirmDialog'
 import { useStore } from '../../store/StoreContext'
@@ -43,6 +43,7 @@ function ProductForm({ initial, onClose }: { initial: Product | null; onClose: (
   const brandNames = useMemo(() => brands.map((b) => b.name).sort(), [brands])
 
   const [cropSrc, setCropSrc] = useState<File | string | null>(null)
+  const [cropAutoBg, setCropAutoBg] = useState(false)
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -94,13 +95,14 @@ function ProductForm({ initial, onClose }: { initial: Product | null; onClose: (
             <div className="flex flex-wrap items-center gap-2">
               <label className={`${btnSoft} !h-9`}>
                 Upload image <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Upload size={15} aria-hidden />
-                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/bmp" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
+                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/bmp" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setCropAutoBg(false); setCropSrc(f) } e.target.value = '' }} />
               </label>
               <label className={`${btnSoft} !h-9`} title="Take a photo with your device camera">
                 Camera <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Camera size={15} aria-hidden />
-                <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCropSrc(f); e.target.value = '' }} />
+                <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setCropAutoBg(false); setCropSrc(f) } e.target.value = '' }} />
               </label>
-              {d.image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => setCropSrc(d.image)}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
+              {d.image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => { setCropAutoBg(false); setCropSrc(d.image) }}>Adjust <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Crop size={15} aria-hidden /></button>}
+              {d.image && <button type="button" className={`${btnSoft} !h-9`} onClick={() => { setCropAutoBg(true); setCropSrc(d.image) }}>Remove BG <span aria-hidden className="h-4 w-px shrink-0 bg-current opacity-30" /> <Eraser size={15} aria-hidden /></button>}
               {d.image && <button type="button" className={`${btnDanger} !h-9 !px-4`} onClick={() => set('image', '')}>Remove</button>}
             </div>
           </div>
@@ -113,7 +115,7 @@ function ProductForm({ initial, onClose }: { initial: Product | null; onClose: (
           <button type="submit" className={btnPrimary}>{initial ? 'Save changes' : 'Add product'}</button>
         </div>
       </form>
-      {cropSrc && <ImageCropDialog src={cropSrc} preset={d.isLogo ? CROP_PRESETS.logo : CROP_PRESETS.product} onCancel={() => setCropSrc(null)} onApply={(url) => { set('image', url); setCropSrc(null) }} />}
+      {cropSrc && <ImageCropDialog src={cropSrc} preset={d.isLogo ? CROP_PRESETS.logo : CROP_PRESETS.product} autoRemoveBg={cropAutoBg} onCancel={() => { setCropSrc(null); setCropAutoBg(false) }} onApply={(url) => { set('image', url); setCropSrc(null); setCropAutoBg(false) }} />}
     </Modal>
   )
 }
