@@ -59,9 +59,9 @@ export default function Footer() {
     }
   }
   const socialLinks = [
-    { label: t('instagramLabel'), Icon: InstagramIcon, href: safeExternal(company.instagram) },
-    { label: t('whatsappLabel'), Icon: MessageCircle, href: safeExternal(company.whatsappLink) || (hasWhatsApp ? whatsappUrl(settings) : '') },
-    { label: t('facebookLabel'), Icon: FacebookIcon, href: safeExternal(company.facebook) },
+    { label: t('instagramLabel'), Icon: InstagramIcon, href: safeExternal(company.instagram), badgeCls: 'bg-[#fde8ef] text-[#E4405F]' },
+    { label: t('whatsappLabel'), Icon: MessageCircle, href: safeExternal(company.whatsappLink) || (hasWhatsApp ? whatsappUrl(settings) : ''), badgeCls: 'bg-[#e7f9ee] text-[#16a34a]' },
+    { label: t('facebookLabel'), Icon: FacebookIcon, href: safeExternal(company.facebook), badgeCls: 'bg-[#e8f1ff] text-[#1877F2]' },
   ]
 
   return (
@@ -97,21 +97,25 @@ export default function Footer() {
           <nav aria-label={t('socialMedia')}>
             <h3 className={headCls}>{t('socialMedia')}</h3>
             <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
-              {socialLinks.map(({ label, Icon, href }) => (
+              {socialLinks.map(({ label, Icon, href, badgeCls }) => (
                 <li key={label}>
                   {href ? (
                     <a
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-[14px] text-[#c9c9ce] no-underline transition-colors hover:translate-x-0.5 hover:text-white"
+                      className="inline-flex items-center gap-2.5 text-[14px] text-[#c9c9ce] no-underline transition-colors hover:translate-x-0.5 hover:text-white"
                     >
-                      <Icon size={15} aria-hidden className="shrink-0 text-brand" />
+                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${badgeCls}`}>
+                        <Icon size={15} aria-hidden />
+                      </span>
                       <span>{label}</span>
                     </a>
                   ) : (
-                    <span className="inline-flex items-center gap-2 text-[14px] text-[#7c7d85]">
-                      <Icon size={15} aria-hidden className="shrink-0 text-brand/60" />
+                    <span className="inline-flex items-center gap-2.5 text-[14px] text-[#7c7d85]">
+                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg opacity-75 ${badgeCls}`}>
+                        <Icon size={15} aria-hidden />
+                      </span>
                       <span>{label}</span>
                     </span>
                   )}
