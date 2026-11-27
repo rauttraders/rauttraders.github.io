@@ -91,6 +91,15 @@ export function useShopCart() {
     })
   }, [])
 
+  const clearCart = useCallback(() => {
+    try {
+      localStorage.removeItem(KEY)
+    } catch {
+      /* ignore */
+    }
+    setQtys({})
+  }, [])
+
   const itemCount = useMemo(() => Object.values(qtys).reduce((s, n) => s + n, 0), [qtys])
-  return { qtys, setQty, itemCount }
+  return { qtys, setQty, clearCart, itemCount }
 }

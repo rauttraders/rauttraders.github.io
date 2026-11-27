@@ -4,7 +4,7 @@ import { useStore } from '../../store/StoreContext'
 import { useLanguage } from '../../hooks/useLanguage'
 import Reveal from '../ui/Reveal'
 import SectionHeader from '../ui/SectionHeader'
-import { ProductGridSkeleton } from '../ui/Skeleton'
+import { ProductGridSkeleton, ShopHeaderSkeleton } from '../ui/Skeleton'
 import FilterDropdown from './FilterDropdown'
 import ProductShowCard from './ProductShowCard'
 
@@ -41,30 +41,35 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
   return (
     <section id="shop" aria-labelledby="shop-title" className="scroll-mt-16 bg-dots bg-[#faf7f7] py-16 dark:bg-[#26272b] max-md:py-10">
       <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-4">
-        <Reveal>
-          <SectionHeader title={tSetting(settings.shop.title, 'shopTitle')} titleId="shop-title">
-            {tSetting(settings.shop.text, 'shopSubtitle')}
-          </SectionHeader>
-        </Reveal>
-
-        <div className="mb-6 mt-7 max-w-[320px] max-sm:max-w-full">
-          <FilterDropdown
-            label={t('brand')}
-            icon={<Tag size={16} aria-hidden />}
-            value={brand ?? ''}
-            options={brandOptions}
-            onChange={(v) => setBrand(v || null)}
-          />
-        </div>
-
-        <p className="mb-5 mt-0 text-[13px] font-semibold text-muted" aria-live="polite">
-          {t('showing')} <span className="text-brand">{items.length}</span> {items.length === 1 ? t('productSingular') : t('productPlural')}
-          {query.trim() ? <> {t('forQuery')} “<span className="text-ink">{query.trim()}</span>”</> : null}
-        </p>
-
         {!ready ? (
-          <ProductGridSkeleton />
-        ) : showcaseProducts.length === 0 ? (
+          <>
+            <ShopHeaderSkeleton />
+            <ProductGridSkeleton />
+          </>
+        ) : (
+          <>
+            <Reveal>
+              <SectionHeader title={tSetting(settings.shop.title, 'shopTitle')} titleId="shop-title">
+                {tSetting(settings.shop.text, 'shopSubtitle')}
+              </SectionHeader>
+            </Reveal>
+
+            <div className="mb-6 mt-7 max-w-[320px] max-sm:max-w-full">
+              <FilterDropdown
+                label={t('brand')}
+                icon={<Tag size={16} aria-hidden />}
+                value={brand ?? ''}
+                options={brandOptions}
+                onChange={(v) => setBrand(v || null)}
+              />
+            </div>
+
+            <p className="mb-5 mt-0 text-[13px] font-semibold text-muted" aria-live="polite">
+              {t('showing')} <span className="text-brand">{items.length}</span> {items.length === 1 ? t('productSingular') : t('productPlural')}
+              {query.trim() ? <> {t('forQuery')} “<span className="text-ink">{query.trim()}</span>”</> : null}
+            </p>
+
+            {showcaseProducts.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-line py-16 text-center text-muted">
             <LayoutGrid size={32} aria-hidden className="opacity-30" />
             <p className="m-0 text-[15px] font-semibold text-ink">{t('noProductsYet')}</p>
@@ -85,6 +90,8 @@ export default function ShopSection({ query, qtys, onQty }: ShopSectionProps) {
             <SearchX size={28} aria-hidden />
             <p className="m-0 text-[15px]">{t('noProductsMatch')}{query ? ` “${query}”` : ` ${t('thisCategory')}`}.</p>
           </div>
+        )}
+          </>
         )}
 
       </div>

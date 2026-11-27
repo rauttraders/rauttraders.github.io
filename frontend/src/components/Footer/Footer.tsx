@@ -4,6 +4,7 @@ import { whatsappUrl } from '../../lib/links'
 import { useStore } from '../../store/StoreContext'
 import { useLanguage } from '../../hooks/useLanguage'
 import PromoHeader from '../PromoModal/PromoHeader'
+import { FooterSkeleton } from '../ui/Skeleton'
 
 const InstagramIcon = ({ size = 15, className = '' }: { size?: number; className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
@@ -23,8 +24,9 @@ const linkCls = 'text-[14px] text-[#c9c9ce] no-underline transition-colors hover
 const headCls = 'm-0 mb-4 inline-block border-b-2 border-brand pb-1.5 text-[13px] font-bold uppercase tracking-[0.1em] text-white'
 
 export default function Footer() {
-  const { settings } = useStore()
+  const { settings, ready } = useStore()
   const { t } = useLanguage()
+  if (!ready) return <FooterSkeleton />
   const company = settings.business
   const quickLinks = [
     { label: t('navHome'), to: '/#home' },

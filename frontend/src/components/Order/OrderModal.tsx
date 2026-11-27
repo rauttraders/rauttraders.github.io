@@ -21,13 +21,16 @@ function newOrderKey(): string {
 interface OrderModalProps {
   items: BasketItem[]
   onClose: () => void
-  /** Called once the order has been placed and the customer closes the confirmation (clears the basket). */
+  /** Called as soon as the order is placed so the basket is cleared immediately in state & localStorage. */
+  onOrderPlaced?: () => void
+  /** Called once the order has been placed and the customer closes the confirmation. */
   onSent: () => void
 }
 
 interface Placed {
   id?: string
   total: number
+  items: BasketItem[]
   customer?: OrderCustomerInfo
   /** The order message text (for "Copy message"). */
   text: string
@@ -42,7 +45,7 @@ interface Placed {
  *  - saves the order for the admin panel, and
  *  - opens a WhatsApp chat with the shop's number with the full order message ready to send.
  */
-export default function OrderModal({ items, onClose, onSent }: OrderModalProps) {
+export default function OrderModal({ items, onClose, onOrderPlaced, onSent }: OrderModalProps) {
   const { settings, placeOrder } = useStore()
   const { t } = useLanguage()
   const [busy, setBusy] = useState(false)
@@ -109,12 +112,13 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
       }
       saved = false // server unreachable: still send the WhatsApp message so the order isn't lost
     }
-    const text = buildBasketMessage(items, settings.business, settings.whatsapp, id, undefined, customer)
+    const snapshotItems = items.map((i) => ({ ...i }))
+    const text = buildBasketMessage(snapshotItems, settings.business, settings.whatsapp, id, undefined, customer)
     const waUrl = whatsappUrl(settings, text)
     saveRecentOrder({
       id: id ?? `WA-${Date.now().toString(36).toUpperCase()}`,
       createdAt: new Date().toISOString(),
-      items: items.map((i) => ({
+      items: snapshotItems.map((i) => ({
         id: i.id,
         name: i.name,
         company: i.company ?? '',
@@ -126,7 +130,9 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
       total,
       ...(customer ? { customer } : {}),
     })
-    setPlaced({ id, total, customer, text, waUrl, webUrl: whatsappWebUrl(settings, text), saved })
+    // Clear the active basket right away so localStorage & the cart badge only retain recent orders after completion.
+    onOrderPlaced?.()
+    setPlaced({ id, total, items: snapshotItems, customer, text, waUrl, webUrl: whatsappWebUrl(settings, text), saved })
     setBusy(false)
     if (tab && !tab.closed) tab.location.href = waUrl
     else window.location.href = waUrl
@@ -156,7 +162,7 @@ export default function OrderModal({ items, onClose, onSent }: OrderModalProps) 
             order={{
               id: placed.id,
               createdAt: new Date().toISOString(),
-              items: items.map(i => ({ id: i.id, name: i.name, company: i.company ?? '', categoryId: '', size: i.size ?? '', price: i.price, qty: i.qty })),
+              items: placed.items.map(i => ({ id: i.id, name: i.name, company: i.company ?? '', categoryId: '', size: i.size ?? '', price: i.price, qty: i.qty })),
               total: placed.total,
               ...(placed.customer ? { customer: placed.customer } : {}),
             }}

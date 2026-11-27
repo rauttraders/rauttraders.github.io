@@ -9,11 +9,12 @@ import ContactIllustration from './ContactIllustration'
 import Field from '../Order/Field'
 import { useStore } from '../../store/StoreContext'
 import { useLanguage } from '../../hooks/useLanguage'
+import { ContactSkeleton } from '../ui/Skeleton'
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
 
 export default function ContactSection() {
-  const { settings } = useStore()
+  const { settings, ready } = useStore()
   const { t, tSetting } = useLanguage()
   const [form, setForm] = useState({ name: '', shopName: '', phone: '', message: '' })
   const [errors, setErrors] = useState<OrderErrors>({})
@@ -55,6 +56,8 @@ export default function ContactSection() {
       setServerError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.')
     }
   }
+
+  if (!ready) return <ContactSkeleton />
 
   return (
     <section id="contact" aria-labelledby="contact-title" className="scroll-mt-16 bg-dots bg-[#faf7f7] py-16 dark:bg-[#26272b] max-lg:py-12 max-md:py-8">

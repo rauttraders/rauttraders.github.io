@@ -8,6 +8,8 @@ import SearchBar from './SearchBar'
 import HeaderActions from './HeaderActions'
 import type { BasketItem } from './BasketMenu'
 import { useLanguage } from '../../hooks/useLanguage'
+import { useStore } from '../../store/StoreContext'
+import { NavbarSkeleton } from '../ui/Skeleton'
 import './navbar.css'
 
 const SECTION_IDS = ['home', 'shop', 'about', 'contact']
@@ -74,6 +76,7 @@ export const defaultNavItems: NavItem[] = [
 ]
 
 function Navbar({ items, searchQuery, onSearchChange, onSearch, theme = 'light', onThemeChange = noop, language = 'en', onLanguageChange = noop, basketItems, onRemoveItem, onQtyChange, onBag, onCheckout, basketOpen, onBasketOpenChange, cartCount, onNavigate, onLogoClick }: NavbarProps) {
+  const { ready } = useStore()
   const { t } = useLanguage()
   const navItems: NavItem[] = items ?? [
     { label: t('navHome'), href: '#home' },
@@ -94,6 +97,8 @@ function Navbar({ items, searchQuery, onSearchChange, onSearch, theme = 'light',
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [menuOpen])
+
+  if (!ready) return <NavbarSkeleton />
 
   return (
     <header className={`navbar sticky top-0 z-[1000] bg-white/90 backdrop-blur-md transition-shadow dark:bg-[#34353a]/90 ${scrolled ? 'is-scrolled' : ''}`}>

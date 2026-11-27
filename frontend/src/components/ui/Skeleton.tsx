@@ -170,3 +170,117 @@ export function InfoPageSkeleton() {
     </div>
   )
 }
+
+/** Matches sticky Navbar (brand logo, nav links, search bar, and action buttons). */
+export function NavbarSkeleton() {
+  return (
+    <header aria-label="Loading navigation" className="navbar sticky top-0 z-[1000] bg-white/90 backdrop-blur-md dark:bg-[#34353a]/90">
+      <div className="flex h-16 items-center gap-6 px-10 max-lg:h-14 max-lg:justify-between max-lg:gap-3 max-lg:px-4">
+        <Skeleton className="h-9 w-36 shrink-0 rounded-xl max-md:h-8 max-md:w-28" />
+        <div className="flex items-center gap-6 max-lg:hidden">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-4 w-16 rounded-md" />
+          ))}
+        </div>
+        <div className="ml-auto flex items-center gap-[22px] max-lg:gap-2 max-md:gap-1.5">
+          <Skeleton className="h-10 w-[340px] rounded-full max-xl:w-[260px] max-lg:hidden" />
+          <Skeleton className="hidden h-9 w-9 rounded-full max-lg:block" />
+          <Skeleton className="h-9 w-9 rounded-full" />
+          <Skeleton className="h-9 w-9 rounded-full" />
+          <Skeleton className="hidden h-9 w-9 rounded-full max-lg:block" />
+        </div>
+      </div>
+    </header>
+  )
+}
+
+/** Matches InfoPageLayout sticky header while settings load. */
+export function InfoHeaderSkeleton() {
+  return (
+    <header aria-label="Loading header" className="sticky top-0 z-[1000] border-b border-[#ececf0] bg-white/90 backdrop-blur-md dark:border-[#45464c] dark:bg-[#34353a]/90">
+      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-10 max-lg:h-14 max-lg:px-4">
+        <Skeleton className="h-9 w-36 rounded-xl max-md:h-8 max-md:w-28" />
+        <Skeleton className="h-9 w-9 rounded-full" />
+      </div>
+    </header>
+  )
+}
+
+/** Matches ShopSection header, brand filter, and count line above ProductGridSkeleton. */
+export function ShopHeaderSkeleton() {
+  return (
+    <div aria-hidden="true">
+      <Skeleton className="h-8 w-56 max-md:h-7 max-md:w-44" />
+      <Skeleton className="mt-3 h-4 w-full max-w-[460px]" />
+      <Skeleton className="mb-6 mt-7 h-11 w-full max-w-[320px] rounded-xl max-sm:max-w-full" />
+      <Skeleton className="mb-5 h-4 w-36" />
+    </div>
+  )
+}
+
+/** Matches ContactSection 2-column layout (intro + illustration on left, enquiry form card on right). */
+export function ContactSkeleton() {
+  return (
+    <section id="contact" aria-label="Loading contact section" className="scroll-mt-16 bg-dots bg-[#faf7f7] py-16 dark:bg-[#26272b] max-lg:py-12 max-md:py-8">
+      <div className="mx-auto w-full max-w-[1200px] px-3.5 max-xl:px-10 max-md:px-4">
+        <div className="grid grid-cols-2 items-start gap-10 max-lg:grid-cols-1 max-lg:gap-8 max-md:gap-5">
+          <div className="min-w-0">
+            <Skeleton className="h-8 w-56 max-md:h-7 max-md:w-44" />
+            <Skeleton className="mt-3 h-4 w-full max-w-[440px]" />
+            <Skeleton className="mt-2 h-4 w-[78%] max-w-[360px]" />
+            <div className="mt-8 max-lg:mt-6 max-lg:flex max-lg:justify-center max-md:hidden">
+              <Skeleton className="h-[260px] w-full max-w-[400px] rounded-3xl" />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3.5 rounded-2xl border border-[#ececf0] bg-white p-6 dark:border-[#45464c] dark:bg-[#34353a] max-md:gap-3 max-md:p-4">
+            <div className="flex items-center gap-3 border-b border-[#ececf0] pb-4 dark:border-[#45464c]">
+              <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
+              <div className="flex-1">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="mt-1.5 h-3 w-52" />
+              </div>
+            </div>
+            <Skeleton className="h-[44px] w-full rounded-lg" />
+            <Skeleton className="h-[44px] w-full rounded-lg" />
+            <Skeleton className="h-[44px] w-full rounded-lg" />
+            <Skeleton className="h-[88px] w-full rounded-lg" />
+            <div className="mt-1 flex gap-3">
+              <Skeleton className="h-[46px] flex-1 rounded-full" />
+              <Skeleton className="h-[46px] flex-1 rounded-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/** Matches dark Footer layout (brand + tagline + link columns + contact + copyright). */
+export function FooterSkeleton() {
+  return (
+    <footer aria-label="Loading footer" className="relative bg-[#1f2023] text-[#c9c9ce]">
+      <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand via-[#ff8a65] to-brand" />
+      <div className="mx-auto w-full max-w-[1200px] px-8 pb-6 pt-12 max-xl:px-10 max-md:px-6 max-md:pt-9">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-8 max-[340px]:grid-cols-1 lg:flex lg:items-start lg:justify-around lg:gap-8">
+          <div className="col-span-2 flex flex-col items-start max-[340px]:col-span-1 lg:max-w-[280px]">
+            <Skeleton className="h-11 w-40 rounded-xl !bg-white/10" />
+            <Skeleton className="mt-4 h-3.5 w-60 !bg-white/10" />
+            <Skeleton className="mt-2 h-3.5 w-44 !bg-white/10" />
+          </div>
+          {Array.from({ length: 4 }).map((_, col) => (
+            <div key={col} className="min-w-0 space-y-2.5">
+              <Skeleton className="mb-4 h-4 w-24 !bg-white/15" />
+              {Array.from({ length: 4 }).map((_, row) => (
+                <Skeleton key={row} className="h-3.5 w-28 !bg-white/10" />
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="mt-10 flex justify-center border-t border-[#3a3b40] pt-5">
+          <Skeleton className="h-3.5 w-56 !bg-white/10" />
+        </div>
+      </div>
+    </footer>
+  )
+}

@@ -20,7 +20,7 @@ export default function App() {
   const showcaseProducts = useMemo(() => allProducts.filter((p) => p.active), [allProducts])
   const { theme, setTheme } = useTheme()
   const { language, setLanguage } = useLanguage()
-  const { qtys, setQty, itemCount } = useShopCart()
+  const { qtys, setQty, clearCart, itemCount } = useShopCart()
   const [query, setQuery] = useState('')
   const [ordering, setOrdering] = useState(false)
   const [myOrderOpen, setMyOrderOpen] = useState(false)
@@ -66,13 +66,15 @@ export default function App() {
       </main>
       <Footer />
       <FloatingActions />
-      {ordering && basketItems.length > 0 && (
+      {ordering && (
         <OrderModal
           items={basketItems}
           onClose={() => setOrdering(false)}
+          onOrderPlaced={clearCart}
           onSent={() => {
-            basketItems.forEach((i) => setQty(i.id, 0))
+            clearCart()
             setOrdering(false)
+            setMyOrderOpen(false)
           }}
         />
       )}
