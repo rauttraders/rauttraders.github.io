@@ -48,9 +48,11 @@ function ProductShowCard({ product, qty, brandLogo, searchQuery = '', onQty }: P
 
       <div className="flex flex-1 flex-col p-4">
         <h3 className="m-0 text-[15px] font-bold leading-snug text-ink"><HighlightText text={product.name} query={searchQuery} /></h3>
-        <p className="mb-3 mt-1.5 line-clamp-2 min-h-[2.6rem] text-[13px] leading-[1.3rem] text-muted"><HighlightText text={product.description} query={searchQuery} /></p>
+        {product.description.trim() && (
+          <p className="mb-2.5 mt-1.5 line-clamp-2 text-[13px] leading-[1.3rem] text-muted"><HighlightText text={product.description} query={searchQuery} /></p>
+        )}
 
-        <div className="mb-4 mt-auto flex items-baseline gap-2">
+        <div className="mb-3.5 mt-auto flex items-baseline gap-2 pt-2">
           {product.mrp && <span className="text-[13px] text-muted line-through">{formatINR(product.price)}</span>}
           <span className="text-[19px] font-extrabold text-brand">{formatINR(product.price)}</span>
           {product.size && product.size !== '0' && <span className="rounded-full bg-black/5 px-2 py-0.5 text-[11px] font-semibold text-muted dark:bg-white/10">{product.size}</span>}
